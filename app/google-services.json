@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "1059296762726",
+    "firebase_url": "https://dora-c2c0a.firebaseio.com",
+    "project_id": "dora-c2c0a",
+    "storage_bucket": "dora-c2c0a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059296762726:android:9bf99c8c4b383cf9",
+        "android_client_info": {
+          "package_name": "com.aputech.dora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059296762726-0u04kc09si2oarppoorct5550felg86v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aputech.dora",
+            "certificate_hash": "b9cac6596665b7d7b9b7e7302ce6cc73a30886b3"
+          }
+        },
+        {
+          "client_id": "1059296762726-fbu49e1nnrajhdfcqqri3hsk6joolvf0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU4X8ixlkoVCCBVNd82iXVErFLzg0rV7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059296762726-fbu49e1nnrajhdfcqqri3hsk6joolvf0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-6296537129319863~2750846373"
+    }
+  ],
+  "configuration_version": "1"
+}
