@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -11,9 +12,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //here is an comment
-        //kptsf
-        Intent intent= new Intent(MainActivity.this,MapsActivity.class);
-        startActivity(intent);
+        Handler handle = new Handler();
+        Runnable maps= new Runnable() {
+            @Override
+            public void run() {
+           Intent mapIntent= new Intent(MainActivity.this,MapsActivity.class);
+           startActivity(mapIntent);
+             }
+            };
+        handle.postDelayed(maps,1000);
     }
 }
+
+
+
+
+
