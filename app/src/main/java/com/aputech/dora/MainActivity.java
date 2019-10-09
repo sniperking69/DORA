@@ -12,13 +12,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //here is an comment
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        Handler handle = new Handler();
+        Runnable maps= new Runnable() {
+            @Override
             public void run() {
-                Intent intent= new Intent(MainActivity.this,MapsActivity.class);
-                startActivity(intent);
-            }
-        },2000);
+           Intent mapIntent= new Intent(MainActivity.this,MapsActivity.class);
+           startActivity(mapIntent);
+             }
+            };
+        handle.postDelayed(maps,1000);
     }
 }
+
+
+
+
+
