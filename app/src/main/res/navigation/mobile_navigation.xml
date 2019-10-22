@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_trending"
-        android:name="com.aputech.dora.ui.dashboard.DashboardFragment"
+        android:name="com.aputech.dora.ui.Trending.TrendingFragment"
         android:label="@string/title_trending"
         tools:layout="@layout/fragment_dashboard" />
 
