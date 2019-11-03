@@ -20,6 +20,11 @@ public class MainActivity extends AppCompatActivity {
             }
         },5000);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }
 
 
