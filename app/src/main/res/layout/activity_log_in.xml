@@ -6,4 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".LogInActivity">
 
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="220dp"
+        android:layout_height="66dp"
+        android:text="@string/btn_FB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.756" />
+
+    <Button
+        android:id="@+id/bt2"
+        android:layout_width="220dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="111dp"
+        android:layout_marginTop="242dp"
+        android:layout_marginEnd="80dp"
+        android:text="@string/g_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.212" />
 </androidx.constraintlayout.widget.ConstraintLayout>

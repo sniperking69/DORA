@@ -6,4 +6,6 @@
     <string name="title_trending">Trending</string>
     <string name="title_new">Upload</string>
     <string name="title_profile">Profile</string>
+    <string name="btn_FB">Facebook.com</string>
+    <string name="g_btn">google.com</string>
 </resources>
