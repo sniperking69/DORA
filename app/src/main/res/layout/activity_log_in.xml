@@ -8,16 +8,17 @@
     android:layout_height="match_parent"
     tools:context=".LogInActivity">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button2"
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" | Google Sign In"
-
-        android:drawablePadding="4dp"
-        android:drawableStart="@drawable/person"
+       app:iconGravity="start"
+        android:text="MATERIAL BUTTON"
+        app:icon="@drawable/person"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@android:color/darker_gray"
+        app:strokeWidth="2dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
