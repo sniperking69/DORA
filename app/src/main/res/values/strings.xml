@@ -2,8 +2,6 @@
     <string name="app_name">DropChat</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_home">HomeActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_trending">Trending</string>
-    <string name="title_new">Upload</string>
-    <string name="title_profile">Profile</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 </resources>

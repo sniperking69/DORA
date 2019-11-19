@@ -1,4 +1,4 @@
-package com.aputech.dora;
+package com.aputech.dora.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,8 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.GoogleApi;
+import com.aputech.dora.R;
 
 public class MainActivity extends AppCompatActivity {
 
