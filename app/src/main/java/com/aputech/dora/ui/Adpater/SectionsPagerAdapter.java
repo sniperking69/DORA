@@ -1,4 +1,4 @@
-package com.aputech.dora.ui.main;
+package com.aputech.dora.ui.Adpater;
 
 import android.content.Context;
 
@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.aputech.dora.R;
+import com.aputech.dora.ui.Fragments.PlaceholderFragment;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
