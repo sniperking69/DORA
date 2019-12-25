@@ -3,6 +3,7 @@ package com.aputech.dora.ui;
 import android.os.Bundle;
 
 import com.aputech.dora.R;
+import com.aputech.dora.ui.Adpater.SectionsPagerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -14,7 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.aputech.dora.ui.main.SectionsPagerAdapter;
+
 
 public class HomeActivity extends AppCompatActivity {
 
