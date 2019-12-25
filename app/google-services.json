@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1059296762726",
-    "firebase_url": "https://dora-c2c0a.firebaseio.com",
-    "project_id": "dora-c2c0a",
-    "storage_bucket": "dora-c2c0a.appspot.com"
+    "project_number": "1053280239797",
+    "firebase_url": "https://dora-275f8.firebaseio.com",
+    "project_id": "dora-275f8",
+    "storage_bucket": "dora-275f8.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1059296762726:android:9bf99c8c4b383cf9",
+        "mobilesdk_app_id": "1:1053280239797:android:35cd8d35c558434ccc7efc",
         "android_client_info": {
           "package_name": "com.aputech.dora"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1059296762726-0u04kc09si2oarppoorct5550felg86v.apps.googleusercontent.com",
+          "client_id": "1053280239797-vm8eq52kmr5gchrpfmrq84ggt7n8c9pq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.aputech.dora",
@@ -23,26 +23,25 @@
           }
         },
         {
-          "client_id": "1059296762726-fbu49e1nnrajhdfcqqri3hsk6joolvf0.apps.googleusercontent.com",
+          "client_id": "1053280239797-dvm22rhe7271lfvi574d4fj5j1s82iar.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCU4X8ixlkoVCCBVNd82iXVErFLzg0rV7w"
+          "current_key": "AIzaSyAguiSp7dUUg2AfzHabxahpivxvhLIJcrg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1059296762726-fbu49e1nnrajhdfcqqri3hsk6joolvf0.apps.googleusercontent.com",
+              "client_id": "1053280239797-dvm22rhe7271lfvi574d4fj5j1s82iar.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
         }
-      },
-      "admob_app_id": "ca-app-pub-6296537129319863~2750846373"
+      }
     }
   ],
   "configuration_version": "1"
