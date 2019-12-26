@@ -29,7 +29,7 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
     @NonNull
     @Override
     public NoteHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item,
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_feed,
                 parent, false);
         return new NoteHolder(v);
     }
