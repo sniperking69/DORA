@@ -1,8 +1,10 @@
 package com.aputech.dora.ui.Adpater;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.R;
 import com.aputech.dora.ui.Model.Note;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -21,9 +24,21 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
 
     @Override
     protected void onBindViewHolder(@NonNull NoteHolder holder, int position, @NonNull Note model) {
-        holder.textViewTitle.setText(model.getTitle());
-        holder.textViewDescription.setText(model.getDescription());
-        holder.textViewPriority.setText(String.valueOf(model.getPriority()));
+        if(model.getType()==1){
+            holder.textViewTitle.setText(model.getTitle());
+            holder.textViewDescription.setText(model.getDescription());
+            holder.textViewPriority.setText(String.valueOf(model.getPriority()));
+        }
+        if(model.getType()==2){
+            holder.img.setVisibility(View.VISIBLE);
+            Glide
+                    .with(holder.img.getContext())
+                    .load(model.getImageUrl())
+                    .into(holder.img);
+            holder.textViewDescription.setText(model.getDescription());
+            holder.textViewPriority.setText(String.valueOf(model.getPriority()));
+        }
+
     }
 
     @NonNull
@@ -38,12 +53,13 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
         TextView textViewTitle;
         TextView textViewDescription;
         TextView textViewPriority;
-
+        ImageView img;
         public NoteHolder(View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.text_view_title);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
             textViewPriority = itemView.findViewById(R.id.text_view_priority);
+            img =itemView.findViewById(R.id.img);
         }
     }
 }
