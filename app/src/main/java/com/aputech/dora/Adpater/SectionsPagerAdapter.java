@@ -1,4 +1,4 @@
-package com.aputech.dora.ui.Adpater;
+package com.aputech.dora.Adpater;
 
 import android.content.Context;
 

@@ -1,6 +1,5 @@
-package com.aputech.dora.ui.Adpater;
+package com.aputech.dora.Adpater;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.R;
-import com.aputech.dora.ui.Model.Note;
+import com.aputech.dora.Model.Note;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;

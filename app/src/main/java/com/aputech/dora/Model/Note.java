@@ -1,4 +1,4 @@
-package com.aputech.dora.ui.Model;
+package com.aputech.dora.Model;
 
 public class Note {
     private String title;

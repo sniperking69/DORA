@@ -2,13 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/navigation_search"
         android:icon="@drawable/ic_search"
         app:showAsAction="always"
         android:title="@string/title_search" />
 
     <item
-        android:id="@+id/navigation_post"
         android:icon="@drawable/ic_post"
         android:visible="true"
         app:showAsAction="always"

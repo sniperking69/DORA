@@ -7,14 +7,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.R;
-import com.aputech.dora.ui.Adpater.NoteAdapter;
-import com.aputech.dora.ui.Model.Note;
-import com.aputech.dora.ui.Model.PageViewModel;
+import com.aputech.dora.Adpater.NoteAdapter;
+import com.aputech.dora.Model.Note;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,7 +26,6 @@ public class PlaceholderFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Notebook");
-    private PageViewModel pageViewModel;
     private NoteAdapter adapter;
 
     public static PlaceholderFragment newInstance(int index) {
@@ -42,12 +39,12 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
-        int index = 1;
-        if (getArguments() != null) {
-            index = getArguments().getInt(ARG_SECTION_NUMBER);
-        }
-        pageViewModel.setIndex(index);
+       // pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
+//        int index = 1;
+//        if (getArguments() != null) {
+//            index = getArguments().getInt(ARG_SECTION_NUMBER);
+//        }
+     //   pageViewModel.setIndex(index);
     }
 
     @Override
