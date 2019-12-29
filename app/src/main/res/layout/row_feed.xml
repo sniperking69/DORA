@@ -23,6 +23,18 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="15dp">
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/info"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentEnd="true"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_alignStart="@+id/info"/>
+
         <ImageView
             android:id="@+id/imgView_proPic"
             android:layout_width="45dp"
@@ -42,6 +54,7 @@
         app:srcCompat="@drawable/ic_more"/>
 </LinearLayout>
         <LinearLayout
+            android:id="@+id/pname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
