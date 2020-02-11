@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, HActivity.class));
                     finish();
                 }
-            },5000);
+            },3000);
         } else {
             startActivityForResult(
                     AuthUI.getInstance()
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     protected void onDestroy() {
+
         super.onDestroy();
     }
 
