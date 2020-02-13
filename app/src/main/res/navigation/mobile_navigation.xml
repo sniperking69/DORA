@@ -6,13 +6,13 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.aputech.dora.ui.Fragments.PlaceholderFragment"
+        android:name="com.aputech.dora.ui.Fragments.home"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_h" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.aputech.dora.ui.Fragments.PlaceholderFragment"
+        android:name="com.aputech.dora.ui.Fragments.home"
         android:label="@string/title_trending"
         tools:layout="@layout/fragment_h" />
 

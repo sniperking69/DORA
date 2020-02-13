@@ -21,15 +21,15 @@ import com.google.firebase.firestore.Query;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PlaceholderFragment extends Fragment {
+public class home extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Notebook");
     private NoteAdapter adapter;
 
-    public static PlaceholderFragment newInstance(int index) {
-        PlaceholderFragment fragment = new PlaceholderFragment();
+    public static home newInstance(int index) {
+        home fragment = new home();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
         fragment.setArguments(bundle);
