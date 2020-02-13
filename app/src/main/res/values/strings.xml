@@ -11,6 +11,18 @@
     <string name="title_profile">Profile</string>
     <string name="title_search">Search</string>
     <string name="title_post">Post</string>
+    <string name="name">Name</string>
+    <string name="username">UserName</string>
+    <string name="profileurl">ProfileUrl</string>
+    <string name="bio">Bio</string>
+    <string name="email">Email Address</string>
+    <string name="gender">Gender</string>
+
+    <string-array name="genderspinner">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
