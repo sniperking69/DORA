@@ -17,10 +17,6 @@
         <activity
             android:name=".ui.HActivity"
             android:label="@string/title_activity_h" />
-        <activity
-            android:name=".ui.HomeActivity"
-            android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
