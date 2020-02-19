@@ -3,11 +3,13 @@ package com.aputech.dora.Model;
 public class User {
     private String Name;
     private String UserName;
-    private String ProfileUrl;
+
     private String Bio;
     private String EmailAdress;
     private String Gender;
-    // optional
+
+    private String ProfileUrl; //Backend Url of Image
+    //Optional
     private String facebookId;
     private String instaId;
 

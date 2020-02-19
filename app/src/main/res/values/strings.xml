@@ -16,7 +16,8 @@
     <string name="profileurl">ProfileUrl</string>
     <string name="bio">Bio</string>
     <string name="email">Email Address</string>
-    <string name="gender">Gender</string>
+    <string name="gender">Gender :</string>
+    <string name="Continue">Continue</string>
 
     <string-array name="genderspinner">
         <item>Male</item>
