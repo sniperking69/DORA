@@ -7,6 +7,7 @@
         android:title="@string/title_home" />
 
     <item
+        android:id="@+id/trending"
         android:icon="@drawable/ic_trending"
         android:title="@string/title_trending" />
 
@@ -15,6 +16,7 @@
         android:title="@string/title_reminder" />
     <item
         android:icon="@drawable/ic_privatemsg"
+
         android:title="@string/title_privatemsg" />
     <item
         android:icon="@drawable/ic_nearby"
