@@ -35,20 +35,20 @@ public class HActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
       NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-        FloatingActionButton fab = findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AuthUI.getInstance().signOut(HActivity.this).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            public void onComplete(@NonNull Task<Void> task) {
-                                // user is now signed out
-                                startActivity(new Intent(HActivity.this, MainActivity.class));
-                                finish();
-                            }
-                        });
-            }
-        });
+//        FloatingActionButton fab = findViewById(R.id.fab);
+//
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                AuthUI.getInstance().signOut(HActivity.this).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                // user is now signed out
+//                                startActivity(new Intent(HActivity.this, MainActivity.class));
+//                                finish();
+//                            }
+//                        });
+//            }
+//        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -11,7 +11,7 @@
         android:title="@string/title_trending" />
 
     <item
-        android:icon="@drawable/ic_reminder"
+        android:icon="@drawable/ic_post"
         android:title="@string/title_reminder" />
     <item
         android:icon="@drawable/ic_privatemsg"

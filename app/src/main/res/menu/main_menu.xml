@@ -11,5 +11,10 @@
         android:visible="true"
         app:showAsAction="always"
         android:title="@string/title_post" />
+    <item
+        android:icon="@drawable/ic_nearby"
+        android:visible="true"
+        app:showAsAction="always"
+        android:title="@string/title_post" />
 
 </menu>
