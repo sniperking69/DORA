@@ -18,6 +18,13 @@
     <string name="email">Email Address</string>
     <string name="gender">Gender :</string>
     <string name="Continue">Continue</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="type">Type</string>
+    <string name="priority">Priority</string>
+    <string name="upload">Upload</string>
+    <string name="location">Location</string>
+
 
     <string-array name="genderspinner">
         <item>Male</item>
