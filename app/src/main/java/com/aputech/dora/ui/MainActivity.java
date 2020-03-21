@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         imageView =findViewById(R.id.imageView);
         imageView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.loganim));
         FirebaseAuth auth = FirebaseAuth.getInstance();
+
         if (auth.getCurrentUser() != null) {
             new Handler().postDelayed(new Runnable() {
                 @Override
