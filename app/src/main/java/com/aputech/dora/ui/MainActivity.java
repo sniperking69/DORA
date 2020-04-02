@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
-                            .setTheme(R.style.Nobar)
+                            .setTheme(R.style.AppTheme)
                             .setLogo(R.drawable.ic_logo)
                             .setAvailableProviders(Arrays.asList(
                                     new AuthUI.IdpConfig.GoogleBuilder().build(),

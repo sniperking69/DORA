@@ -43,6 +43,7 @@ public class regUser extends AppCompatActivity {
 
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         int resultCode = scheduler.schedule(info);
+
         if (resultCode == JobScheduler.RESULT_SUCCESS) {
             Log.d("joblocationservice", "Job scheduled");
         } else {
