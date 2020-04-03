@@ -1,15 +1,25 @@
 package com.aputech.dora.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.aputech.dora.R;
 
+import com.aputech.dora.ui.Fragments.Profile;
+import com.aputech.dora.ui.Fragments.Reminder;
+import com.aputech.dora.ui.Fragments.Trending;
+import com.aputech.dora.ui.Fragments.home;
 import com.bumptech.glide.Glide;
 
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.FragmentTransaction;
 
 
 import java.util.Objects;
@@ -38,27 +49,74 @@ public class HActivity extends AppCompatActivity {
         setContentView(R.layout.activity_h);
         navView = findViewById(R.id.nav_view);
         fragmentContainerView = findViewById(R.id.nav_host_fragment);
+        BottomNavigationMenuView mbottomNavigationMenuView =
+                (BottomNavigationMenuView) navView.getChildAt(0);
 
-//        BottomNavigationView.OnNavigationItemSelectedListener listener= new BottomNavigationView.OnNavigationItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                if (item.getItemId() == R.id.post) {
-//                    Intent intent = new Intent(HActivity.this, uploadActivity.class);
-//                    startActivity(intent);
-//                    return true;
-//                }
-//                return false;
-//            }
-//        };
-    //    navView.setOnNavigationItemSelectedListener(listener);
-       View view= navView.getMenu().findItem(R.id.profile).getActionView();
-       ImageView profileImage = view.findViewById(R.id.toolbar_profile_image);
+        View view = mbottomNavigationMenuView.getChildAt(4);
+
+        BottomNavigationItemView itemView = (BottomNavigationItemView) view;
+
+        View cart_badge = LayoutInflater.from(this)
+                .inflate(R.layout.profile_menu_layout,
+                        mbottomNavigationMenuView, false);
+
+
+
+        ImageView profileImage =  cart_badge.findViewById(R.id.toolbar_profile_image);
         if (auth.getCurrentUser()!=null){
             Glide
                     .with(this)
                     .load(auth.getCurrentUser().getPhotoUrl())
                     .into(profileImage);
         }
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navView.setSelectedItemId(R.id.profile);
+            }
+        });
+        itemView.addView(cart_badge);
+
+
+        BottomNavigationView.OnNavigationItemSelectedListener listener= new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                Fragment newFragment;
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();;
+                if (navView.getSelectedItemId() != id) {
+                    switch (id) {
+                        case R.id.navigation_home:
+                            newFragment = new home();
+                            transaction.replace(R.id.nav_host_fragment, newFragment);
+                            transaction.commit();
+                            return true;
+                        case R.id.trending:
+                            newFragment = new Trending();
+                            transaction.replace(R.id.nav_host_fragment, newFragment);
+                            transaction.commit();
+                            return true;
+                        case R.id.profile:
+                            newFragment = new Profile();
+                            transaction.replace(R.id.nav_host_fragment, newFragment);
+                            transaction.commit();
+                            return true;
+                        case R.id.remind:
+                            newFragment = new Reminder();
+                            transaction.replace(R.id.nav_host_fragment, newFragment);
+                            transaction.commit();
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+
+                return false;
+            }
+
+        };
+        navView.setOnNavigationItemSelectedListener(listener);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 //        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -86,7 +144,7 @@ public class HActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        navView.setSelectedItemId(R.id.trending);
+        navView.setSelectedItemId(R.id.navigation_home);
         super.onStart();
 
     }
@@ -97,4 +155,5 @@ public class HActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
+
 }
