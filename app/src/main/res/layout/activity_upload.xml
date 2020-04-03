@@ -56,7 +56,6 @@
         app:layout_constraintTop_toBottomOf="@+id/editText3" />
 
     <Button
-        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/upload"
@@ -66,7 +65,6 @@
         app:layout_constraintTop_toBottomOf="@+id/editText4" />
 
     <Button
-        android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/location"

@@ -24,7 +24,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView2"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/ic_user">
@@ -50,7 +49,6 @@
         app:layout_constraintVertical_bias="0.19">
 
         <EditText
-            android:id="@+id/pName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/bg"
@@ -70,7 +68,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
 
         <EditText
-            android:id="@+id/pUserName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/bg"
@@ -93,7 +90,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
 
         <EditText
-            android:id="@+id/pBio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/bg"
@@ -116,7 +112,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
         <EditText
-            android:id="@+id/pEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/bg"
@@ -152,7 +147,6 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:clickable="true"
@@ -163,7 +157,6 @@
         app:srcCompat="@android:drawable/ic_menu_upload" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnGoogle"
         style="@style/Widget.MaterialComponents.Button.Icon"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

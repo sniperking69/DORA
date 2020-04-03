@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.job.JobInfo;
@@ -15,6 +17,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        imageView =findViewById(R.id.imageView);
+
 //        imageView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.loganim));
 //        FirebaseAuth auth = FirebaseAuth.getInstance();
 //
@@ -101,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         UpdateUI();
+                        revealFAB();
                     }
 
                     @Override
@@ -184,6 +189,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+    private void revealFAB() {
+        final View view = findViewById(R.id.imageView);
+        view.setVisibility(View.INVISIBLE);
+        int cx = view.getWidth() /2;
+        int cy = view.getHeight()/2 ;
+
+        float finalRadius = (float) Math.hypot(cx, cy);
+
+        Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
+        anim.setDuration(3000);
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                view.setVisibility(View.VISIBLE);
+
+            }
+        });
+        anim.start();
+
     }
 }
 

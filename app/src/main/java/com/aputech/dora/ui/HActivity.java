@@ -8,6 +8,8 @@ import android.view.Menu;
 
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -20,10 +22,14 @@ import com.aputech.dora.ui.Fragments.Trending;
 import com.aputech.dora.ui.Fragments.home;
 import com.bumptech.glide.Glide;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,6 +50,7 @@ public class HActivity extends AppCompatActivity {
     public BottomNavigationView navView;
     FragmentContainerView fragmentContainerView;
     ImageView Home,Trending,Reminder,profileImage ;
+    int FragNum;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection(Objects.requireNonNull(auth.getUid()));
@@ -58,9 +65,16 @@ public class HActivity extends AppCompatActivity {
         Home= findViewById(R.id.Home);
         Reminder= findViewById(R.id.Remind);
         Trending= findViewById(R.id.Trending);
+        Fragment newFragment;
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();;
+        newFragment = new home();
+        transaction.replace(R.id.nav_host_fragment, newFragment);
+        transaction.commit();
         Reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
+                Reminder.startAnimation(animation);
                 Fragment newFragment;
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 newFragment = new Reminder();
@@ -71,6 +85,8 @@ public class HActivity extends AppCompatActivity {
         Trending.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
+                Trending.startAnimation(animation);
                 Fragment newFragment;
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 newFragment = new Trending();
@@ -81,6 +97,8 @@ public class HActivity extends AppCompatActivity {
         Home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
+                Home.startAnimation(animation);
                 Fragment newFragment;
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 newFragment = new home();
@@ -88,13 +106,6 @@ public class HActivity extends AppCompatActivity {
                 transaction.commit();
             }
         });
-        BottomNavigationMenuView mbottomNavigationMenuView =
-                (BottomNavigationMenuView) navView.getChildAt(0);
-
-        View view = mbottomNavigationMenuView.getChildAt(4);
-
-        BottomNavigationItemView itemView = (BottomNavigationItemView) view;
-
 
       profileImage =  findViewById(R.id.toolbar_profile_image);
         if (auth.getCurrentUser()!=null){
@@ -106,6 +117,8 @@ public class HActivity extends AppCompatActivity {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
+                profileImage.startAnimation(animation);
                 Fragment newFragment;
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 newFragment = new Profile();
@@ -114,79 +127,28 @@ public class HActivity extends AppCompatActivity {
             }
         });
 
+        final FloatingActionButton fab = findViewById(R.id.fab);
 
-        BottomNavigationView.OnNavigationItemSelectedListener listener= new BottomNavigationView.OnNavigationItemSelectedListener() {
-
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                Fragment newFragment;
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                if (navView.getSelectedItemId() != id) {
-                    switch (id) {
-                        case R.id.navigation_home:
-                            newFragment = new home();
-                            transaction.replace(R.id.nav_host_fragment, newFragment);
-                            transaction.commit();
-                            return true;
-                        case R.id.trending:
-                            newFragment = new Trending();
-                            transaction.replace(R.id.nav_host_fragment, newFragment);
-                            transaction.commit();
-                            return true;
-                        case R.id.profile:
-                            newFragment = new Profile();
-                            transaction.replace(R.id.nav_host_fragment, newFragment);
-                            transaction.commit();
-                            return true;
-                        case R.id.remind:
-                            newFragment = new Reminder();
-                            transaction.replace(R.id.nav_host_fragment, newFragment);
-                            transaction.commit();
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-
-                return false;
-            }
-
-        };
-        navView.setOnNavigationItemSelectedListener(listener);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-//                .build();
-//
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//      NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-//        NavigationUI.setupWithNavController(navView, navController);
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
+            public void onClick(View view) {
+//                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.move);
+//                fab.startAnimation(animation);
+                Intent intent = new Intent(HActivity.this,Post.class);
+                startActivity(intent);
 //                AuthUI.getInstance().signOut(HActivity.this).addOnCompleteListener(new OnCompleteListener<Void>() {
 //                            public void onComplete(@NonNull Task<Void> task) {
 //                                // user is now signed out
-//                                startActivity(new Intent(HActivity.this, MainActivity.class));
+//                                startActivity(new Intent(HActivity.this, Post.class));
 //                                finish();
 //                            }
 //                        });
-//            }
-//        });
+            }
+        });
     }
 
     @Override
     protected void onStart() {
-        navView.setSelectedItemId(R.id.navigation_home);
-        Fragment newFragment;
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();;
-        newFragment = new home();
-        transaction.replace(R.id.nav_host_fragment, newFragment);
-        transaction.commit();
         super.onStart();
 
     }
@@ -213,7 +175,6 @@ public class HActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-
         super.onResume();
     }
 }

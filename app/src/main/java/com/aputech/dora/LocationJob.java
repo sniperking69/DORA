@@ -24,7 +24,7 @@ import static com.aputech.dora.ui.MainActivity.CHANNEL_1_ID;
 public class LocationJob extends JobService {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection(Objects.requireNonNull(auth.getUid()));
+//    private CollectionReference notebookRef = db.collection(Objects.requireNonNull(auth.getUid()));
     private static final String TAG = "joblocationservice";
     private boolean jobCancelled = false;
 
