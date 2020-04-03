@@ -2,6 +2,7 @@ package com.aputech.dora.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 
 import com.aputech.dora.R;
 
@@ -28,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
@@ -47,6 +50,8 @@ public class HActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_h);
+         Toolbar toolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
         navView = findViewById(R.id.nav_view);
         fragmentContainerView = findViewById(R.id.nav_host_fragment);
         BottomNavigationMenuView mbottomNavigationMenuView =
@@ -145,6 +150,11 @@ public class HActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         navView.setSelectedItemId(R.id.navigation_home);
+        Fragment newFragment;
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();;
+        newFragment = new home();
+        transaction.replace(R.id.nav_host_fragment, newFragment);
+        transaction.commit();
         super.onStart();
 
     }
@@ -156,4 +166,22 @@ public class HActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.mail) {
+            Intent intent = new Intent(HActivity.this,msgActivity.class);
+            startActivity(intent);
+            return true;
+        }else{
+            return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+    }
 }
