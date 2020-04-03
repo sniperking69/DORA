@@ -43,6 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class HActivity extends AppCompatActivity {
     public BottomNavigationView navView;
     FragmentContainerView fragmentContainerView;
+    ImageView Home,Trending,Reminder,profileImage ;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection(Objects.requireNonNull(auth.getUid()));
@@ -54,6 +55,39 @@ public class HActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         navView = findViewById(R.id.nav_view);
         fragmentContainerView = findViewById(R.id.nav_host_fragment);
+        Home= findViewById(R.id.Home);
+        Reminder= findViewById(R.id.Remind);
+        Trending= findViewById(R.id.Trending);
+        Reminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment newFragment;
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                newFragment = new Reminder();
+                transaction.replace(R.id.nav_host_fragment, newFragment);
+                transaction.commit();
+            }
+        });
+        Trending.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment newFragment;
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                newFragment = new Trending();
+                transaction.replace(R.id.nav_host_fragment, newFragment);
+                transaction.commit();
+            }
+        });
+        Home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment newFragment;
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                newFragment = new home();
+                transaction.replace(R.id.nav_host_fragment, newFragment);
+                transaction.commit();
+            }
+        });
         BottomNavigationMenuView mbottomNavigationMenuView =
                 (BottomNavigationMenuView) navView.getChildAt(0);
 
@@ -61,13 +95,8 @@ public class HActivity extends AppCompatActivity {
 
         BottomNavigationItemView itemView = (BottomNavigationItemView) view;
 
-        View cart_badge = LayoutInflater.from(this)
-                .inflate(R.layout.profile_menu_layout,
-                        mbottomNavigationMenuView, false);
 
-
-
-        ImageView profileImage =  cart_badge.findViewById(R.id.toolbar_profile_image);
+      profileImage =  findViewById(R.id.toolbar_profile_image);
         if (auth.getCurrentUser()!=null){
             Glide
                     .with(this)
@@ -77,10 +106,13 @@ public class HActivity extends AppCompatActivity {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navView.setSelectedItemId(R.id.profile);
+                Fragment newFragment;
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                newFragment = new Profile();
+                transaction.replace(R.id.nav_host_fragment, newFragment);
+                transaction.commit();
             }
         });
-        itemView.addView(cart_badge);
 
 
         BottomNavigationView.OnNavigationItemSelectedListener listener= new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -89,7 +121,7 @@ public class HActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 Fragment newFragment;
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();;
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 if (navView.getSelectedItemId() != id) {
                     switch (id) {
                         case R.id.navigation_home:
