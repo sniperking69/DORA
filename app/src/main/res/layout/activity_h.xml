@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
+    android:background="@android:color/transparent"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/my_toolbar"
+android:layout_above="@+id/bottomlinear"
+        />
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-
         android:layout_height="?attr/actionBarSize"
         android:layout_margin="0dp"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:padding="0dp"
-        app:contentInsetStartWithNavigation="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_host_fragment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_alignParentTop="true"
         app:menu="@menu/main_menu">
 
         <RelativeLayout
@@ -44,30 +45,14 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:id="@+id/fab"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_margin="4dp"
-        app:fabSize="normal"
-        android:src="@drawable/ic_post"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-
+        android:id="@+id/bottomlinear"
+        android:layout_width="match_parent"
         android:layout_height="45dp"
         android:orientation="horizontal"
         android:weightSum="5"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nav_host_fragment">
+        android:layout_alignParentBottom="true"
+   >
 
         <ImageView
             android:id="@+id/Home"
@@ -89,9 +74,14 @@
             android:padding="10dp"
             android:src="@drawable/ic_trending" />
 
-        <View
+        <ImageView
+            android:id="@+id/new_post"
+            android:src="@drawable/ic_post"
+            android:padding="10dp"
+            android:visibility="invisible"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/newbutton"
             android:layout_weight="1" />
 
         <ImageView
@@ -110,32 +100,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp" />
+            android:padding="5dp"
+            android:focusable="true" />
     </LinearLayout>
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:labelVisibilityMode="unlabeled"
-        android:visibility="gone"
-        app:itemHorizontalTranslationEnabled="false"
-        android:layoutAnimation="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
+
 
     <!--    <navH-->
 <!--        android:id="@+id/nav_host_fragment"-->
@@ -149,21 +118,19 @@
 <!--        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"-->
 <!--        app:navGraph="@navigation/bottom_navigation" />-->
 
-<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/fab"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginEnd="8dp"-->
-<!--        android:layout_marginBottom="8dp"-->
-<!--        android:focusable="true"-->
-<!--        app:backgroundTint="@android:color/white"-->
-<!--        app:borderWidth="0dp"-->
-<!--        app:elevation="2dp"-->
-<!--        app:fabSize="normal"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/nav_view"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/nav_host_fragment"-->
-<!--        app:pressedTranslationZ="12dp"-->
-<!--        app:rippleColor="@android:color/black"-->
-<!--        app:srcCompat="@drawable/ic_nearby" />-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:focusable="true"
+        app:borderWidth="0dp"
+        app:elevation="0dp"
+        app:fabSize="normal"
+        app:pressedTranslationZ="12dp"
+        app:rippleColor="@android:color/black"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
