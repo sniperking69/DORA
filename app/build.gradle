@@ -44,6 +44,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    //circular imageview liberary
-    implementation 'com.mikhaellopez:circularimageview:4.2.0'
 }
