@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.R;
-import com.aputech.dora.Adpater.NoteAdapter;
+import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Model.Note;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.CollectionReference;
@@ -26,7 +26,7 @@ public class home extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Notebook");
-    private NoteAdapter adapter;
+    private HomeAdapter adapter;
 
     public static home newInstance(int index) {
         home fragment = new home();
@@ -39,12 +39,6 @@ public class home extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
-//        int index = 1;
-//        if (getArguments() != null) {
-//            index = getArguments().getInt(ARG_SECTION_NUMBER);
-//        }
-     //   pageViewModel.setIndex(index);
     }
 
     @Override
@@ -58,20 +52,12 @@ public class home extends Fragment {
                 .setQuery(query, Note.class)
                 .build();
 
-        adapter = new NoteAdapter(options);
+        adapter = new HomeAdapter(options);
 
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
-
-//        final TextView textView = root.findViewById(R.id.section_label);
-//        pageViewModel.getText().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
         return root;
     }
 
