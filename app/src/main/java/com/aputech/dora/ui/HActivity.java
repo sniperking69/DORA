@@ -47,20 +47,21 @@ import java.util.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HActivity extends AppCompatActivity {
-    public BottomNavigationView navView;
+
     FragmentContainerView fragmentContainerView;
-    ImageView Home,Trending,Reminder,profileImage ;
+    ImageView Home,Trending,Reminder,profileImage,newPost;
     int FragNum;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection(Objects.requireNonNull(auth.getUid()));
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_h);
          Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
-        navView = findViewById(R.id.nav_view);
+
         fragmentContainerView = findViewById(R.id.nav_host_fragment);
         Home= findViewById(R.id.Home);
         Reminder= findViewById(R.id.Remind);
@@ -127,9 +128,9 @@ public class HActivity extends AppCompatActivity {
             }
         });
 
-        final FloatingActionButton fab = findViewById(R.id.fab);
+        newPost = findViewById(R.id.new_post);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.move);
