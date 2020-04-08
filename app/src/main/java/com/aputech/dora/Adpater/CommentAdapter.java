@@ -25,7 +25,7 @@ public class CommentAdapter extends FirestoreRecyclerAdapter<Comment, CommentAda
     @Override
     protected void onBindViewHolder(@NonNull CommentHolder holder, int position, @NonNull Comment model) {
 //            holder.img.setVisibility(View.VISIBLE);
-//            holder.textViewDescription.setText(model.getDescription());
+         holder.textViewDescription.setText(model.getCommentText());
 //            holder.textViewPriority.setText(String.valueOf(model.getPriority()));
 
 
@@ -40,16 +40,10 @@ public class CommentAdapter extends FirestoreRecyclerAdapter<Comment, CommentAda
     }
 
     class CommentHolder extends RecyclerView.ViewHolder {
-        TextView textViewTitle;
         TextView textViewDescription;
-        TextView textViewPriority;
-        ImageView img;
         public CommentHolder(View itemView) {
             super(itemView);
-            textViewTitle = itemView.findViewById(R.id.text_view_title);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
-            textViewPriority = itemView.findViewById(R.id.text_view_priority);
-            img =itemView.findViewById(R.id.img);
         }
     }
 }

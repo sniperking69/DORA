@@ -1,7 +1,9 @@
 package com.aputech.dora.Adpater;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +21,15 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.NoteHolder> {
-
-    public HomeAdapter(@NonNull FirestoreRecyclerOptions<Note> options) {
+    Context mContext;
+    public HomeAdapter(@NonNull FirestoreRecyclerOptions<Note> options, Context mContext) {
         super(options);
+        this.mContext=mContext;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull final NoteHolder holder, int position, @NonNull Note model) {
+    protected void onBindViewHolder(@NonNull final NoteHolder holder, int position, @NonNull final Note model) {
+        Log.d("doracheck", "onClick: "+model.getrefComments().getParent().getPath());
         if(model.getType()==1){
             holder.textViewTitle.setText(model.getTitle());
             holder.textViewDescription.setText(model.getDescription());
@@ -43,8 +47,11 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
         holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent= new Intent(holder.Commentbutton.getContext(), ViewPostActivity.class);
-                holder.Commentbutton.getContext().startActivity(intent);
+                Intent intent= new Intent(mContext, ViewPostActivity.class);
+
+                intent.putExtra("coll",model.getrefComments().getParent().getPath());
+                intent.putExtra("doc",model.getrefComments().getId());
+                mContext.startActivity(intent);
             }
         });
 
