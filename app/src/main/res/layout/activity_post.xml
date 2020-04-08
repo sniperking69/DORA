@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.Post">
+
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/post_toolbar"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_margin="0dp"
@@ -20,4 +23,49 @@
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/main_post">
     </androidx.appcompat.widget.Toolbar>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="locationadd"
+        android:text="Add Location" />
+
+    <Button
+        android:id="@+id/Camera"
+        android:layout_width="match_parent"
+        android:onClick="cameraopen"
+        android:layout_height="wrap_content"
+        android:text="Camera" />
+
+    <Button
+        android:id="@+id/gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="gallery"
+        android:text="Gallery"
+        />
+
+    <Button
+        android:id="@+id/Audio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="AudioGallery"
+        android:text="Button" />
+
+    <EditText
+        android:id="@+id/para"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="para" />
+
+    <Button
+        android:id="@+id/DONE"
+        android:layout_width="match_parent"
+        android:onClick="Done"
+        android:layout_height="wrap_content"
+        android:text="DONE" />
+
+</LinearLayout>

@@ -49,4 +49,19 @@ public class Post extends AppCompatActivity {
         anim.start();
 
     }
+
+    public void locationadd(View view) {
+    }
+
+    public void cameraopen(View view) {
+    }
+
+    public void gallery(View view) {
+    }
+
+    public void AudioGallery(View view) {
+    }
+
+    public void Done(View view) {
+    }
 }

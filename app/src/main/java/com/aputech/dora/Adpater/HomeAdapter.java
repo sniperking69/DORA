@@ -1,6 +1,7 @@
 package com.aputech.dora.Adpater;
 
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.R;
 import com.aputech.dora.Model.Note;
+import com.aputech.dora.ui.ViewPostActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -23,7 +25,7 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull NoteHolder holder, int position, @NonNull Note model) {
+    protected void onBindViewHolder(@NonNull final NoteHolder holder, int position, @NonNull Note model) {
         if(model.getType()==1){
             holder.textViewTitle.setText(model.getTitle());
             holder.textViewDescription.setText(model.getDescription());
@@ -38,6 +40,13 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             holder.textViewDescription.setText(model.getDescription());
             holder.textViewPriority.setText(String.valueOf(model.getPriority()));
         }
+        holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(holder.Commentbutton.getContext(), ViewPostActivity.class);
+                holder.Commentbutton.getContext().startActivity(intent);
+            }
+        });
 
     }
 
@@ -54,12 +63,14 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
         TextView textViewDescription;
         TextView textViewPriority;
         ImageView img;
+        View Commentbutton;
         public NoteHolder(View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.text_view_title);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
             textViewPriority = itemView.findViewById(R.id.text_view_priority);
             img =itemView.findViewById(R.id.img);
+            Commentbutton= itemView.findViewById(R.id.comment);
         }
     }
 }

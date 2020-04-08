@@ -49,11 +49,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class HActivity extends AppCompatActivity {
 
     FragmentContainerView fragmentContainerView;
-    ImageView Home,Trending,Reminder,profileImage,newPost;
-    int FragNum;
+    ImageView Home,Trending,Reminder,profileImage;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection(Objects.requireNonNull(auth.getUid()));
+    int page=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,6 @@ public class HActivity extends AppCompatActivity {
         setContentView(R.layout.activity_h);
          Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
-
         fragmentContainerView = findViewById(R.id.nav_host_fragment);
         Home= findViewById(R.id.Home);
         Reminder= findViewById(R.id.Remind);
@@ -71,40 +70,51 @@ public class HActivity extends AppCompatActivity {
         newFragment = new home();
         transaction.replace(R.id.nav_host_fragment, newFragment);
         transaction.commit();
+        page=1;
         Reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
-                Reminder.startAnimation(animation);
-                Fragment newFragment;
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                newFragment = new Reminder();
-                transaction.replace(R.id.nav_host_fragment, newFragment);
-                transaction.commit();
+                if (page != 3) {
+                    page=3;
+                    Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
+                    Reminder.startAnimation(animation);
+                    Fragment newFragment;
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    newFragment = new Reminder();
+                    transaction.replace(R.id.nav_host_fragment, newFragment);
+                    transaction.commit();
+                }
             }
         });
         Trending.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
-                Trending.startAnimation(animation);
-                Fragment newFragment;
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                newFragment = new Trending();
-                transaction.replace(R.id.nav_host_fragment, newFragment);
-                transaction.commit();
+                if (page != 2) {
+                    page=2;
+                    Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
+                    Trending.startAnimation(animation);
+                    Fragment newFragment;
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    newFragment = new Trending();
+                    transaction.replace(R.id.nav_host_fragment, newFragment);
+                    transaction.commit();
+                }
             }
         });
         Home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
-                Home.startAnimation(animation);
-                Fragment newFragment;
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                newFragment = new home();
-                transaction.replace(R.id.nav_host_fragment, newFragment);
-                transaction.commit();
+                if (page!=1){
+                    page=1;
+                    Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
+                    Home.startAnimation(animation);
+                    Fragment newFragment;
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    newFragment = new home();
+                    transaction.replace(R.id.nav_host_fragment, newFragment);
+                    transaction.commit();
+                }
+
             }
         });
 
@@ -118,17 +128,20 @@ public class HActivity extends AppCompatActivity {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
-                profileImage.startAnimation(animation);
-                Fragment newFragment;
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                newFragment = new Profile();
-                transaction.replace(R.id.nav_host_fragment, newFragment);
-                transaction.commit();
+                if (page!=4) {
+                    page=4;
+                    Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
+                    profileImage.startAnimation(animation);
+                    Fragment newFragment;
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    newFragment = new Profile();
+                    transaction.replace(R.id.nav_host_fragment, newFragment);
+                    transaction.commit();
+                }
             }
         });
 
-        newPost = findViewById(R.id.new_post);
+        FloatingActionButton newPost = findViewById(R.id.fab);
 
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,7 +169,6 @@ public class HActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }

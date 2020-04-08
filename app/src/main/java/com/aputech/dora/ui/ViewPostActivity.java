@@ -1,0 +1,21 @@
+package com.aputech.dora.ui;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+
+import com.aputech.dora.R;
+
+public class ViewPostActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_post);
+
+    }
+
+    public void sendcomment(View view) {
+    }
+}
