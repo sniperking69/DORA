@@ -25,21 +25,18 @@
     </androidx.appcompat.widget.Toolbar>
 
     <Button
-        android:id="@+id/location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="locationadd"
         android:text="Add Location" />
 
     <Button
-        android:id="@+id/Camera"
         android:layout_width="match_parent"
         android:onClick="cameraopen"
         android:layout_height="wrap_content"
         android:text="Camera" />
 
     <Button
-        android:id="@+id/gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="gallery"
@@ -47,7 +44,6 @@
         />
 
     <Button
-        android:id="@+id/Audio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="AudioGallery"
@@ -62,7 +58,6 @@
         android:text="para" />
 
     <Button
-        android:id="@+id/DONE"
         android:layout_width="match_parent"
         android:onClick="Done"
         android:layout_height="wrap_content"

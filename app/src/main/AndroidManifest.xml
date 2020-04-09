@@ -15,7 +15,10 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.ViewPostActivity"></activity>
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+        <activity android:name=".ui.ViewPostActivity" />
         <activity android:name=".ui.msgActivity" />
 
         <meta-data

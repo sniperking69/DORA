@@ -111,7 +111,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/upvote"
             android:layout_weight="1">
 
             <LinearLayout
@@ -172,7 +171,6 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:id="@+id/downvote"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
