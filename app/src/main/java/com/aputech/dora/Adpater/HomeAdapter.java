@@ -29,7 +29,6 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
 
     @Override
     protected void onBindViewHolder(@NonNull final NoteHolder holder, int position, @NonNull final Note model) {
-        Log.d("doracheck", "onClick: "+model.getrefComments().getParent().getPath());
         if(model.getType()==1){
             holder.textViewTitle.setText(model.getTitle());
             holder.textViewDescription.setText(model.getDescription());
