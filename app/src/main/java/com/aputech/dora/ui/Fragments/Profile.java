@@ -3,6 +3,7 @@ package com.aputech.dora.ui.Fragments;
 
 import android.os.Bundle;
 
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Adpater.ProfileAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.R;
@@ -31,7 +33,7 @@ public class Profile extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Notebook");
-    private ProfileAdapter adapter;
+    private HomeAdapter adapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -80,7 +82,7 @@ public class Profile extends Fragment {
                 .setQuery(query, Note.class)
                 .build();
 
-        adapter = new ProfileAdapter(options);
+        adapter = new HomeAdapter(options,getContext());
 
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
