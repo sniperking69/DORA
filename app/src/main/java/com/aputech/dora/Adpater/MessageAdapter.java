@@ -12,8 +12,11 @@ import com.aputech.dora.Model.Message;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 public class MessageAdapter extends FirestoreRecyclerAdapter <Message, MessageAdapter.MessageHolder> {
+
+    private OnItemClickListener listener;
 
 
     public MessageAdapter(@NonNull FirestoreRecyclerOptions<Message> options) {
@@ -36,6 +39,10 @@ public class MessageAdapter extends FirestoreRecyclerAdapter <Message, MessageAd
         return new MessageHolder(v);
     }
 
+    public void deleteItem(int position) {
+        getSnapshots().getSnapshot(position).getReference().delete();
+    }
+
     class MessageHolder extends RecyclerView.ViewHolder {
         TextView Title;
         TextView Description;
@@ -46,7 +53,26 @@ public class MessageAdapter extends FirestoreRecyclerAdapter <Message, MessageAd
             Title = itemView.findViewById(R.id.text_view_title);
             Description = itemView.findViewById(R.id.text_view_description);
             Priority = itemView.findViewById(R.id.text_view_priority);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && listener != null) {
+                        listener.OnItemClick(getSnapshots().getSnapshot(position), position);
+                    }
+                }
+            });
         }
+
+    }
+
+    public interface OnItemClickListener {
+        void OnItemClick(DocumentSnapshot documentSnapshot, int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener= listener;
+
     }
 }
 
