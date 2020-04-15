@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Switch;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.aputech.dora.Model.Message;
 import com.aputech.dora.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -21,19 +23,23 @@ public class NewMessageActivity extends AppCompatActivity {
     private EditText editTextTitle;
     private EditText editTextDescription;
     private NumberPicker numberPickerPriority;
-
+    MaterialButton button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_message);
-
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
         setTitle("New Message");
-
+button = findViewById(R.id.send);
+button.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        saveMessage();
+        finish();
+    }
+});
         editTextTitle = findViewById(R.id.edit_text_title);
         editTextDescription = findViewById(R.id.edit_text_description);
         numberPickerPriority = findViewById(R.id.number_picker_priority);
-
         numberPickerPriority.setMinValue(1);
         numberPickerPriority.setMaxValue(10);
     }

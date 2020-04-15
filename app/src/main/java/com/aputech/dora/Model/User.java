@@ -1,25 +1,22 @@
 package com.aputech.dora.Model;
 
+import java.util.ArrayList;
+
 public class User {
-    private String Name;
+
     private String UserName;
 
     private String Bio;
     private String EmailAdress;
     private String Gender;
-
+    private ArrayList<String> followers;
+    private ArrayList<String> following;
+    private ArrayList<String> posts;
+    private int Userlevel;
     private String ProfileUrl; //Backend Url of Image
     //Optional
     private String facebookId;
     private String instaId;
-
-    public String getName() {
-        return Name;
-    }
-
-    public void setName(String name) {
-        Name = name;
-    }
 
     public String getUserName() {
         return UserName;
@@ -75,5 +72,37 @@ public class User {
 
     public void setInstaId(String instaId) {
         this.instaId = instaId;
+    }
+
+    public ArrayList<String> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(ArrayList<String> followers) {
+        this.followers = followers;
+    }
+
+    public ArrayList<String> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(ArrayList<String> following) {
+        this.following = following;
+    }
+
+    public ArrayList<String> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(ArrayList<String> posts) {
+        this.posts = posts;
+    }
+
+    public int getUserlevel() {
+        return Userlevel;
+    }
+
+    public void setUserlevel(int userlevel) {
+        Userlevel = userlevel;
     }
 }

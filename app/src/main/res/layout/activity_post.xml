@@ -62,5 +62,8 @@
         android:onClick="Done"
         android:layout_height="wrap_content"
         android:text="DONE" />
-
+<ImageView
+    android:id="@+id/dispimg"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
 </LinearLayout>

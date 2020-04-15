@@ -1,5 +1,6 @@
 package com.aputech.dora.ui;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,11 +25,21 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.aputech.dora.LocationJob;
+import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseUserMetadata;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -44,8 +55,10 @@ public class MainActivity extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 457;
     private static int JOB_ID= 123;
     private String CHANNEL_ID="regNotify";
+    FirebaseAuth auth;
     public static final String CHANNEL_1_ID = "channel1";
     ImageView imageView;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,12 +87,12 @@ public class MainActivity extends AppCompatActivity {
 //                            .build(),
 //                    MY_REQUEST_CODE);
 //        }
-        createNotificationChannels();
-        MainOpen();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null) {
-            locationCheck();
-        } else {
+//        createNotificationChannels();
+//        MainOpen();
+         auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser()!=null){
+            checkifalreadyuser();
+        }else{
             startActivityForResult(
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
@@ -91,7 +104,10 @@ public class MainActivity extends AppCompatActivity {
                                     new AuthUI.IdpConfig.PhoneBuilder().build()))
                             .build(),
                     MY_REQUEST_CODE);
+
         }
+
+
     }
 
     private void locationCheck(){
@@ -182,13 +198,53 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == MY_REQUEST_CODE) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
-                locationCheck();
+                checkifalreadyuser();
             } else {
                 if (response != null) {
                     Toast.makeText(this, "" + Objects.requireNonNull(response.getError()).getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         }
+    }
+    private void checkifalreadyuser(){
+//        notebookRef = db.collection("Users").document();
+//        notebookRef.get().addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//
+//            }
+//        }).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                if (documentSnapshot !=null){
+//                    locationCheck();
+//
+//                }else{
+//                    Intent intent = new Intent(MainActivity.this,regUser.class);
+//                    startActivity(intent);
+//                    finish();
+//                }
+//
+//            }
+//        });
+        DocumentReference docIdRef = db.collection("Users").document(auth.getCurrentUser().getUid());
+        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        locationCheck();
+                    } else {
+                        Intent intent = new Intent(MainActivity.this,regUser.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                } else {
+                    Log.d("bigpp", "Failed with: ", task.getException());
+                }
+            }
+        });
     }
     private void revealFAB() {
         final View view = findViewById(R.id.imageView);

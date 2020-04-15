@@ -33,7 +33,7 @@ public class Profile extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Notebook");
-    private HomeAdapter adapter;
+    private ProfileAdapter adapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -82,7 +82,7 @@ public class Profile extends Fragment {
                 .setQuery(query, Note.class)
                 .build();
 
-        adapter = new HomeAdapter(options,getContext());
+        adapter = new ProfileAdapter(options,getContext());
 
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);

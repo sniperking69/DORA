@@ -34,5 +34,9 @@
         android:id="@+id/number_picker_priority"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
+<com.google.android.material.button.MaterialButton
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/send"
+    android:text="Save"/>
 </LinearLayout>

@@ -80,7 +80,7 @@ public class Trending extends Fragment {
                 .setQuery(query, Note.class)
                 .build();
 
-        adapter = new TrendingAdapter(options);
+        adapter = new TrendingAdapter(options,getContext());
 
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);

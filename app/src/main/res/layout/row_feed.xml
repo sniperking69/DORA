@@ -24,12 +24,11 @@
         android:layout_marginTop="15dp">
 
 
-        <ImageView
-            android:id="@+id/imgView_proPic"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/poster_profile"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
+
             android:src="@drawable/ic_ram_profile" />
 <LinearLayout
     android:layout_width="wrap_content"
@@ -47,11 +46,11 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_toEndOf="@+id/imgView_proPic"
+            android:layout_toEndOf="@+id/poster_profile"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/text_view_title"
+                android:id="@+id/user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
@@ -60,7 +59,7 @@
                 android:textSize="17sp" />
 
             <TextView
-                android:id="@+id/text_view_priority"
+                android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
@@ -109,6 +108,7 @@
         android:layout_below="@+id/imgView_line">
 
         <RelativeLayout
+            android:id="@+id/upbutton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
@@ -126,6 +126,7 @@
                     app:srcCompat="@drawable/upvote" />
 
                 <TextView
+                    android:id="@+id/upcount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -170,6 +171,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/downbutton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
@@ -187,6 +189,7 @@
                     app:srcCompat="@drawable/downvote" />
 
                 <TextView
+                    android:id="@+id/downcount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"

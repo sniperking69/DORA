@@ -1,93 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.regUser"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="81dp">
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/view2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:elevation="12dp"
-        android:innerRadius="0dp"
-        android:shape="ring"
-        android:thicknessRatio="1.9"
-        app:cardCornerRadius="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
+    tools:context=".ui.regUser">
+    <RelativeLayout
+        android:id="@+id/imglayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profiledefault"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_user">
-
-        </ImageView>
-    </androidx.cardview.widget.CardView>
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_user"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/upimage"
+            android:layout_margin="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_alignBottom="@+id/profiledefault"
+            android:layout_alignEnd="@+id/profiledefault"
+            app:fabSize="mini"
+            app:srcCompat="@android:drawable/ic_menu_upload"
+            android:focusable="true" />
+    </RelativeLayout>
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout4"
+        android:id="@+id/Uname"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_marginStart="8dp"
-
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view2"
-        app:layout_constraintVertical_bias="0.19">
+        android:layout_below="@+id/imglayout"
+        android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/bg"
             android:ems="10"
-            android:hint="Name"
+            android:hint="User Name"
             android:inputType="textPersonName"
             android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
-
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout4"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout4"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/bg"
-            android:ems="10"
-            android:hint="UserName"
-            android:inputType="textPersonName"
-            android:textSize="16sp"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="12dp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout2"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
+        android:id="@+id/Bio"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/Uname"
+        android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="match_parent"
@@ -95,21 +57,14 @@
             android:backgroundTint="@color/bg"
             android:ems="10"
             android:hint="Bio"
-
-            android:inputType="textMultiLine"
-            android:textSize="16sp"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="11dp" />
+            android:inputType="textPersonName"
+            android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
-
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/Bio"
+        android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="match_parent"
@@ -118,11 +73,8 @@
             android:ems="10"
             android:hint="Email Address"
             android:inputType="textPersonName"
-            android:textSize="16sp"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="11dp" />
+            android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
-
     <TextView
         android:id="@+id/pGender"
         android:layout_width="wrap_content"
@@ -133,32 +85,17 @@
         android:hint="@string/gender"
         android:inputType="textPersonName"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/spinner"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout3"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+        android:layout_below="@+id/email"/>
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/pGender"
-        app:layout_constraintStart_toEndOf="@+id/pGender"
-        app:layout_constraintTop_toTopOf="@+id/pGender"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:clickable="true"
-        app:fabCustomSize="30dp"
-
-        app:layout_constraintBottom_toBottomOf="@+id/view2"
-        app:layout_constraintEnd_toEndOf="@+id/view2"
-        app:srcCompat="@android:drawable/ic_menu_upload" />
+        android:layout_below="@+id/pGender"
+        android:layout_height="wrap_content" />
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.MaterialComponents.Button.Icon"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:elevation="10dp"
@@ -171,14 +108,8 @@
         app:icon="@drawable/ic_next"
         app:cornerRadius="20dp"
         app:iconGravity="textEnd"
-        android:onClick="MainOpen"
+        android:onClick="Continue"
         app:iconTint="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pGender"
-        app:layout_constraintVertical_bias="1.0"
+        android:layout_alignParentBottom="true"
         app:rippleColor="@android:color/white" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

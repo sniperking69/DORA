@@ -24,7 +24,7 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
     @Override
     protected void onBindViewHolder(@NonNull NoteHolder holder, int position, @NonNull Note model) {
         if(model.getType()==1){
-            holder.textViewTitle.setText(model.getTitle());
+           // holder.textViewTitle.setText(model.getTitle());
             holder.textViewDescription.setText(model.getDescription());
             holder.textViewPriority.setText(String.valueOf(model.getPriority()));
         }

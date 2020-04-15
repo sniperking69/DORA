@@ -52,7 +52,7 @@ public class HActivity extends AppCompatActivity {
     ImageView Home,Trending,Reminder,profileImage;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection(Objects.requireNonNull(auth.getUid()));
+//    private CollectionReference notebookRef = db.collection(Objects.requireNonNull(auth.getUid()));
     int page=1;
 
     @Override
@@ -66,6 +66,7 @@ public class HActivity extends AppCompatActivity {
         Reminder= findViewById(R.id.Remind);
         Trending= findViewById(R.id.Trending);
         Fragment newFragment;
+        Log.d("bigpp", "onCreate: "+auth.getUid());
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();;
         newFragment = new home();
         transaction.replace(R.id.nav_host_fragment, newFragment);
@@ -153,7 +154,7 @@ public class HActivity extends AppCompatActivity {
 //                AuthUI.getInstance().signOut(HActivity.this).addOnCompleteListener(new OnCompleteListener<Void>() {
 //                            public void onComplete(@NonNull Task<Void> task) {
 //                                // user is now signed out
-//                                startActivity(new Intent(HActivity.this, Post.class));
+//                               // startActivity(new Intent(HActivity.this, Post.class));
 //                                finish();
 //                            }
 //                        });
