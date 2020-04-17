@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.R;
-import com.aputech.dora.ui.ViewPostActivity;
+import com.aputech.dora.ui.CommentActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -47,7 +47,7 @@ public class ProfileAdapter extends FirestoreRecyclerAdapter<Note, ProfileAdapte
         holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent= new Intent(mContext, ViewPostActivity.class);
+                Intent intent= new Intent(mContext, CommentActivity.class);
                 intent.putExtra("coll",model.getRefComments().getParent().getPath());
                 intent.putExtra("doc",model.getRefComments().getId());
                 mContext.startActivity(intent);

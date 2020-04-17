@@ -29,12 +29,15 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Post extends AppCompatActivity {
 
@@ -106,17 +109,16 @@ public class Post extends AppCompatActivity {
         post.setType(1);
 
         ArrayList<String> emp=new ArrayList<String>();
-        List<String> empty= Collections.<String>emptyList();
-        post.setUpvote(empty);
-        post.setDownvote(empty);
+        post.setUpvote(emp);
+        post.setDownvote(emp);
         post.setUserid(auth.getUid());
-        final Date currentTime = Calendar.getInstance().getTime();
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
+        final String date =dateFormat.format(Calendar.getInstance().getTime());
         notebookRef.add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 post.setRefComments(documentReference);
-                post.setUptime(currentTime.toString());
+                post.setUptime(date);
                 documentReference.set(post);
 
             }

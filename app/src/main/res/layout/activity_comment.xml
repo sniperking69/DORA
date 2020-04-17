@@ -5,11 +5,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.ViewPostActivity">
+    tools:context=".ui.CommentActivity">
+    <LinearLayout
+        android:id="@+id/toplayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:orientation="horizontal">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/up"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Show" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/down"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Show" />
+
+
+    </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
+        android:layout_below="@+id/toplayout"
         android:layout_width="match_parent"
-        android:layout_above="@+id/comment"
+        android:layout_above="@+id/commenttext"
         android:layout_height="match_parent"/>
 
     <Button
@@ -22,12 +46,11 @@
 
     <EditText
         android:id="@+id/commenttext"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:layout_above="@+id/button"
         android:inputType="textPersonName"
-        android:text="Name" />
+        android:hint="Write a Comment...." />
 
 </RelativeLayout>

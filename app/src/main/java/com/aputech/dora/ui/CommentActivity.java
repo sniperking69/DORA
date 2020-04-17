@@ -12,9 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.aputech.dora.Adpater.CommentAdapter;
-import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Model.Comment;
-import com.aputech.dora.Model.Note;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,7 +20,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-public class ViewPostActivity extends AppCompatActivity {
+public class CommentActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef ;
     private FirebaseAuth auth= FirebaseAuth.getInstance();
@@ -32,7 +30,7 @@ public class ViewPostActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_post);
+        setContentView(R.layout.activity_comment);
         editText = findViewById(R.id.commenttext);
         Intent intent= getIntent();
         String collection = intent.getStringExtra("coll");
@@ -61,7 +59,7 @@ public class ViewPostActivity extends AppCompatActivity {
         comment.setUid(auth.getUid());
         comment.setPriority(0);
         notebookRef.add(comment);
-        Toast.makeText(ViewPostActivity.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
+        Toast.makeText(CommentActivity.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
 
     }
 

@@ -3,6 +3,7 @@ package com.aputech.dora.Adpater;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.aputech.dora.Model.Note;
-import com.aputech.dora.ui.ViewPostActivity;
+import com.aputech.dora.ui.CommentActivity;
+import com.aputech.dora.ui.PostDetail;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -26,12 +28,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Objects;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -47,6 +49,8 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
 
     @Override
     protected void onBindViewHolder(@NonNull final NoteHolder holder, int position, @NonNull final Note model) {
+        holder.uptext.setText(String.valueOf(model.getUpvote().size()));
+        holder.downtxt.setText(String.valueOf(model.getDownvote().size()));
         if (model.getUpvote() !=null && model.getUpvote() !=null){
             if (model.getUpvote().contains(auth.getUid())){
                 holder.upicon.setImageResource(R.drawable.upvote_on);
@@ -69,22 +73,41 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
                             .load(user.getProfileUrl())
                             .into(holder.profile);
                     if (user.getPosts() !=null){
-                        if (user.getPosts().size()<100){
-                            holder.level.setBackgroundColor(mContext.getResources().getColor(R.color.level1));
+                        if (user.getUserlevel()==0){
+                            Glide
+                                    .with(mContext)
+                                    .load(R.drawable.ic_grade)
+                                    .into(holder.level);
                         }
-                        if (user.getPosts().size()<200 && user.getPosts().size()>100){
-                            holder.level.setBackgroundColor(mContext.getResources().getColor(R.color.level2));
-                        }   if (user.getPosts().size()>200){
-                            holder.level.setBackgroundColor(mContext.getResources().getColor(R.color.level3));
+                        if (user.getUserlevel()==1){
+                            Glide
+                                    .with(mContext)
+                                    .load(R.drawable.ic_grade1)
+                                    .into(holder.level);
+                        }
+                        if (user.getUserlevel()==2){
+                            Glide
+                                    .with(mContext)
+                                    .load(R.drawable.ic_grade2)
+                                    .into(holder.level);
                         }
                     }
                 }
             });
         }
 
-        if(model.getType()==1){
+        if( model.getType()==1){
             holder.textViewDescription.setText(model.getDescription());
             holder.time.setText(String.valueOf(model.getUptime()));
+            holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent =new Intent(mContext, PostDetail.class);
+                    intent.putExtra("coll",model.getRefComments().getParent().getPath());
+                    intent.putExtra("doc",model.getRefComments().getId());
+                    mContext.startActivity(intent);
+                }
+            });
         }
         if(model.getType()==2){
             holder.img.setVisibility(View.VISIBLE);
@@ -94,60 +117,50 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
                     .into(holder.img);
             holder.textViewDescription.setText(model.getDescription());
             holder.time.setText(String.valueOf(model.getUptime()));
+
+            holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent= new Intent(mContext, CommentActivity.class);
+                    intent.putExtra("coll", (Parcelable) model);
+                    mContext.startActivity(intent);
+                }
+            });
         }
-        holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(mContext, ViewPostActivity.class);
-                intent.putExtra("coll",model.getRefComments().getParent().getPath());
-                intent.putExtra("doc",model.getRefComments().getId());
-                mContext.startActivity(intent);
-            }
-        });
+
         holder.up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!model.getUpvote().contains(auth.getUid())){
-                    DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
-                    documentReference
-                            .update("upvote",model.getUpvote().add(auth.getUid()))
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("bigpp", "DocumentSnapshot successfully updated!");
-                                    holder.upicon.setImageResource(R.drawable.upvote_on);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w("bigpp", "Error updating document", e);
-                                }
-                            });
-                }else{
-                    DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
-                    documentReference
-                            .update("upvote",model.getUpvote().remove(auth.getUid()))
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("bigpp", "DocumentSnapshot successfully updated!");
-                                    holder.upicon.setImageResource(R.drawable.upvote);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w("bigpp", "Error updating document", e);
-                                }
-                            });
+                boolean ifdown= model.getDownvote().contains(auth.getUid());
+                boolean ifup= model.getUpvote().contains(auth.getUid());
+                DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
+                if (!ifup && !ifdown){
+                    documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
                 }
+                if (ifup && !ifdown){
+                    documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
+                }if(!ifup && ifdown){
+                    documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
+                    documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
+                }
+
             }
         });
         holder.down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                boolean ifdown= model.getDownvote().contains(auth.getUid());
+                boolean ifup= model.getUpvote().contains(auth.getUid());
+                DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
+                if (!ifup && !ifdown){
+                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
+                }
+                if (ifdown && !ifup){
+                    documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
+                }if(!ifdown && ifup){
+                    documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
+                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
+                }
             }
         });
         holder.LocationIcon.setOnClickListener(new View.OnClickListener() {

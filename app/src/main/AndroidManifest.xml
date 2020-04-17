@@ -4,8 +4,11 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-feature android:name="android.hardware.camera"
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -17,11 +20,12 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.NewMessageActivity"></activity>
+        <activity android:name=".ui.PostDetail"></activity>
+        <activity android:name=".ui.NewMessageActivity" />
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".ui.ViewPostActivity" />
+        <activity android:name=".ui.CommentActivity" />
         <activity android:name=".ui.msgActivity" />
 
         <meta-data

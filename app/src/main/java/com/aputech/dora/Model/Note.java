@@ -15,8 +15,8 @@ public class Note {
     private int type;
     private String userid;
     private String uptime;
-    private List<String> downvote;
-    private List<String> upvote;
+    private ArrayList<String> downvote;
+    private ArrayList<String> upvote;
     private DocumentReference refComments;
     private int priority;
 
@@ -24,7 +24,7 @@ public class Note {
         //empty constructor needed
     }
 
-    public Note(String description, int priority, String imageUrl, int type,String uptime,String userid, List<String> upvote,List<String> downvote,DocumentReference refComments) {
+    public Note(String description, int priority, String imageUrl, int type,String uptime,String userid, ArrayList<String> upvote,ArrayList<String> downvote,DocumentReference refComments) {
 
         this.description = description;
         this.priority = priority;
@@ -94,19 +94,19 @@ public class Note {
         this.uptime = uptime;
     }
 
-    public List<String> getDownvote() {
+    public ArrayList<String> getDownvote() {
         return downvote;
     }
 
-    public void setDownvote(List<String> downvote) {
+    public void setDownvote(ArrayList<String> downvote) {
         this.downvote = downvote;
     }
 
-    public List<String> getUpvote() {
+    public ArrayList<String> getUpvote() {
         return upvote;
     }
 
-    public void setUpvote(List<String> upvote) {
+    public void setUpvote(ArrayList<String> upvote) {
         this.upvote = upvote;
     }
 
