@@ -29,8 +29,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class Post extends AppCompatActivity {
 
@@ -100,6 +104,11 @@ public class Post extends AppCompatActivity {
         final Note post = new Note();
         post.setDescription(text);
         post.setType(1);
+
+        ArrayList<String> emp=new ArrayList<String>();
+        List<String> empty= Collections.<String>emptyList();
+        post.setUpvote(empty);
+        post.setDownvote(empty);
         post.setUserid(auth.getUid());
         final Date currentTime = Calendar.getInstance().getTime();
 

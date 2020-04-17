@@ -42,7 +42,7 @@ android:layout_above="@+id/bottomlinear"
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
+<!--add a scroll to top function-->
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="match_parent"

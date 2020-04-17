@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 //        MainOpen();
          auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser()!=null){
+            Log.d("bigpp", "onCreate: ");
             checkifalreadyuser();
         }else{
             startActivityForResult(

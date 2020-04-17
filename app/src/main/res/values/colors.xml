@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#013220</color>
     <color name="bg">#CCCCCC</color>
-
+    <color name="level1">@android:color/holo_blue_dark</color>
+    <color name="level2">@android:color/holo_orange_dark</color>
+    <color name="level3">@android:color/holo_purple</color>
 </resources>
