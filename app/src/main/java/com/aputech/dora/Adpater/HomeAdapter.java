@@ -102,7 +102,7 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent =new Intent(mContext, PostDetail.class);
+                    Intent intent =new Intent(mContext, CommentActivity.class);
                     intent.putExtra("coll",model.getRefComments().getParent().getPath());
                     intent.putExtra("doc",model.getRefComments().getId());
                     mContext.startActivity(intent);

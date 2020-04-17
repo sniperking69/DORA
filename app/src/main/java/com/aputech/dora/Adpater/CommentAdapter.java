@@ -34,7 +34,7 @@ public class CommentAdapter extends FirestoreRecyclerAdapter<Comment, CommentAda
     @NonNull
     @Override
     public CommentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_feed,
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_feed,
                 parent, false);
         return new CommentHolder(v);
     }
