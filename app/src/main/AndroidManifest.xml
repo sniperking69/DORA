@@ -20,6 +20,10 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.ProfileDisplayActivity"
+            android:label="@string/title_activity_profile_display"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".ui.PostDetail" />
         <activity android:name=".ui.NewMessageActivity" />
         <activity
