@@ -3,22 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/level1"
     android:layout_height="match_parent"
+    android:background="#D3D3D3"
     tools:context=".ui.CommentActivity">
 
     <include layout="@layout/comment_bottom"/>
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-
+        android:background="@drawable/comment_bottom_shape"
+        android:backgroundTint="#D3D3D3"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme"
-        android:background="@color/level1">
+        android:theme="@style/AppTheme">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:contentScrim="?attr/colorPrimary"
+            app:contentScrim="@null"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
             <LinearLayout
@@ -37,8 +37,7 @@
                     android:layout_marginEnd="20dp"
                     app:iconGravity="textStart"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
-                    app:icon="@drawable/upvote"
-                    android:text="Show" />
+                    app:icon="@drawable/upvote" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/down"
                     android:layout_weight="1"
@@ -47,8 +46,7 @@
                     app:iconGravity="textStart"
                     android:layout_marginStart="20dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Show" />
+                    android:layout_height="wrap_content" />
 
 
             </LinearLayout>

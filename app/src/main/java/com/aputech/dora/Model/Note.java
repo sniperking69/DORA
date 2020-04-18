@@ -1,5 +1,7 @@
 package com.aputech.dora.Model;
 
+import android.location.Location;
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -15,6 +17,7 @@ public class Note {
     private int type;
     private String userid;
     private String uptime;
+    private Location location;
     private ArrayList<String> downvote;
     private ArrayList<String> upvote;
     private DocumentReference refComments;
@@ -24,7 +27,7 @@ public class Note {
         //empty constructor needed
     }
 
-    public Note(String description, int priority, String imageUrl, int type,String uptime,String userid, ArrayList<String> upvote,ArrayList<String> downvote,DocumentReference refComments) {
+    public Note(String description, int priority, String imageUrl, int type,Location location,String uptime,String userid, ArrayList<String> upvote,ArrayList<String> downvote,DocumentReference refComments) {
 
         this.description = description;
         this.priority = priority;
@@ -36,6 +39,7 @@ public class Note {
         this.upvote=upvote;
         this.uptime=uptime;
         this.userid=userid;
+        this.location=location;
 
     }
 
@@ -51,7 +55,13 @@ public class Note {
         this.userid = userid;
     }
 
+    public Location getLocation() {
+        return location;
+    }
 
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 
     public void setDescription(String description) {
         this.description = description;

@@ -1,8 +1,11 @@
 package com.aputech.dora.ui.Fragments;
 
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,10 +19,17 @@ import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Adpater.ProfileAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.R;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +41,7 @@ public class Profile extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Notebook");
     private ProfileAdapter adapter;
@@ -88,7 +99,23 @@ public class Profile extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+        final FloatingActionButton profileImage =  root.findViewById(R.id.profileimg);
+        if (auth.getCurrentUser()!=null){
+            Glide
+                    .with(this)
+                    .load(auth.getCurrentUser().getPhotoUrl())
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            profileImage.setBackgroundDrawable(resource);
+                        }
 
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                        }
+                    });
+        }
 //        final TextView textView = root.findViewById(R.id.section_label);
 //        pageViewModel.getText().observe(this, new Observer<String>() {
 //            @Override

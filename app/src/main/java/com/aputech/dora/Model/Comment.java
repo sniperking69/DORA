@@ -1,18 +1,23 @@
 package com.aputech.dora.Model;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Comment {
     private String uid,commentText,time;
-    private int up,down,priority;
+    private int priority;
+    private ArrayList<String> downvote;
+    private ArrayList<String> upvote;
     public Comment() {
         //empty constructor needed
     }
 
-    public Comment(String uid, String commentText, String time, int up, int down, int priority) {
+    public Comment(String uid, String commentText, String time, ArrayList<String> up,ArrayList<String> down, int priority) {
         this.uid = uid;
         this.commentText = commentText;
         this.time = time;
-        this.up = up;
-        this.down = down;
+        this.upvote = up;
+        this.downvote = down;
         this.priority = priority;
     }
 
@@ -28,13 +33,6 @@ public class Comment {
         return time;
     }
 
-    public int getUp() {
-        return up;
-    }
-
-    public int getDown() {
-        return down;
-    }
 
     public int getPriority() {
         return priority;
@@ -52,12 +50,20 @@ public class Comment {
         this.time = time;
     }
 
-    public void setUp(int up) {
-        this.up = up;
+    public ArrayList<String> getDownvote() {
+        return downvote;
     }
 
-    public void setDown(int down) {
-        this.down = down;
+    public void setDownvote(ArrayList<String> downvote) {
+        this.downvote = downvote;
+    }
+
+    public ArrayList<String> getUpvote() {
+        return upvote;
+    }
+
+    public void setUpvote(ArrayList<String> upvote) {
+        this.upvote = upvote;
     }
 
     public void setPriority(int priority) {

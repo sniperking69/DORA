@@ -20,6 +20,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class CommentActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef ;
@@ -43,7 +46,7 @@ public class CommentActivity extends AppCompatActivity {
                 .setQuery(query, Comment.class)
                 .build();
 
-        adapter = new CommentAdapter(options);
+        adapter = new CommentAdapter(options,getApplicationContext());
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -58,6 +61,9 @@ public class CommentActivity extends AppCompatActivity {
         comment.setCommentText(comenttext);
         comment.setUid(auth.getUid());
         comment.setPriority(0);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
+        final String date =dateFormat.format(Calendar.getInstance().getTime());
+        comment.setTime(date);
         notebookRef.add(comment);
         Toast.makeText(CommentActivity.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
 

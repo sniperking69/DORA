@@ -110,6 +110,7 @@ public class Post extends AppCompatActivity {
 
         ArrayList<String> emp=new ArrayList<String>();
         post.setUpvote(emp);
+        post.setLocation(null);
         post.setDownvote(emp);
         post.setUserid(auth.getUid());
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");

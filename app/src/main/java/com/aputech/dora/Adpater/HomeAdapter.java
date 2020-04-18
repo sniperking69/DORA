@@ -50,6 +50,12 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
     @Override
     protected void onBindViewHolder(@NonNull final NoteHolder holder, int position, @NonNull final Note model) {
         holder.uptext.setText(String.valueOf(model.getUpvote().size()));
+        if (model.getLocation()==null){
+            holder.LocationIcon.setImageResource(R.drawable.ic_locationsad);
+        }else{
+            holder.LocationIcon.setImageResource(R.drawable.ic_locationhappy);
+        }
+        //holder.commet.setText(String.valueOf(notebookRef.collection("comments").get().getResult().size()));
         holder.downtxt.setText(String.valueOf(model.getDownvote().size()));
         if (model.getUpvote() !=null && model.getUpvote() !=null){
             if (model.getUpvote().contains(auth.getUid())){

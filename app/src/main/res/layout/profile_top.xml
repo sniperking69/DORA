@@ -3,29 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <RelativeLayout
-        android:id="@+id/toppart"
-        android:layout_width="match_parent"
-        android:layout_height="210dp">
-        <ImageView android:id="@+id/banner"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@android:color/holo_red_dark"/>
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profileimg"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_logo"/>
-
-    </RelativeLayout>
  <TextView
      android:id="@+id/nametitle"
      android:layout_width="match_parent"
      android:text="Mr Wilson"
-     android:layout_below="@+id/toppart"
      android:gravity="center"
      android:textStyle="bold"
      android:textSize="20sp"

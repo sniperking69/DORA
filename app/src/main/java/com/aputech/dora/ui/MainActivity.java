@@ -14,6 +14,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -248,24 +249,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void revealFAB() {
-        final View view = findViewById(R.id.imageView);
-        view.setVisibility(View.INVISIBLE);
-        int cx = view.getWidth() /2;
-        int cy = view.getHeight()/2 ;
-
-        float finalRadius = (float) Math.hypot(cx, cy);
-
-        Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
-        anim.setDuration(3000);
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                view.setVisibility(View.VISIBLE);
-
-            }
-        });
-        anim.start();
+//        final View view = findViewById(R.id.imageView);
+//        view.setVisibility(View.INVISIBLE);
+//        int cx = view.getWidth() /2;
+//        int cy = view.getHeight()/2 ;
+//
+//        float finalRadius = (float) Math.hypot(cx, cy);
+//
+//        Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
+//        anim.setDuration(3000);
+//        anim.addListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationStart(Animator animation) {
+//                super.onAnimationStart(animation);
+//                view.setVisibility(View.VISIBLE);
+//
+//            }
+//        });
+//        anim.start();
+        ImageView progressBar = findViewById(R.id.progress_anim);
+        progressBar.setBackgroundResource(R.drawable.loading);
+        AnimationDrawable frameAnimation = (AnimationDrawable) progressBar.getBackground();
+        frameAnimation.start();
 
     }
 }

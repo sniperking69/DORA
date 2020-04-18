@@ -20,7 +20,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.PostDetail"></activity>
+        <activity android:name=".ui.ProfileDetails"></activity>
+        <activity android:name=".ui.PostDetail" />
         <activity android:name=".ui.NewMessageActivity" />
         <activity
             android:name=".ui.SettingsActivity"
