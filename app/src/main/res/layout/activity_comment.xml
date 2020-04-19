@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="#D3D3D3"
     tools:context=".ui.CommentActivity">
-
     <include layout="@layout/comment_bottom"/>
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -30,7 +29,6 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/up"
                     android:layout_weight="1"
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:iconSize="24dp"

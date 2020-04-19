@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -30,7 +31,7 @@ public class Trending extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Notebook");
-    private TrendingAdapter adapter;
+    private HomeAdapter adapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -79,7 +80,7 @@ public class Trending extends Fragment {
                 .setQuery(query, Note.class)
                 .build();
 
-        adapter = new TrendingAdapter(options,getContext());
+        adapter = new HomeAdapter(options,getActivity());
 
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);

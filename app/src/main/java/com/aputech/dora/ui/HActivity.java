@@ -1,17 +1,29 @@
 package com.aputech.dora.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
+import com.aputech.dora.Adpater.HomeAdapter;
+import com.aputech.dora.Adpater.SearchAdapter;
+import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 
 import com.aputech.dora.ui.Fragments.Profile;
@@ -20,16 +32,27 @@ import com.aputech.dora.ui.Fragments.Trending;
 import com.aputech.dora.ui.Fragments.home;
 import com.bumptech.glide.Glide;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HActivity extends AppCompatActivity {
 
@@ -37,26 +60,71 @@ public class HActivity extends AppCompatActivity {
     ImageView Home,Trending,Reminder,profileImage;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-//    private CollectionReference notebookRef = db.collection(Objects.requireNonNull(auth.getUid()));
-    int page=1;
-
+    private Toolbar myToolbar;
+    RelativeLayout searchlayout;
+    SearchView searchView;
+    FloatingActionButton newPost;
+    LinearLayout bottomlinear;
+    RecyclerView recyclerView;
+    boolean adapterlisten=false;
+    private SearchAdapter adapter;
+    private CollectionReference collectionReference= db.collection("Users");
+    int page=2;
+    boolean search_bool=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_h);
-         Toolbar toolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(toolbar);
+          myToolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        bottomlinear= findViewById(R.id.bottomlinear);
         fragmentContainerView = findViewById(R.id.nav_host_fragment);
         Home= findViewById(R.id.Home);
+        searchView=findViewById(R.id.searchArea);
+        searchView.setSubmitButtonEnabled(true);
+        final RecyclerView recyclerView = findViewById(R.id.search_rec);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        ImageView searchSubmit = (ImageView) searchView.findViewById (androidx.appcompat.R.id.search_go_btn);
+        searchSubmit.setColorFilter (Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_ATOP);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Query userquery= collectionReference.whereEqualTo("userName",query);
+                FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
+                        .setQuery(userquery, User.class)
+                        .build();
+                adapter = new SearchAdapter(options,HActivity.this);
+                recyclerView.setAdapter(adapter);
+                adapter.startListening();
+
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         Reminder= findViewById(R.id.Remind);
+        searchlayout= findViewById(R.id.search_list);
         Trending= findViewById(R.id.Trending);
         Fragment newFragment;
-        Log.d("bigpp", "onCreate: "+auth.getUid());
+        ImageView backsearch = findViewById(R.id.backsearch);
+        backsearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideFAB();
+                search_bool=false;
+            }
+        });
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();;
-        newFragment = new home();
+        newFragment = new Trending();
         transaction.replace(R.id.nav_host_fragment, newFragment);
         transaction.commit();
-        page=1;
+        page=2;
         Reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,13 +195,11 @@ public class HActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton newPost = findViewById(R.id.fab);
+         newPost = findViewById(R.id.fab);
 
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.move);
-//                fab.startAnimation(animation);
                 Intent intent = new Intent(HActivity.this,Post.class);
                 startActivity(intent);
 //                AuthUI.getInstance().signOut(HActivity.this).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -161,15 +227,83 @@ public class HActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.mail) {
-            Intent intent = new Intent(HActivity.this,msgActivity.class);
-            startActivity(intent);
-            return true;
-        }else{
-            return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.search:
+                revealFAB();
+                search_bool=true;
+                return true;
+            case R.id.mail:
+                Intent intent = new Intent(HActivity.this,msgActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    private void revealFAB() {
+        final View view = findViewById(R.id.search_view);
+        myToolbar.setVisibility(View.INVISIBLE);
+
+        int cx = view.getWidth() -200;
+        int cy = view.getHeight()/2 ;
+
+        float finalRadius = (float) Math.hypot(cx, cy);
+
+        Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                view.setVisibility(View.VISIBLE);
+                searchlayout.setVisibility(View.VISIBLE);
+                myToolbar.setVisibility(View.INVISIBLE);
+                fragmentContainerView.setVisibility(View.INVISIBLE);
+                newPost.setVisibility(View.INVISIBLE);
+                bottomlinear.setVisibility(View.INVISIBLE);
+            }
+        });
+        anim.start();
+
+    }
+    private void hideFAB() {
+        final View view = findViewById(R.id.search_view);
+            adapter.stopListening();
+
+        int cx = view.getWidth()-200;
+        int cy = view.getHeight()/2 ;
+
+        float initialRadius = (float) Math.hypot(cx, cy);
+
+        Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, initialRadius, 0);
+
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+
+                view.setVisibility(View.INVISIBLE);
+                searchlayout.setVisibility(View.INVISIBLE);
+                myToolbar.setVisibility(View.VISIBLE);
+                fragmentContainerView.setVisibility(View.VISIBLE);
+                newPost.setVisibility(View.VISIBLE);
+                bottomlinear.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        anim.start();
+    }
+    @Override
+    public void onBackPressed() {
+
+        if (search_bool){
+            hideFAB();
+            search_bool=false;
+        }else{
+            super.onBackPressed();
+        }
     }
 
     @Override

@@ -13,10 +13,21 @@ public class User {
     private ArrayList<String> following;
     private ArrayList<String> posts;
     private int Userlevel;
+
+
+    private String userid;
     private String ProfileUrl; //Backend Url of Image
     //Optional
     private String facebookId;
     private String instaId;
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
 
     public String getUserName() {
         return UserName;

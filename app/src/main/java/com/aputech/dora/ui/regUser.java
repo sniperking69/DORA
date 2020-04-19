@@ -66,6 +66,7 @@ public class regUser extends AppCompatActivity {
         user.setBio(bio);
         user.setProfileUrl(firebaseAuth.getCurrentUser().getPhotoUrl().toString());
         user.setEmailAdress(email);
+        user.setUserid(firebaseAuth.getUid());
         user.setGender(spinner.getSelectedItem().toString());
         user.setUserName(username);
         notebookRef.document(firebaseAuth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
