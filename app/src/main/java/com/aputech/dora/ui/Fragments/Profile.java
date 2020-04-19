@@ -2,17 +2,12 @@ package com.aputech.dora.ui.Fragments;
 
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +15,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aputech.dora.Adpater.HomeAdapter;
-import com.aputech.dora.Adpater.ProfileAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.SettingsActivity;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -39,10 +30,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.protobuf.StringValue;
-
-import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -149,7 +136,7 @@ public class Profile extends Fragment {
                         .setQuery(profilequery, Note.class)
                         .build();
                 adapter = new HomeAdapter(options,getActivity());
-//                adapter = new HomeAdapter(options,getActivity());
+
                 recyclerView.setAdapter(adapter);
                 adapter.startListening();
                 posts.setText(String.valueOf(user.getPosts().size()));

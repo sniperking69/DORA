@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aputech.dora.Adpater.NoteAdapter;
+import com.aputech.dora.Adpater.NotiAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -21,24 +21,24 @@ import com.google.firebase.firestore.Query;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Reminder#newInstance} factory method to
+ * Use the {@link Notify#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Reminder extends Fragment {
+public class Notify extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Notebook");
-    private NoteAdapter adapter;
+    private NotiAdapter adapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
 
-    public Reminder() {
+    public Notify() {
         // Required empty public constructor
     }
 
@@ -51,8 +51,8 @@ public class Reminder extends Fragment {
      * @return A new instance of fragment Reminder.
      */
     // TODO: Rename and change types and number of parameters
-    public static Reminder newInstance(String param1, String param2) {
-        Reminder fragment = new Reminder();
+    public static Notify newInstance(String param1, String param2) {
+        Notify fragment = new Notify();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -73,14 +73,14 @@ public class Reminder extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_reminder, container, false);
+        View root = inflater.inflate(R.layout.fragment_notify, container, false);
         Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
                 .setQuery(query, Note.class)
                 .build();
 
-        adapter = new NoteAdapter(options);
+        adapter = new NotiAdapter(options);
 
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);

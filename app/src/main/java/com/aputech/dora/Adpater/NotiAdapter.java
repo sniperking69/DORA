@@ -1,7 +1,5 @@
 package com.aputech.dora.Adpater;
 
-import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,26 +11,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.R;
 import com.aputech.dora.Model.Note;
-import com.aputech.dora.ui.CommentActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+public class NotiAdapter extends FirestoreRecyclerAdapter<Note, NotiAdapter.NoteHolder> {
 
-public class TrendingAdapter extends FirestoreRecyclerAdapter<Note, TrendingAdapter.NoteHolder> {
-    Context mContext;
-
-    public TrendingAdapter(@NonNull FirestoreRecyclerOptions<Note> options, Context mContext) {
+    public NotiAdapter(@NonNull FirestoreRecyclerOptions<Note> options) {
         super(options);
-        this.mContext=mContext;
     }
+
     @Override
-    protected void onBindViewHolder(@NonNull NoteHolder holder, int position, @NonNull final Note model) {
+    protected void onBindViewHolder(@NonNull NoteHolder holder, int position, @NonNull Note model) {
         if(model.getType()==1){
-           // holder.user_name.setText(model.getTitle());
+           // holder.textViewTitle.setText(model.getTitle());
             holder.textViewDescription.setText(model.getDescription());
-            holder.time.setText(String.valueOf(model.getUptime()));
+            holder.textViewPriority.setText(String.valueOf(model.getPriority()));
         }
         if(model.getType()==2){
             holder.img.setVisibility(View.VISIBLE);
@@ -41,17 +35,8 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Note, TrendingAdap
                     .load(model.getImageUrl())
                     .into(holder.img);
             holder.textViewDescription.setText(model.getDescription());
-            holder.time.setText(String.valueOf(model.getUptime()));
+            holder.textViewPriority.setText(String.valueOf(model.getPriority()));
         }
-        holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(mContext, CommentActivity.class);
-                intent.putExtra("coll",model.getRefComments().getParent().getPath());
-                intent.putExtra("doc",model.getRefComments().getId());
-                mContext.startActivity(intent);
-            }
-        });
 
     }
 
@@ -64,21 +49,16 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Note, TrendingAdap
     }
 
     class NoteHolder extends RecyclerView.ViewHolder {
-        TextView user_name;
+        TextView textViewTitle;
         TextView textViewDescription;
-        TextView time;
+        TextView textViewPriority;
         ImageView img;
-        CircleImageView profile;
-        View Commentbutton;
         public NoteHolder(View itemView) {
             super(itemView);
-            user_name = itemView.findViewById(R.id.user_name);
+            textViewTitle = itemView.findViewById(R.id.text_view_title);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
-            time = itemView.findViewById(R.id.time);
-            profile=itemView.findViewById(R.id.poster_profile);
-
+            textViewPriority = itemView.findViewById(R.id.text_view_priority);
             img =itemView.findViewById(R.id.img);
-            Commentbutton= itemView.findViewById(R.id.comment);
         }
     }
 }
