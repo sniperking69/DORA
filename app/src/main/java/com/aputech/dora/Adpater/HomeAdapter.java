@@ -20,6 +20,7 @@ import com.aputech.dora.R;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.ui.CommentActivity;
 import com.aputech.dora.ui.PostDetail;
+import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -66,7 +67,22 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             }
 
         }
-
+        holder.profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
+                intent.putExtra("user_id",model.getUserid());
+                mContext.startActivity(intent);
+            }
+        });
+        holder.user_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
+                intent.putExtra("user_id",model.getUserid());
+                mContext.startActivity(intent);
+            }
+        });
         if ( model.getUserid() != null) {
             notebookRef = db.collection("Users").document(model.getUserid());
             notebookRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

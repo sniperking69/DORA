@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -107,12 +108,12 @@ public class Post extends AppCompatActivity {
         final Note post = new Note();
         post.setDescription(text);
         post.setType(1);
-
         ArrayList<String> emp=new ArrayList<String>();
         post.setUpvote(emp);
         post.setLocation(null);
         post.setDownvote(emp);
         post.setUserid(auth.getUid());
+        final DocumentReference DR= db.collection("Users").document(auth.getUid());
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
         final String date =dateFormat.format(Calendar.getInstance().getTime());
         notebookRef.add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -121,6 +122,7 @@ public class Post extends AppCompatActivity {
                 post.setRefComments(documentReference);
                 post.setUptime(date);
                 documentReference.set(post);
+                DR.update("posts", FieldValue.arrayUnion(documentReference.getId()));
 
             }
         });
