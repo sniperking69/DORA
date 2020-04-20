@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.aputech.dora.Adpater.NotiAdapter;
 import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.CollectionReference;
@@ -74,13 +75,13 @@ public class Notify extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_notify, container, false);
-        Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
+        Query query = notebookRef.orderBy("time", Query.Direction.ASCENDING);
 
-        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                .setQuery(query, Note.class)
+        FirestoreRecyclerOptions<notification> options = new FirestoreRecyclerOptions.Builder<notification>()
+                .setQuery(query, notification.class)
                 .build();
 
-        adapter = new NotiAdapter(options);
+        adapter = new NotiAdapter(options,getContext());
 
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);

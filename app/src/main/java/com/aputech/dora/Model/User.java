@@ -13,7 +13,24 @@ public class User {
     private ArrayList<String> following;
     private ArrayList<String> posts;
     private int Userlevel;
+    public User() {
+        //empty constructor needed
+    }
 
+    public User(String userName, String bio, String emailAdress, String gender, ArrayList<String> followers, ArrayList<String> following, ArrayList<String> posts, int userlevel, String userid, String profileUrl, String facebookId, String instaId) {
+        UserName = userName;
+        Bio = bio;
+        EmailAdress = emailAdress;
+        Gender = gender;
+        this.followers = followers;
+        this.following = following;
+        this.posts = posts;
+        Userlevel = userlevel;
+        this.userid = userid;
+        ProfileUrl = profileUrl;
+        this.facebookId = facebookId;
+        this.instaId = instaId;
+    }
 
     private String userid;
     private String ProfileUrl; //Backend Url of Image
