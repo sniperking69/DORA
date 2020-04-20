@@ -1,5 +1,7 @@
 package com.aputech.dora.Model;
 
+import com.aputech.dora.ui.Post;
+
 import java.util.ArrayList;
 
 public class User {
@@ -9,6 +11,7 @@ public class User {
     private String Bio;
     private String EmailAdress;
     private String Gender;
+    private int postnum;
     private ArrayList<String> followers;
     private ArrayList<String> following;
     private ArrayList<String> posts;

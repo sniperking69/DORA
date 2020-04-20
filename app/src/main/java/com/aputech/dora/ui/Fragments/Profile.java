@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,11 @@ import android.widget.TextView;
 import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.User;
+import com.aputech.dora.ProfileSettings;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -97,7 +100,8 @@ public class Profile extends Fragment {
         final RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        LatLng sydney = new LatLng(-34, 151);
+        Log.d("bigpp", "onCreateView: "+sydney);
 //        Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
 //
 //        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
@@ -114,7 +118,7 @@ public class Profile extends Fragment {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent= new Intent(getActivity(), SettingsActivity.class);
+                Intent intent= new Intent(getActivity(), ProfileSettings.class);
                 startActivity(intent);
             }
         });

@@ -88,7 +88,7 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             notebookRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    User user = task.getResult().toObject(User.class);
+                    final User user = task.getResult().toObject(User.class);
                     holder.user_name.setText(user.getUserName());
                     Glide
                             .with(mContext)
@@ -114,41 +114,38 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
                                     .into(holder.level);
                         }
                     }
+                    if( model.getType()==1){
+                        holder.textViewDescription.setText(model.getDescription());
+                        holder.time.setText(String.valueOf(model.getUptime()));
+                        holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent =new Intent(mContext, CommentActivity.class);
+                                intent.putExtra("coll",model.getRefComments().getParent().getPath());
+                                intent.putExtra("doc",model.getRefComments().getId());
+                                intent.putExtra("user_id",model.getUserid());
+                                intent.putExtra("user_name",user.getUserName());
+                                mContext.startActivity(intent);
+                            }
+                        });
+                    }
+                    if(model.getType()==2){
+                        holder.img.setVisibility(View.VISIBLE);
+                        Glide
+                                .with(mContext)
+                                .load(model.getImageUrl())
+                                .into(holder.img);
+                        holder.textViewDescription.setText(model.getDescription());
+                        holder.time.setText(String.valueOf(model.getUptime()));
+
+
+                    }
                 }
             });
+
         }
 
-        if( model.getType()==1){
-            holder.textViewDescription.setText(model.getDescription());
-            holder.time.setText(String.valueOf(model.getUptime()));
-            holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent =new Intent(mContext, CommentActivity.class);
-                    intent.putExtra("coll",model.getRefComments().getParent().getPath());
-                    intent.putExtra("doc",model.getRefComments().getId());
-                    mContext.startActivity(intent);
-                }
-            });
-        }
-        if(model.getType()==2){
-            holder.img.setVisibility(View.VISIBLE);
-            Glide
-                    .with(mContext)
-                    .load(model.getImageUrl())
-                    .into(holder.img);
-            holder.textViewDescription.setText(model.getDescription());
-            holder.time.setText(String.valueOf(model.getUptime()));
 
-            holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent= new Intent(mContext, CommentActivity.class);
-                    intent.putExtra("coll", (Parcelable) model);
-                    mContext.startActivity(intent);
-                }
-            });
-        }
 
         holder.up.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -10,10 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.NumberPicker;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.aputech.dora.Model.Message;
 import com.aputech.dora.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.CollectionReference;

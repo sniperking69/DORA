@@ -1,28 +1,42 @@
 package com.aputech.dora.Model;
 
-import android.location.Location;
 
-import com.google.firebase.firestore.DocumentReference;
-
-import java.util.ArrayList;
-
-public class Message {
+public class message {
     private String description;
     private String imageUrl;
     private int type;
     private String userid;
     private String uptime;
-    private Location location;
-    public Message() {
+    private String lat;
+    private String lng;
+    public message() {
         //empty constructor needed
     }
-    public Message(String description, String imageUrl, int type, String userid, String uptime, Location location) {
+
+    public message(String description, String imageUrl, int type, String userid, String uptime, String lat, String lng) {
         this.description = description;
         this.imageUrl = imageUrl;
         this.type = type;
         this.userid = userid;
         this.uptime = uptime;
-        this.location = location;
+        this.lat = lat;
+        this.lng = lng;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
     }
 
     public String getDescription() {
@@ -65,11 +79,5 @@ public class Message {
         this.uptime = uptime;
     }
 
-    public Location getLocation() {
-        return location;
-    }
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
 }

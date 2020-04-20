@@ -8,23 +8,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aputech.dora.Model.Message;
+import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
 
-public class MessageAdapter extends FirestoreRecyclerAdapter <Message, MessageAdapter.MessageHolder> {
+public class MessageAdapter extends FirestoreRecyclerAdapter <message, MessageAdapter.MessageHolder> {
 
     private OnItemClickListener listener;
 
 
-    public MessageAdapter(@NonNull FirestoreRecyclerOptions<Message> options) {
+    public MessageAdapter(@NonNull FirestoreRecyclerOptions<message> options) {
         super(options);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull MessageHolder holder, int position, @NonNull Message model) {
+    protected void onBindViewHolder(@NonNull MessageHolder holder, int position, @NonNull message model) {
 //        holder.Title.setText(model.getTitle());
 //        holder.Description.setText(model.getDescription());
 //        holder.Priority.setText(String.valueOf(model.getPriority()));

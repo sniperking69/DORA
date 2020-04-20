@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.aputech.dora.R;
-import com.aputech.dora.Model.Message;
+import com.aputech.dora.Model.message;
 import com.aputech.dora.Adpater.MessageAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -46,8 +46,8 @@ public class msgActivity extends AppCompatActivity {
     private void setUpRecyclerView(){
         Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
 
-        FirestoreRecyclerOptions<Message> options = new FirestoreRecyclerOptions.Builder<Message>()
-                .setQuery(query, Message.class)
+        FirestoreRecyclerOptions<message> options = new FirestoreRecyclerOptions.Builder<message>()
+                .setQuery(query, message.class)
                 .build();
 
         adapter = new MessageAdapter(options);
@@ -74,7 +74,7 @@ public class msgActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(DocumentSnapshot documentSnapshot, int position) {
-                Message message= documentSnapshot.toObject(Message.class);
+                message message= documentSnapshot.toObject(com.aputech.dora.Model.message.class);
                 String id= documentSnapshot.getId();
                 String path = documentSnapshot.getReference().getPath();
                 Toast.makeText(msgActivity.this,

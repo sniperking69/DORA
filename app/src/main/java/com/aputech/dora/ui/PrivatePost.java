@@ -1,47 +1,75 @@
 package com.aputech.dora.ui;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Message;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
+
+import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.EventListener;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PrivatePost extends FragmentActivity implements OnMapReadyCallback {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference received,sent;
+    private ArrayList<message> listsent=new ArrayList<>();
+    private ArrayList<message> listreceived=new ArrayList<message>();
     private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private_post);
-        received= db.collection("Users").document(auth.getUid()).collection("receivec");
-//        msgRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//
-//            }
-//        });
-//        msgRef= db.collection("Users").document(auth.getUid()).collection("sent");
-//        msgRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//
-//            }
-//        });
+        FloatingActionButton floatingActionButton = findViewById(R.id.button_add_msg);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CollectionReference collectionReference = db.collection("Users").document(auth.getUid()).collection("sent");
+                message mms= new message();
+                mms.setType(1);
+                mms.setUptime("hehoa");
+                mms.setUserid(auth.getUid());
+                mms.setLat("-34");
+                mms.setLng("151");
+                collectionReference.add(mms);
+            }
+        });
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -58,13 +86,105 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMinZoomPreference(mMap.getMinZoomLevel());
+        mMap.setMaxZoomPreference(1.0f);
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+
+                CollectionReference received = db.collection("Users").document(auth.getUid()).collection("received");
+                received.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                listreceived.add(document.toObject(message.class));
+                                // Log.d("bigpp", document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            // Log.d("bigpp", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+                CollectionReference sent = db.collection("Users").document(auth.getUid()).collection("sent");
+                sent.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                listsent.add(document.toObject(message.class));
+                                // Log.d("bigpp", document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            //    Log.d("bigpp", "Error getting documents: ", task.getException());
+                        }
+                        if (!listsent.isEmpty()){
+                            for (int i=0;i<listsent.size();i++){
+                                message msg = listsent.get(i);
+                                LatLng customMarkerLocationOne = new LatLng(Double.parseDouble(msg.getLat()), Double.parseDouble(msg.getLng()));
+                                mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).
+                                        icon(BitmapDescriptorFactory.fromBitmap(
+                                                createCustomMarker(PrivatePost.this,R.drawable.ic_logo,"Manish")))).setTitle("iPragmatech Solutions Pvt Lmt");
+                                //LatLng sydney = new LatLng(-34, 151);
+                                //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+                            }
+                        }
+                    }
+                });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+        });
+
+
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+
+      //  mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
-}
+    public static Bitmap createCustomMarker(Context context, @DrawableRes int resource, String _name) {
+
+        View marker = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker_layout, null);
+
+        CircleImageView markerImage = (CircleImageView) marker.findViewById(R.id.user_dp);
+        markerImage.setImageResource(resource);
+        TextView txt_name = (TextView)marker.findViewById(R.id.name);
+        txt_name.setText(_name);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(52, ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(marker.getMeasuredWidth(), marker.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
+    }}

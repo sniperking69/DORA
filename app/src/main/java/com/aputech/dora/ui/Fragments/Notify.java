@@ -16,6 +16,7 @@ import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -31,7 +32,8 @@ public class Notify extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection("Notebook");
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private CollectionReference notebookRef = db.collection("Users").document(auth.getUid()).collection("notify");
     private NotiAdapter adapter;
 
     // TODO: Rename and change types of parameters

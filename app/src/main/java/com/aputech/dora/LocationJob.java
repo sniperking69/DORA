@@ -9,13 +9,17 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
 
@@ -24,13 +28,14 @@ import static com.aputech.dora.ui.MainActivity.CHANNEL_1_ID;
 public class LocationJob extends JobService {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    //private CollectionReference notebookRef = db.collection();
+    private CollectionReference notebookRef = db.collection("Users").document(auth.getUid()).collection("notify");
     private static final String TAG = "joblocationservice";
     private boolean jobCancelled = false;
 
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.d(TAG, "Job started");
+
         doBackgroundWork(params);
         return true;
     }
@@ -39,24 +44,29 @@ public class LocationJob extends JobService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < 100; i++) {
-                    Log.d(TAG, "run: " + i);
+//                for (int i = 0; i < 100; i++) {
+//                    Log.d(TAG, "run: " + i);
 //                    if (i==50){
 //                        sendOnChannel1();
 //                    }
-                    if (jobCancelled) {
-                        return;
-                    }
+//                    if (jobCancelled) {
+//                        return;
+//                    }
+//
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+                notebookRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
 
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
-                }
-
-                Log.d(TAG, "Job finished");
-                jobFinished(params, false);
+                });
+               // Log.d(TAG, "Job finished");
+              //  jobFinished(params, false);
             }
         }).start();
     }

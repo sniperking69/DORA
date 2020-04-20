@@ -20,9 +20,14 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdapter.notificationHolder> {
     private Context mContext;
+    private FirebaseAuth auth=FirebaseAuth.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     public NotiAdapter(@NonNull FirestoreRecyclerOptions<notification> options, Context mContext) {
         super(options);
         this.mContext=mContext;
@@ -30,10 +35,11 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
 
     @Override
     protected void onBindViewHolder(@NonNull notificationHolder holder, int position, @NonNull final notification model) {
-//        holder.img.setVisibility(View.VISIBLE);
+        holder.img.setVisibility(View.VISIBLE);
+    //    DocumentReference documentReference = db.
 //        Glide
 //                .with(mContext)
-//                .load(model.getProfileUrl())
+//                .load(model.getDocument())
 //                .into(holder.img);
 //        holder.textViewTitle.setText(model.getnotificationName());
 //        holder.textViewTitle.setOnClickListener(new View.OnClickListener() {
