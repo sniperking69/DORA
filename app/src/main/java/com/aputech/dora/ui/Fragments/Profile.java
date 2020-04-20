@@ -18,7 +18,6 @@ import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
-import com.aputech.dora.ui.SettingsActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
