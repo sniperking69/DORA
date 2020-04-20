@@ -25,9 +25,9 @@ public class MessageAdapter extends FirestoreRecyclerAdapter <Message, MessageAd
 
     @Override
     protected void onBindViewHolder(@NonNull MessageHolder holder, int position, @NonNull Message model) {
-        holder.Title.setText(model.getTitle());
-        holder.Description.setText(model.getDescription());
-        holder.Priority.setText(String.valueOf(model.getPriority()));
+//        holder.Title.setText(model.getTitle());
+//        holder.Description.setText(model.getDescription());
+//        holder.Priority.setText(String.valueOf(model.getPriority()));
 
     }
 

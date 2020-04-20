@@ -233,7 +233,7 @@ public class HActivity extends AppCompatActivity {
                 search_bool=true;
                 return true;
             case R.id.mail:
-                Intent intent = new Intent(HActivity.this,msgActivity.class);
+                Intent intent = new Intent(HActivity.this,PrivatePost.class);
                 startActivity(intent);
                 return true;
             default:

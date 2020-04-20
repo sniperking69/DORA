@@ -75,7 +75,7 @@ button.setOnClickListener(new View.OnClickListener() {
 
         CollectionReference notebookRef = FirebaseFirestore.getInstance()
                 .collection("MessageBook");
-        notebookRef.add(new Message(title, description, priority));
+     //   notebookRef.add(new Message(title, description, priority));
         Toast.makeText(this, "Message added", Toast.LENGTH_SHORT).show();
         finish();
     }

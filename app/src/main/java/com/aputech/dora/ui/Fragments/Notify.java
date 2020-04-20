@@ -75,7 +75,7 @@ public class Notify extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_notify, container, false);
-        Query query = notebookRef.orderBy("time", Query.Direction.ASCENDING);
+        Query query = notebookRef;
 
         FirestoreRecyclerOptions<notification> options = new FirestoreRecyclerOptions.Builder<notification>()
                 .setQuery(query, notification.class)
