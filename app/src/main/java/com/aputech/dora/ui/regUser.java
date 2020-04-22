@@ -7,6 +7,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -31,6 +32,7 @@ import java.util.Date;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class regUser extends AppCompatActivity {
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
     TextInputLayout Email,Uname,Bio;
     Spinner spinner;
     FloatingActionButton upimg;
@@ -53,7 +55,15 @@ public class regUser extends AppCompatActivity {
         spinner = findViewById(R.id.spinner);
         dispimg = findViewById(R.id.profiledefault);
         upimg = findViewById(R.id.upimage);
-
+        upimg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+        });
 
 
     }

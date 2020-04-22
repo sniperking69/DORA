@@ -20,16 +20,24 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.UserHolder> {
     private Context mContext;
+    private FirebaseAuth auth= FirebaseAuth.getInstance();
+    private FirestoreRecyclerOptions<User> op;
+    private FirebaseFirestore db= FirebaseFirestore.getInstance();
     public SearchAdapter(@NonNull FirestoreRecyclerOptions<User> options, Context mContext) {
         super(options);
         this.mContext=mContext;
+        this.op=options;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull UserHolder holder, int position, @NonNull final User model) {
+    protected void onBindViewHolder(@NonNull final UserHolder holder, int position, @NonNull final User model) {
             holder.img.setVisibility(View.VISIBLE);
             Glide
                     .with(mContext)
@@ -42,6 +50,38 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                     Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
                     intent.putExtra("user_id",model.getUserid());
                     mContext.startActivity(intent);
+                }
+            });
+            if (model.getFollowers()!=null){
+                if (model.getFollowers().contains(auth.getUid())){
+                    holder.followbutton.setText("UNFOLLOW");
+                }
+            }
+
+            holder.followbutton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (model.getFollowers()!=null){
+                        if (model.getFollowers().contains(auth.getUid())){
+                            DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+                            DocumentReference documentReference= db.collection("Users").document(model.getUserid());
+                            documentReference.update("followers", FieldValue.arrayRemove(auth.getUid()));
+                            documentRef.update("following", FieldValue.arrayRemove(model.getUserid()));
+                            holder.followbutton.setText("FOLLOW");
+                        }else{
+                            DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+                            DocumentReference documentReference= db.collection("Users").document(model.getUserid());
+                            documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
+                            documentRef.update("following", FieldValue.arrayUnion(model.getUserid()));
+                            holder.followbutton.setText("UNFOLLOW");
+                        }
+                    }else{
+                        DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+                        DocumentReference documentReference= db.collection("Users").document(model.getUserid());
+                        documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
+                        documentRef.update("following", FieldValue.arrayUnion(model.getUserid()));
+                    }
+
                 }
             });
 
@@ -66,4 +106,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
             img =itemView.findViewById(R.id.profiledisplay);
         }
     }
+
+
+
 }

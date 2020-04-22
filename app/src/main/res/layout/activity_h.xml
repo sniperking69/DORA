@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
     <RelativeLayout
         android:id="@+id/search_list"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
@@ -16,11 +16,28 @@
             android:id="@+id/search_rec"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-        <TextView
+        <RelativeLayout
+            android:id="@+id/noresult"
+            android:visibility="invisible"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Writing something for search Result"
-            android:gravity="center"/>
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/searchicon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_search"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:tint="@android:color/darker_gray"/>
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/searchicon"
+                android:text="No result Found" />
+        </RelativeLayout>
+
     </RelativeLayout>
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
@@ -60,7 +77,6 @@ android:layout_above="@+id/bottomlinear"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageView
-                android:id="@+id/applogotext"
                 android:layout_width="120dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
@@ -136,7 +152,7 @@ android:layout_above="@+id/bottomlinear"
             android:layout_weight="1" />
 
         <ImageView
-            android:id="@+id/Remind"
+            android:id="@+id/Notify"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

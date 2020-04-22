@@ -3,14 +3,9 @@ package com.aputech.dora;
 import android.app.Notification;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
-import android.content.Context;
-import android.content.Intent;
-import android.os.SystemClock;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -21,9 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Objects;
-
-import static com.aputech.dora.ui.MainActivity.CHANNEL_1_ID;
+import static com.aputech.dora.ui.SplashActivity.CHANNEL_1_ID;
 
 public class LocationJob extends JobService {
     private FirebaseAuth auth = FirebaseAuth.getInstance();

@@ -3,6 +3,7 @@ package com.aputech.dora.Adpater;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.ui.CommentActivity;
+import com.aputech.dora.ui.DispPostLocation;
 import com.aputech.dora.ui.PostDetail;
 import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.bumptech.glide.Glide;
@@ -28,6 +30,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -50,23 +53,34 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
 
     @Override
     protected void onBindViewHolder(@NonNull final NoteHolder holder, int position, @NonNull final Note model) {
-        holder.uptext.setText(String.valueOf(model.getUpvote().size()));
-        if (model.getLocation()==null){
-            holder.LocationIcon.setImageResource(R.drawable.ic_locationsad);
-        }else{
+        holder.down.setText(String.valueOf(model.getDownnum()));
+        if (model.getLocation()!=null){
             holder.LocationIcon.setImageResource(R.drawable.ic_locationhappy);
-        }
-        //holder.commet.setText(String.valueOf(notebookRef.collection("comments").get().getResult().size()));
-        holder.downtxt.setText(String.valueOf(model.getDownvote().size()));
-        if (model.getUpvote() !=null && model.getUpvote() !=null){
-            if (model.getUpvote().contains(auth.getUid())){
-                holder.upicon.setImageResource(R.drawable.upvote_on);
-            }
-            if (model.getDownvote().contains(auth.getUid())){
-                holder.downicon.setImageResource(R.drawable.downvote_on);
-            }
+            holder.LocationIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext,DispPostLocation.class);
+                    intent.putExtra("lat",model.getLocation().getLatitude());
+                    intent.putExtra("lng",model.getLocation().getLongitude());
+                    mContext.startActivity(intent);
+                }
+            });
+        }else{
+            holder.LocationIcon.setImageResource(R.drawable.ic_locationsad);
 
         }
+
+        //holder.commet.setText(String.valueOf(notebookRef.collection("comments").get().getResult().size()));
+        holder.up.setText(String.valueOf(model.getUpnum()));
+//        if (model.getUpvote() !=null && model.getUpvote() !=null){
+//            if (model.getUpvote().contains(auth.getUid())){
+//               // holder.upicon.setImageResource(R.drawable.upvote_on);
+//            }
+//            if (model.getDownvote().contains(auth.getUid())){
+//             //   holder.downicon.setImageResource(R.drawable.downvote_on);
+//            }
+//
+//        }
         holder.profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,16 +166,29 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             public void onClick(View v) {
                 boolean ifdown= model.getDownvote().contains(auth.getUid());
                 boolean ifup= model.getUpvote().contains(auth.getUid());
+                float up =model.getUpnum();
+                float down=model.getDownnum();
                 DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
                 if (!ifup && !ifdown){
                     documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
+                    documentReference.update("upnum", model.getUpnum()+1);
+                    up=up + 1;
+
                 }
                 if (ifup && !ifdown){
                     documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
+                    documentReference.update("upnum", model.getUpnum()-1);
+                    up=up - 1;
                 }if(!ifup && ifdown){
                     documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
+                    documentReference.update("downnum", model.getDownnum()-1);
+                    down =down - 1;
                     documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
+                    documentReference.update("upnum", model.getUpnum()+1);
+                    up=up + 1;
+
                 }
+               documentReference.update("priority",up*0.4+down*0.2+model.getCommentnum()*0.4);
 
             }
         });
@@ -170,22 +197,27 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             public void onClick(View v) {
                 boolean ifdown= model.getDownvote().contains(auth.getUid());
                 boolean ifup= model.getUpvote().contains(auth.getUid());
+                float upi =model.getUpnum();
+                float downi=model.getDownnum();
                 DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
                 if (!ifup && !ifdown){
                     documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
+                    documentReference.update("downnum", model.getDownnum()+1);
+                    downi =downi+1;
                 }
                 if (ifdown && !ifup){
                     documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
+                    documentReference.update("downnum", model.getDownnum()-1);
+                    downi =downi-1;
                 }if(!ifdown && ifup){
                     documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
+                    documentReference.update("upnum", model.getUpnum()-1);
+                    upi=upi+1;
                     documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
+                    documentReference.update("downnum", model.getDownnum()+1);
+                    downi= downi+1;
                 }
-            }
-        });
-        holder.LocationIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+                documentReference.update("priority",upi*0.4+downi*0.2+model.getCommentnum()*0.4);
             }
         });
     }
@@ -202,14 +234,12 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
         TextView user_name;
         TextView textViewDescription;
         TextView time;
-        RelativeLayout up,down;
-        ImageView upicon,downicon;
+        MaterialButton up,down;
         ImageView img;
         ImageView level;
-        ImageView LocationIcon;
-        TextView uptext,downtxt;
+        ImageView LocationIcon,delete,edit;
         CircleImageView profile;
-        View Commentbutton;
+        MaterialButton Commentbutton;
         public NoteHolder(View itemView) {
             super(itemView);
             up= itemView.findViewById(R.id.upbutton);
@@ -217,12 +247,8 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             user_name = itemView.findViewById(R.id.user_name);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
             time = itemView.findViewById(R.id.time);
-            upicon = itemView.findViewById(R.id.upimg);
-            uptext = itemView.findViewById(R.id.upcount);
             level= itemView.findViewById(R.id.level);
-            downtxt = itemView.findViewById(R.id.downcount);
             LocationIcon = itemView.findViewById(R.id.locate);
-            downicon = itemView.findViewById(R.id.downimg);
             profile=itemView.findViewById(R.id.poster_profile);
             img =itemView.findViewById(R.id.img);
             Commentbutton= itemView.findViewById(R.id.comment);

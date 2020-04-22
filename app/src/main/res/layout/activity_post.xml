@@ -6,68 +6,40 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.Post">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button_add_msg"
+        android:onClick="Done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_done" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="50dp"
+        android:layout_margin="10dp"
+        android:layout_height="50dp"
+        android:id="@+id/profiledisplay"
+        android:src="@drawable/ic_ram_profile"/>
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_below="@+id/profiledisplay"
     android:orientation="vertical">
 
 
 
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/post_toolbar"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_margin="0dp"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:padding="0dp"
-        app:contentInsetStartWithNavigation="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/main_post">
-    </androidx.appcompat.widget.Toolbar>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="locationadd"
-        android:text="Add Location" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:onClick="cameraopen"
-        android:layout_height="wrap_content"
-        android:text="Camera" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="gallery"
-        android:text="Gallery"
-        />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="AudioGallery"
-        android:text="Button" />
-
     <EditText
         android:id="@+id/para"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="para" />
+        android:gravity="top"
+        android:hint="hellow"
+        android:background="@null"
+        android:inputType="textPersonName"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:onClick="Done"
-        android:layout_height="wrap_content"
-        android:text="DONE" />
 <ImageView
     android:id="@+id/dispimg"
     android:layout_width="match_parent"
@@ -82,36 +54,36 @@
         android:weightSum="5"
         android:layout_alignParentBottom="true">
 
-        <ImageView
-            android:id="@+id/Home"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/Camera"
             android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            android:src="@drawable/ic_mail_sent" />
-
-        <ImageView
-            android:id="@+id/Trending"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            app:iconSize="24dp"
+            app:iconGravity="textEnd"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+            app:icon="@android:drawable/ic_menu_camera" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/Gallery"
             android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            android:src="@drawable/ic_trending" />
-
-
-
-        <ImageView
-            android:id="@+id/Remind"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            app:iconSize="24dp"
+            app:iconGravity="textEnd"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+            app:icon="@android:drawable/ic_menu_gallery" />
+
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/Audio"
             android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            android:src="@drawable/ic_reminder" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:iconSize="24dp"
+            app:iconGravity="textEnd"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+            app:icon="@android:drawable/presence_audio_busy" />
     </LinearLayout>
 </RelativeLayout>

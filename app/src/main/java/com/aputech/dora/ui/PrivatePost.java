@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.location.Location;
@@ -20,8 +21,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,11 +33,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -59,14 +64,16 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CollectionReference collectionReference = db.collection("Users").document(auth.getUid()).collection("sent");
-                message mms= new message();
-                mms.setType(1);
-                mms.setUptime("hehoa");
-                mms.setUserid(auth.getUid());
-                mms.setLat("-34");
-                mms.setLng("151");
-                collectionReference.add(mms);
+//                CollectionReference collectionReference = db.collection("Users").document(auth.getUid()).collection("sent");
+//                message mms= new message();
+//                mms.setType(1);
+//                mms.setUptime("hehoa");
+//                mms.setUserid(auth.getUid());
+//                mms.setLat("-34");
+//                mms.setLng("151");
+//                collectionReference.add(mms);
+                Intent intent = new Intent(PrivatePost.this,Post.class);
+                startActivity(intent);
             }
         });
 
@@ -76,22 +83,11 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
         mapFragment.getMapAsync(this);
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMinZoomPreference(mMap.getMinZoomLevel());
-        mMap.setMaxZoomPreference(1.0f);
+        mMap.setMaxZoomPreference(mMap.getMaxZoomLevel());
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
@@ -107,6 +103,25 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
                             }
                         } else {
                             // Log.d("bigpp", "Error getting documents: ", task.getException());
+                        }
+                        if (!listreceived.isEmpty()){
+                            for (int i=0;i<listreceived.size();i++){
+                                message msg = listreceived.get(i);
+                                final LatLng customMarkerLocationOne = new LatLng(Double.parseDouble(msg.getLat()), Double.parseDouble(msg.getLng()));
+                                DocumentReference userinfo= db.collection("Users").document(msg.getUserid());
+                                userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        User user= documentSnapshot.toObject(User.class);
+                                        mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).
+                                                icon(BitmapDescriptorFactory.fromBitmap(
+                                                        createCustomMarker(PrivatePost.this,R.drawable.ic_logo,user.getProfileUrl())))).setTitle("You Are not at this location");
+                                    }
+                                });
+
+                                //LatLng sydney = new LatLng(-34, 151);
+                                //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+                            }
                         }
                     }
                 });
@@ -125,12 +140,8 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
                         if (!listsent.isEmpty()){
                             for (int i=0;i<listsent.size();i++){
                                 message msg = listsent.get(i);
-                                LatLng customMarkerLocationOne = new LatLng(Double.parseDouble(msg.getLat()), Double.parseDouble(msg.getLng()));
-                                mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).
-                                        icon(BitmapDescriptorFactory.fromBitmap(
-                                                createCustomMarker(PrivatePost.this,R.drawable.ic_logo,"Manish")))).setTitle("iPragmatech Solutions Pvt Lmt");
-                                //LatLng sydney = new LatLng(-34, 151);
-                                //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+                                final LatLng customMarkerLocationOne = new LatLng(Double.parseDouble(msg.getLat()), Double.parseDouble(msg.getLng()));
+                                mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).title("Click to Edit Message"));
                             }
                         }
                     }
@@ -167,14 +178,17 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
 
       //  mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
-    public static Bitmap createCustomMarker(Context context, @DrawableRes int resource, String _name) {
+    public static Bitmap createCustomMarker(Context context, @DrawableRes int resource, String url) {
 
         View marker = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker_layout, null);
-
         CircleImageView markerImage = (CircleImageView) marker.findViewById(R.id.user_dp);
         markerImage.setImageResource(resource);
-        TextView txt_name = (TextView)marker.findViewById(R.id.name);
-        txt_name.setText(_name);
+        Glide
+                .with(context)
+                .load(url)
+                .into(markerImage);
+//        TextView txt_name = (TextView)marker.findViewById(R.id.name);
+//        txt_name.setText(_name);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);

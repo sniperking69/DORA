@@ -89,7 +89,6 @@
        android:layout_below="@+id/num"
        android:weightSum="3">
        <TextView
-           android:id="@+id/txtPosts"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
@@ -97,7 +96,6 @@
            android:text="posts"
            android:textColor="@color/design_default_color_on_secondary" />
        <TextView
-           android:id="@+id/txtFoly"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
@@ -105,7 +103,6 @@
            android:text="following"
            android:textColor="@color/design_default_color_on_secondary" />
        <TextView
-           android:id="@+id/txtFolo"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"

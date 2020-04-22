@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.User;
-import com.aputech.dora.ProfileSettings;
+import com.aputech.dora.ui.ProfileSettings;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -143,12 +143,16 @@ public class Profile extends Fragment {
                 recyclerView.setAdapter(adapter);
                 adapter.startListening();
                 posts.setText(String.valueOf(user.getPosts().size()));
-                if (user.getFollowing()!=null && user.getFollowers()!=null){
-                    following.setText(String.valueOf(user.getFollowing().size()));
+                if (user.getFollowers()!=null){
                     followers.setText(String.valueOf(user.getFollowers().size()));
                 }else{
-                    following.setText(String.valueOf(0));
                     followers.setText(String.valueOf(0));
+                }
+                if (user.getFollowing()!=null){
+                    following.setText(String.valueOf(user.getFollowing().size()));
+
+                }else{
+                    following.setText(String.valueOf(0));
                 }
 
                 if (user.getUserlevel()==0){

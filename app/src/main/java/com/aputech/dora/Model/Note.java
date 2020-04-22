@@ -5,6 +5,8 @@ import android.location.Location;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,30 +19,57 @@ public class Note {
     private int type;
     private String userid;
     private String uptime;
-    private Location location;
+    private GeoPoint location;
     private ArrayList<String> downvote;
     private ArrayList<String> upvote;
     private DocumentReference refComments;
-    private int priority;
+    private float priority;
+    private int commentnum;
+    private int upnum;
+    private int downnum;
 
     public Note() {
         //empty constructor needed
     }
 
-    public Note(String description, int priority, String imageUrl, int type,Location location,String uptime,String userid, ArrayList<String> upvote,ArrayList<String> downvote,DocumentReference refComments) {
-
+    public Note(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location, ArrayList<String> downvote, ArrayList<String> upvote, DocumentReference refComments, float priority, int commentnum, int upnum, int downnum) {
         this.description = description;
+        this.imageUrl = imageUrl;
+        this.type = type;
+        this.userid = userid;
+        this.uptime = uptime;
+        this.location = location;
+        this.downvote = downvote;
+        this.upvote = upvote;
+        this.refComments = refComments;
         this.priority = priority;
-        this.imageUrl=imageUrl;
-        this.type=type;
-        this.refComments=refComments;
-        this.uptime=uptime;
-        this.downvote=downvote;
-        this.upvote=upvote;
-        this.uptime=uptime;
-        this.userid=userid;
-        this.location=location;
+        this.commentnum = commentnum;
+        this.upnum = upnum;
+        this.downnum = downnum;
+    }
 
+    public int getCommentnum() {
+        return commentnum;
+    }
+
+    public void setCommentnum(int commentnum) {
+        this.commentnum = commentnum;
+    }
+
+    public int getUpnum() {
+        return upnum;
+    }
+
+    public void setUpnum(int upnum) {
+        this.upnum = upnum;
+    }
+
+    public int getDownnum() {
+        return downnum;
+    }
+
+    public void setDownnum(int downnum) {
+        this.downnum = downnum;
     }
 
     public DocumentReference getRefComments() {
@@ -55,11 +84,11 @@ public class Note {
         this.userid = userid;
     }
 
-    public Location getLocation() {
+    public GeoPoint getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(GeoPoint location) {
         this.location = location;
     }
 
@@ -88,7 +117,7 @@ public class Note {
         return description;
     }
 
-    public int getPriority() {
+    public float getPriority() {
         return priority;
     }
 

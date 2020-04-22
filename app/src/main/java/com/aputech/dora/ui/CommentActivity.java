@@ -13,13 +13,16 @@ import android.widget.Toast;
 
 import com.aputech.dora.Adpater.CommentAdapter;
 import com.aputech.dora.Model.Comment;
+import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -38,6 +41,8 @@ public class CommentActivity extends AppCompatActivity {
     private EditText editText;
     String Document;
     String Userid,user_name;
+    int Commentnum;
+    private String collection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,47 +50,58 @@ public class CommentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comment);
         editText = findViewById(R.id.commenttext);
         Intent intent= getIntent();
-        String collection = intent.getStringExtra("coll");
+      collection = intent.getStringExtra("coll");
          Document=intent.getStringExtra("doc");
          Userid= intent.getStringExtra("user_id");
          user_name = intent.getStringExtra("user_name");
         up=findViewById(R.id.up);
         down=findViewById(R.id.down);
-        up.setOnClickListener(new View.OnClickListener() {
+        DocumentReference documentReference = db.collection(collection).document(Document);
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onClick(View v) {
-//                boolean ifdown= model.getDownvote().contains(auth.getUid());
-//                boolean ifup= model.getUpvote().contains(auth.getUid());
-//                DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
-//                if (!ifup && !ifdown){
-//                    documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
-//                }
-//                if (ifup && !ifdown){
-//                    documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
-//                }if(!ifup && ifdown){
-//                    documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
-//                    documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
-//                }
+            public void onSuccess(final DocumentSnapshot documentSnapshot) {
+                final Note post =documentSnapshot.toObject(Note.class);
+                up.setText(String.valueOf(post.getUpnum()));
+                down.setText(String.valueOf(post.getDownnum()));
+                Commentnum=post.getCommentnum();
+//                up.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        boolean ifdown= post.getDownvote().contains(auth.getUid());
+//                        boolean ifup= model.getUpvote().contains(auth.getUid());
+//                        DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
+//                        if (!ifup && !ifdown){
+//                            documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
+//                        }
+//                        if (ifup && !ifdown){
+//                            documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
+//                        }if(!ifup && ifdown){
+//                            documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
+//                            documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
+//                        }
+//
+//                    }
+//                });
+//                down.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+////                boolean ifdown= model.getDownvote().contains(auth.getUid());
+////                boolean ifup= model.getUpvote().contains(auth.getUid());
+////                DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
+////                if (!ifup && !ifdown){
+////                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
+////                }
+////                if (ifdown && !ifup){
+////                    documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
+////                }if(!ifdown && ifup){
+////                    documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
+////                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
+////                }
+//                    }
+//                });
+            }
+        });
 
-            }
-        });
-        down.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                boolean ifdown= model.getDownvote().contains(auth.getUid());
-//                boolean ifup= model.getUpvote().contains(auth.getUid());
-//                DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
-//                if (!ifup && !ifdown){
-//                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
-//                }
-//                if (ifdown && !ifup){
-//                    documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
-//                }if(!ifdown && ifup){
-//                    documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
-//                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
-//                }
-            }
-        });
         notebookRef = db.collection(collection).document(Document).collection("comments");
         Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
 
@@ -103,6 +119,8 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     public void sendcomment(View view) {
+        DocumentReference documentReference = db.collection(collection).document(Document);
+        documentReference.update("commentnum",Commentnum+1);
         String comenttext= editText.getText().toString();
         Comment comment = new Comment();
         comment.setCommentText(comenttext);

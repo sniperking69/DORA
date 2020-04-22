@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.EditText;
@@ -21,14 +22,17 @@ import android.widget.Toast;
 import com.aputech.dora.Model.Comment;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.R;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,74 +47,80 @@ import java.util.Map;
 public class Post extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_LOCATION = 345;
+
     private EditText editText;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Notebook");
     private ImageView imageView;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
+    MaterialButton camera,gallery,audio;
+    boolean addaudio,addimage,addedvideo;
+    private LatLng latLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        Toolbar postTool = findViewById(R.id.post_toolbar);
-        setSupportActionBar(postTool);
         editText=findViewById(R.id.para);
         imageView = findViewById(R.id.dispimg);
-        new Handler().post(new Runnable() {
+        audio = findViewById(R.id.Audio);
+        gallery=findViewById(R.id.Gallery);
+        camera =findViewById(R.id.Camera);
+        audio.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                revealFAB();
+            public void onClick(View v) {
+
+            }
+        });
+        gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
             }
         });
 
 
-    }
-
-    private void revealFAB() {
-        final View view = findViewById(R.id.post_toolbar);
-        int cx = view.getWidth() /2;
-        int cy = view.getHeight()/2 ;
-
-        float finalRadius = (float) Math.hypot(cx, cy);
-
-        Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                view.setVisibility(View.VISIBLE);
-
-            }
-        });
-        anim.start();
-
-    }
-
-    public void locationadd(View view) {
-    }
-
-    public void cameraopen(View view) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
-    public void gallery(View view) {
-    }
-
-    public void AudioGallery(View view) {
     }
 
     public void Done(View view) {
+        Intent intent= new Intent(Post.this,SelectLocation.class);
+        startActivityForResult(intent,REQUEST_LOCATION);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageView.setImageBitmap(imageBitmap);
+        }
+        if (requestCode ==REQUEST_LOCATION){
+            Bundle extras = data.getExtras();
+            latLng = (LatLng) extras.get("LatLng");
+            Toast.makeText(Post.this,latLng.toString(),Toast.LENGTH_LONG).show();
+            uploadFire();
+        }
+    }
+    private void uploadFire(){
         String text= editText.getText().toString();
         final Note post = new Note();
         post.setDescription(text);
         post.setType(1);
+        GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
+        Log.d("bigpp", "uploadFire: "+geoPoint);
+        post.setLocation(geoPoint);
         ArrayList<String> emp=new ArrayList<String>();
         post.setUpvote(emp);
-        post.setLocation(null);
         post.setDownvote(emp);
         post.setUserid(auth.getUid());
         final DocumentReference DR= db.collection("Users").document(auth.getUid());
@@ -128,14 +138,5 @@ public class Post extends AppCompatActivity {
         });
         Toast.makeText(Post.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
         finish();
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(imageBitmap);
-        }
     }
 }

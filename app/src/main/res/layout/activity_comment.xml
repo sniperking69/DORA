@@ -21,7 +21,6 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
             <LinearLayout
-                android:id="@+id/toplayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="2"
@@ -65,7 +64,6 @@
             android:inputType="textPersonName"
             android:hint="Write a Comment...." />
         <Button
-            android:id="@+id/button"
             android:layout_width="match_parent"
             android:onClick="sendcomment"
             android:layout_height="wrap_content"

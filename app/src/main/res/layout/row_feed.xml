@@ -39,6 +39,18 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="34dp"
         android:layout_height="34dp"
+        android:id="@+id/edit"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_edit"/>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="34dp"
+        android:visibility="gone"
+        android:layout_height="34dp"
+        android:id="@+id/delete"
+        app:srcCompat="@drawable/ic_delete"/>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="34dp"
+        android:layout_height="34dp"
         android:id="@+id/locate"
         app:srcCompat="@drawable/ic_locationsad"/>
 </LinearLayout>
@@ -115,104 +127,51 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
+        android:weightSum="3"
         android:layout_below="@+id/imgView_line">
 
-        <RelativeLayout
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/upbutton"
+            android:layout_weight="1"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            app:iconSize="20dp"
+            android:textSize="12sp"
+            app:iconGravity="textStart"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:icon="@drawable/upvote"
+            android:text="100k"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
 
-                <ImageView
-                    android:id="@+id/upimg"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/upvote" />
 
-                <TextView
-                    android:id="@+id/upcount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="265k"
-                    android:textColor="@android:color/black"
-                    android:textSize="13sp" />
 
-            </LinearLayout>
 
-        </RelativeLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/comment"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:iconSize="20dp"
+                android:textSize="12sp"
+                app:iconGravity="textStart"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                app:icon="@drawable/ic_comment_btn"
+                android:text="Comments"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/comment"
-            android:layout_weight="1">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_comment_btn" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Comment"
-                    android:textColor="@android:color/black"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <RelativeLayout
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/downbutton"
+            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
-
-                <ImageView
-                    android:id="@+id/downimg"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/downvote" />
-
-                <TextView
-                    android:id="@+id/downcount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="1k"
-                    android:textColor="@android:color/black"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
-
-        </RelativeLayout>
+            app:iconSize="20dp"
+            android:textSize="12sp"
+            app:iconGravity="textStart"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:icon="@drawable/downvote"
+            android:text="100k"/>
 
     </LinearLayout>
 
