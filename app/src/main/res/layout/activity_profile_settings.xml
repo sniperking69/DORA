@@ -19,6 +19,7 @@
 
             <ImageView
                 android:id="@+id/edit_profile"
+                android:padding="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_edit"
@@ -28,10 +29,18 @@
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:text="Edit profile"
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/edit_profile"
                 />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/edit_profile"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/darker_gray" />
 
 
         </RelativeLayout>
@@ -43,19 +52,28 @@
             <ImageView
                 android:id="@+id/theme"
                 android:src="@drawable/ic_theme"
+                android:padding="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></ImageView>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/theme"
                 android:text="Dark Theme"/>
             <Switch
                 android:layout_width="wrap_content"
+                android:padding="5dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/theme"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/darker_gray" />
 
         </RelativeLayout>
         <RelativeLayout
@@ -66,20 +84,30 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:src="@drawable/ic_notifications"
                 android:id="@+id/notification"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:layout_centerVertical="true"
                 android:text="Notification"
                 android:layout_toRightOf="@id/notification"
                 android:layout_marginLeft="5dp"/>
             <Switch
                 android:layout_width="wrap_content"
+                android:padding="5dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/notification"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/darker_gray" />
+
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -89,6 +117,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:src="@drawable/ic_logout"
                 android:id="@+id/logout"/>
             <TextView
@@ -96,24 +125,51 @@
                 android:layout_marginLeft="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:text="Logout"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/logout"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/darker_gray" />
+
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_info"
+                android:padding="5dp"
+                android:id="@+id/info"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_toRightOf="@id/info"
                 android:layout_centerVertical="true"
                 android:text="Version"
-                android:layout_marginLeft="25dp" />
+                android:id="@+id/version"
+                android:layout_marginLeft="5dp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0.1"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
                 android:layout_alignParentRight="true"
                 />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/version"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/darker_gray" />
+
         </RelativeLayout>
 
     </LinearLayout>
