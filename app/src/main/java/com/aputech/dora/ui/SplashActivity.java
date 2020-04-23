@@ -64,9 +64,10 @@ public class SplashActivity extends AppCompatActivity {
             startActivityForResult(
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
-                            .setTheme(R.style.AppTheme)
-                            .setLogo(R.drawable.ic_logo)
+                            .setTheme(R.style.RegTheme)
+                            .setLogo(R.drawable.ic_launcher_round)
                             .setIsSmartLockEnabled(false)
+
                             .setAvailableProviders(Arrays.asList(
                                     new AuthUI.IdpConfig.GoogleBuilder().build(),
                                     new AuthUI.IdpConfig.PhoneBuilder().build()))

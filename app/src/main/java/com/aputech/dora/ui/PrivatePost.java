@@ -64,15 +64,8 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                CollectionReference collectionReference = db.collection("Users").document(auth.getUid()).collection("sent");
-//                message mms= new message();
-//                mms.setType(1);
-//                mms.setUptime("hehoa");
-//                mms.setUserid(auth.getUid());
-//                mms.setLat("-34");
-//                mms.setLng("151");
-//                collectionReference.add(mms);
                 Intent intent = new Intent(PrivatePost.this,Post.class);
+                intent.putExtra("activity",2);
                 startActivity(intent);
             }
         });
@@ -107,17 +100,18 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
                         if (!listreceived.isEmpty()){
                             for (int i=0;i<listreceived.size();i++){
                                 message msg = listreceived.get(i);
-                                final LatLng customMarkerLocationOne = new LatLng(Double.parseDouble(msg.getLat()), Double.parseDouble(msg.getLng()));
-                                DocumentReference userinfo= db.collection("Users").document(msg.getUserid());
-                                userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        User user= documentSnapshot.toObject(User.class);
-                                        mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).
-                                                icon(BitmapDescriptorFactory.fromBitmap(
-                                                        createCustomMarker(PrivatePost.this,R.drawable.ic_logo,user.getProfileUrl())))).setTitle("You Are not at this location");
-                                    }
-                                });
+//
+//                                final LatLng customMarkerLocationOne = new LatLng(Double.parseDouble(msg.getLat()), Double.parseDouble(msg.getLng()));
+//                                DocumentReference userinfo= db.collection("Users").document(msg.getUserid());
+//                                userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                                    @Override
+//                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                                        User user= documentSnapshot.toObject(User.class);
+//                                        mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).
+//                                                icon(BitmapDescriptorFactory.fromBitmap(
+//                                                        createCustomMarker(PrivatePost.this,R.drawable.ic_logo,user.getProfileUrl())))).setTitle("You Are not at this location");
+//                                    }
+//                                });
 
                                 //LatLng sydney = new LatLng(-34, 151);
                                 //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
@@ -140,8 +134,8 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
                         if (!listsent.isEmpty()){
                             for (int i=0;i<listsent.size();i++){
                                 message msg = listsent.get(i);
-                                final LatLng customMarkerLocationOne = new LatLng(Double.parseDouble(msg.getLat()), Double.parseDouble(msg.getLng()));
-                                mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).title("Click to Edit Message"));
+//                                final LatLng customMarkerLocationOne = new LatLng(Double.parseDouble(msg.getLat()), Double.parseDouble(msg.getLng()));
+//                                mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).title("Click to Edit Message"));
                             }
                         }
                     }

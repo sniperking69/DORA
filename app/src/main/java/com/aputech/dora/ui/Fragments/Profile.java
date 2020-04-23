@@ -52,7 +52,7 @@ public class Profile extends Fragment {
     private HomeAdapter adapter;
     private User user;
     private CircleImageView profileimg;
-    private TextView following,posts,followers,name;
+    private TextView following,posts,followers,name,bio;
     private ImageView level;
 
     // TODO: Rename and change types of parameters
@@ -100,19 +100,7 @@ public class Profile extends Fragment {
         final RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        LatLng sydney = new LatLng(-34, 151);
-        Log.d("bigpp", "onCreateView: "+sydney);
-//        Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
-//
-//        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-//                .setQuery(query, Note.class)
-//                .build();
-//
-//        adapter = new ProfileAdapter(options,getActivity());
-//        RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
-//        recyclerView.setHasFixedSize(true);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        recyclerView.setAdapter(adapter);
+        bio = root.findViewById(R.id.bio);
         MaterialButton settings=root.findViewById(R.id.followandset);
         settings.setText("SETTINGS");
         settings.setOnClickListener(new View.OnClickListener() {
@@ -142,6 +130,7 @@ public class Profile extends Fragment {
 
                 recyclerView.setAdapter(adapter);
                 adapter.startListening();
+                bio.setText(user.getBio());
                 posts.setText(String.valueOf(user.getPosts().size()));
                 if (user.getFollowers()!=null){
                     followers.setText(String.valueOf(user.getFollowers().size()));
@@ -178,6 +167,13 @@ public class Profile extends Fragment {
                         .with(getActivity())
                         .load(user.getProfileUrl())
                         .into(profileimg);
+
+            }
+        });
+        ImageView editImage = root.findViewById(R.id.editimage);
+        editImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });

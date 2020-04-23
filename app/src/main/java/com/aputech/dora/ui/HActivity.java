@@ -215,6 +215,7 @@ public class HActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HActivity.this,Post.class);
+                intent.putExtra("activity",1);
                 startActivity(intent);
 //                AuthUI.getInstance().signOut(HActivity.this).addOnCompleteListener(new OnCompleteListener<Void>() {
 //                            public void onComplete(@NonNull Task<Void> task) {

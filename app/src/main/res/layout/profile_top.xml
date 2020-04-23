@@ -13,6 +13,13 @@
         android:id="@+id/profiledisplay"
         android:layout_margin="5dp"
         android:src="@drawable/ic_ram_profile"/>
+    <ImageView
+        android:id="@+id/editimage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/profiledisplay"
+        android:layout_alignEnd="@+id/profiledisplay"
+        android:src="@android:drawable/ic_menu_upload" />
     <LinearLayout
         android:id="@+id/nametop"
         android:layout_width="match_parent"
@@ -130,6 +137,7 @@
 
 
         <TextView
+            android:id="@+id/bio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="My Hero Academia (Japanese: 僕のヒーローアカデミア, Hepburn: Boku no Hīrō Akademia) is a Japanese superhero manga series ..more"

@@ -34,8 +34,16 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull notificationHolder holder, int position, @NonNull final notification model) {
-        holder.img.setVisibility(View.VISIBLE);
+    protected void onBindViewHolder(@NonNull notificationHolder holder, final int position, @NonNull final notification model) {
+
+        holder.notitime.setText(model.getTime());
+        holder.Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteItem(position);
+            }
+        });
+        holder.notidesc.setText(model.getText());
     //    DocumentReference documentReference = db.
 //        Glide
 //                .with(mContext)
@@ -63,13 +71,17 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
 
     class notificationHolder extends RecyclerView.ViewHolder {
         TextView notidesc,notitime;
-
+        MaterialButton Delete;
         ImageView img;
         public notificationHolder(View itemView) {
             super(itemView);
+            Delete=itemView.findViewById(R.id.delete);
             notidesc = itemView.findViewById(R.id.notidesc);
             notitime = itemView.findViewById(R.id.notitime);
             img =itemView.findViewById(R.id.profiledisplay);
         }
+    }
+    public void deleteItem(int position) {
+        getSnapshots().getSnapshot(position).getReference().delete();
     }
 }

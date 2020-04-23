@@ -136,7 +136,7 @@ public class CommentActivity extends AppCompatActivity {
         noti.setDocument(Document);
         noti.setUserid(Userid);
         noti.setTime(date);
-        noti.setText(user_name + "Comment On Your Post");
+        noti.setText(user_name + " Comment On Your Post");
         CollectionReference  notiref= db.collection("Users").document(Userid).collection("notify");
         notiref.add(noti);
         Toast.makeText(CommentActivity.this, "Note Added Successfully", Toast.LENGTH_LONG).show();

@@ -1,42 +1,34 @@
 package com.aputech.dora.Model;
 
 
+import com.google.firebase.firestore.GeoPoint;
+
 public class message {
     private String description;
     private String imageUrl;
     private int type;
     private String userid;
     private String uptime;
-    private String lat;
-    private String lng;
+    private GeoPoint location;
     public message() {
         //empty constructor needed
     }
 
-    public message(String description, String imageUrl, int type, String userid, String uptime, String lat, String lng) {
+    public message(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location) {
         this.description = description;
         this.imageUrl = imageUrl;
         this.type = type;
         this.userid = userid;
         this.uptime = uptime;
-        this.lat = lat;
-        this.lng = lng;
+        this.location = location;
     }
 
-    public String getLat() {
-        return lat;
+    public GeoPoint getLocation() {
+        return location;
     }
 
-    public void setLat(String lat) {
-        this.lat = lat;
-    }
-
-    public String getLng() {
-        return lng;
-    }
-
-    public void setLng(String lng) {
-        this.lng = lng;
+    public void setLocation(GeoPoint location) {
+        this.location = location;
     }
 
     public String getDescription() {

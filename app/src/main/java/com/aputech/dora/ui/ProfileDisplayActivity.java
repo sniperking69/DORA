@@ -48,8 +48,9 @@ public class ProfileDisplayActivity extends AppCompatActivity {
   private Boolean follower;
     private MaterialButton settings;
     private CircleImageView profileimg;
-    private TextView following,posts,followers,name;
+    private TextView following,posts,followers,name,bio;
     private ImageView level;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +65,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
        settings= findViewById(R.id.followandset);
-
+       bio = findViewById(R.id.bio);
         final RelativeLayout layout= findViewById(R.id.topdisp);
         final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
@@ -136,44 +137,48 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                         }
                     }
                 });
+                bio.setText(user.getBio());
                 name.setText(user.getUserName());
                 Glide
                         .with(getApplicationContext())
                         .load(user.getProfileUrl())
                         .into(profileimg);
-                if (user.getFollowers() !=null){
-                    follower=user.getFollowers().contains(auth.getUid());
-                    if(follower){
-                        settings.setText("unFollow");
-                    }else{
-                        settings.setText("follow");
+                if (user.getFollowers()!=null){
+                    if (user.getFollowers().contains(auth.getUid())){
+                        settings.setText("UNFOLLOW");
                     }
-                    settings.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                        }
-                    });
-
-                }else{
-                    settings.setText("follow");
-                    settings.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            settings.setText("unfollow");
-                        }
-                    });
                 }
+                settings.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (user.getFollowers()!=null){
+                            if (user.getFollowers().contains(auth.getUid())){
+                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+                                DocumentReference documentReference= db.collection("Users").document(user.getUserid());
+                                documentReference.update("followers", FieldValue.arrayRemove(auth.getUid()));
+                                documentRef.update("following", FieldValue.arrayRemove(user.getUserid()));
+                                settings.setText("FOLLOW");
+                            }else{
+                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+                                DocumentReference documentReference= db.collection("Users").document(user.getUserid());
+                                documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
+                                documentRef.update("following", FieldValue.arrayUnion(user.getUserid()));
+                                settings.setText("UNFOLLOW");
+                            }
+                        }else{
+                            DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+                            DocumentReference documentReference= db.collection("Users").document(user.getUserid());
+                            documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
+                            documentRef.update("following", FieldValue.arrayUnion(user.getUserid()));
+                        }
 
+                    }
+                });
             }
 
 
         });
 
-    }
-    private void followbutton(){
-
-        //follow function
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.aputech.dora.Model.Comment;
 import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -57,6 +58,7 @@ public class Post extends AppCompatActivity {
     MaterialButton camera,gallery,audio;
     boolean addaudio,addimage,addedvideo;
     private LatLng latLng;
+    int activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,8 @@ public class Post extends AppCompatActivity {
         editText=findViewById(R.id.para);
         imageView = findViewById(R.id.dispimg);
         audio = findViewById(R.id.Audio);
+        Intent intent= getIntent();
+        activity= intent.getIntExtra("activity",0);
         gallery=findViewById(R.id.Gallery);
         camera =findViewById(R.id.Camera);
         audio.setOnClickListener(new View.OnClickListener() {
@@ -112,31 +116,48 @@ public class Post extends AppCompatActivity {
         }
     }
     private void uploadFire(){
-        String text= editText.getText().toString();
-        final Note post = new Note();
-        post.setDescription(text);
-        post.setType(1);
-        GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
-        Log.d("bigpp", "uploadFire: "+geoPoint);
-        post.setLocation(geoPoint);
-        ArrayList<String> emp=new ArrayList<String>();
-        post.setUpvote(emp);
-        post.setDownvote(emp);
-        post.setUserid(auth.getUid());
-        final DocumentReference DR= db.collection("Users").document(auth.getUid());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
-        final String date =dateFormat.format(Calendar.getInstance().getTime());
-        notebookRef.add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                post.setRefComments(documentReference);
-                post.setUptime(date);
-                documentReference.set(post);
-                DR.update("posts", FieldValue.arrayUnion(documentReference.getId()));
+        if (activity==1){
+            String text= editText.getText().toString();
+            final Note post = new Note();
+            post.setDescription(text);
+            post.setType(1);
+            GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
+            Log.d("bigpp", "uploadFire: "+geoPoint);
+            post.setLocation(geoPoint);
+            ArrayList<String> emp=new ArrayList<String>();
+            post.setUpvote(emp);
+            post.setDownvote(emp);
+            post.setUserid(auth.getUid());
+            final DocumentReference DR= db.collection("Users").document(auth.getUid());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
+            final String date =dateFormat.format(Calendar.getInstance().getTime());
+            notebookRef.add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    post.setRefComments(documentReference);
+                    post.setUptime(date);
+                    documentReference.set(post);
+                    DR.update("posts", FieldValue.arrayUnion(documentReference.getId()));
 
-            }
-        });
-        Toast.makeText(Post.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
-        finish();
+                }
+            });
+            Toast.makeText(Post.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
+            finish();
+
+
+        }
+        if (activity==2){
+            finish();
+//                CollectionReference collectionReference = db.collection("Users").document(auth.getUid()).collection("sent");
+//                message mms= new message();
+//                mms.setType(1);
+//                mms.setUptime("hehoa");
+//                mms.setUserid(auth.getUid());
+//                GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
+//                mms.setLocation(geoPoint);
+//                collectionReference.add(mms);
+
+        }
+
     }
 }
