@@ -16,6 +16,7 @@ import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.ProfileDisplayActivity;
+import com.aputech.dora.ui.ProfileSettings;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -49,6 +50,12 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
                     intent.putExtra("user_id",model.getUserid());
+                    if (model.getUserid().equals(auth.getUid())){
+                        intent.putExtra("act",0);
+                    }else{
+                        intent.putExtra("act",1);
+                    }
+
                     mContext.startActivity(intent);
                 }
             });
@@ -57,33 +64,46 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                     holder.followbutton.setText("UNFOLLOW");
                 }
             }
+            if (model.getUserid().equals(auth.getUid())){
+                holder.followbutton.setText("Settings");
+                holder.followbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, ProfileSettings.class);
+                        mContext.startActivity(intent);
+                    }
+                });
 
-            holder.followbutton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (model.getFollowers()!=null){
-                        if (model.getFollowers().contains(auth.getUid())){
-                            DocumentReference documentRef= db.collection("Users").document(auth.getUid());
-                            DocumentReference documentReference= db.collection("Users").document(model.getUserid());
-                            documentReference.update("followers", FieldValue.arrayRemove(auth.getUid()));
-                            documentRef.update("following", FieldValue.arrayRemove(model.getUserid()));
-                            holder.followbutton.setText("FOLLOW");
+            }else{
+                holder.followbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (model.getFollowers()!=null){
+                            if (model.getFollowers().contains(auth.getUid())){
+                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+                                DocumentReference documentReference= db.collection("Users").document(model.getUserid());
+                                documentReference.update("followers", FieldValue.arrayRemove(auth.getUid()));
+                                documentRef.update("following", FieldValue.arrayRemove(model.getUserid()));
+                                holder.followbutton.setText("FOLLOW");
+                            }else{
+                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+                                DocumentReference documentReference= db.collection("Users").document(model.getUserid());
+                                documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
+                                documentRef.update("following", FieldValue.arrayUnion(model.getUserid()));
+                                holder.followbutton.setText("UNFOLLOW");
+                            }
                         }else{
                             DocumentReference documentRef= db.collection("Users").document(auth.getUid());
                             DocumentReference documentReference= db.collection("Users").document(model.getUserid());
                             documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
                             documentRef.update("following", FieldValue.arrayUnion(model.getUserid()));
-                            holder.followbutton.setText("UNFOLLOW");
                         }
-                    }else{
-                        DocumentReference documentRef= db.collection("Users").document(auth.getUid());
-                        DocumentReference documentReference= db.collection("Users").document(model.getUserid());
-                        documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
-                        documentRef.update("following", FieldValue.arrayUnion(model.getUserid()));
-                    }
 
-                }
-            });
+                    }
+                });
+
+            }
+
 
     }
 

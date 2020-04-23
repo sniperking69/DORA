@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -48,15 +49,27 @@ public class home extends Fragment {
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_h, container, false);
         Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
-
+        final RelativeLayout relativeLayout= root.findViewById(R.id.noresult);
         FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
                 .setQuery(query, Note.class)
                 .build();
+
         adapter = new HomeAdapter(options,getActivity());
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                int totalNumberOfItems = adapter.getItemCount();
+                if(totalNumberOfItems > 0) {
+
+                    relativeLayout.setVisibility(View.INVISIBLE);
+                }else{
+                   relativeLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         return root;
     }
 

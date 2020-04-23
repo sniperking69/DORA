@@ -67,7 +67,6 @@ public class SplashActivity extends AppCompatActivity {
                             .setTheme(R.style.RegTheme)
                             .setLogo(R.drawable.ic_launcher_round)
                             .setIsSmartLockEnabled(false)
-
                             .setAvailableProviders(Arrays.asList(
                                     new AuthUI.IdpConfig.GoogleBuilder().build(),
                                     new AuthUI.IdpConfig.PhoneBuilder().build()))

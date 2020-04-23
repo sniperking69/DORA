@@ -39,6 +39,7 @@
         </RelativeLayout>
 
     </RelativeLayout>
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:layout_width="match_parent"
@@ -113,7 +114,6 @@ android:layout_above="@+id/bottomlinear"
     </LinearLayout>
     <LinearLayout
         android:id="@+id/bottomlinear"
-
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:elevation="10dp"
@@ -121,69 +121,101 @@ android:layout_above="@+id/bottomlinear"
         android:orientation="horizontal"
         android:weightSum="5"
         android:layout_alignParentBottom="true">
+<RelativeLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:clickable="true"
+    android:focusable="true">
+    <ImageView
+        android:id="@+id/highhome"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/highlight"/>
+    <ImageView
+        android:id="@+id/Home"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_home" />
 
-        <ImageView
-            android:id="@+id/Home"
+</RelativeLayout>
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            android:src="@drawable/ic_home" />
+    >
+            <ImageView
+                android:id="@+id/hightrending"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/highlight"/>
+            <ImageView
+                android:id="@+id/Trending"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_trending"/>
+
+        </RelativeLayout>
+
+
 
         <ImageView
-            android:id="@+id/Trending"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            android:src="@drawable/ic_trending" />
-
-        <ImageView
-            android:src="@drawable/ic_post"
-            android:padding="10dp"
             android:visibility="invisible"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@drawable/newbutton"
             android:layout_weight="1" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/highnoti"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/highlight"/>
+            <ImageView
+                android:id="@+id/Notify"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_reminder"
+                android:clickable="true"
+                android:focusable="true"/>
 
-        <ImageView
-            android:id="@+id/Notify"
+        </RelativeLayout>
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            android:src="@drawable/ic_reminder" />
+            android:focusable="true">
+            <ImageView
+                android:id="@+id/highprofile"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/highlight"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/toolbar_profile_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:focusable="true" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/toolbar_profile_image"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:padding="5dp"
-            android:focusable="true" />
+        </RelativeLayout>
+
     </LinearLayout>
-
-
-
-    <!--    <navH-->
-<!--        android:id="@+id/nav_host_fragment"-->
-<!--      android:class="androidx.navigation.fragment.NavHostFragment"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0dp"-->
-<!--        app:defaultNavHost="true"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/nav_view"-->
-<!--        app:layout_constraintLeft_toLeftOf="parent"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"-->
-<!--        app:navGraph="@navigation/bottom_navigation" />-->
 
 
 </RelativeLayout>

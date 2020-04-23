@@ -32,7 +32,27 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
+    <RelativeLayout
+        android:id="@+id/noresult"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/s"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_locationsad"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:tint="@android:color/darker_gray"/>
+        <TextView
 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/s"
+            android:text="You Are Not Following Anyone" />
+    </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

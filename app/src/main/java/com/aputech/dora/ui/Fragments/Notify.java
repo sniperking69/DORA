@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.aputech.dora.Adpater.NotiAdapter;
 import com.aputech.dora.Model.Note;
@@ -102,6 +103,18 @@ public class Notify extends Fragment {
                 adapter.deleteItem(viewHolder.getAdapterPosition());
             }
         }).attachToRecyclerView(recyclerView);
+        final RelativeLayout relativeLayout= root.findViewById(R.id.noresult);
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                int totalNumberOfItems = adapter.getItemCount();
+                if(totalNumberOfItems > 0) {
+
+                    relativeLayout.setVisibility(View.INVISIBLE);
+                }else{
+                    relativeLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         return root;
     }
     @Override

@@ -6,133 +6,141 @@
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:elevation="10dp"
     android:id="@+id/topdisp">
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/profiledisplay"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
+
         android:src="@drawable/ic_ram_profile"/>
-    <ImageView
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/editimage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:fabSize="mini"
         android:layout_alignBottom="@+id/profiledisplay"
         android:layout_alignEnd="@+id/profiledisplay"
         android:src="@android:drawable/ic_menu_upload" />
     <LinearLayout
-        android:id="@+id/nametop"
+        android:id="@+id/topinfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
         android:gravity="center"
+        android:orientation="vertical"
         android:layout_marginTop="10dp"
-        android:layout_toEndOf="@+id/profiledisplay"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/nametitle"
-            android:layout_width="wrap_content"
-            android:text="Mr Wilson"
-            android:gravity="center"
-            android:layout_toEndOf="@+id/profiledisplay"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:layout_height="wrap_content"/>
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="24dp"
-            android:id="@+id/level"
-            android:layout_height="24dp"
-            app:srcCompat="@drawable/ic_grade"/>
-    </LinearLayout>
-
-
-        <RelativeLayout
-        android:id="@+id/usernumbers"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/nametop"
-            android:layout_marginEnd="5dp"
-            android:layout_toEndOf="@+id/profiledisplay"
-        android:layout_height="wrap_content">
+        android:layout_toEndOf="@+id/profiledisplay">
         <LinearLayout
+            android:id="@+id/nametop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="3"
-            android:id="@+id/num"
+            android:gravity="center"
             android:orientation="horizontal">
             <TextView
-                android:id="@+id/numPosts"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/nametitle"
+                android:layout_width="wrap_content"
+                android:text="Mr Wilson"
                 android:gravity="center"
-                android:layout_weight="1"
-                android:text="135"
-                android:textColor="@color/design_default_color_on_secondary"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/numFoly"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:text="345"
-                android:textColor="@color/design_default_color_on_secondary"
-                android:textStyle="bold"  />
-
-            <TextView
-                android:id="@+id/numFolo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:text="200"
-                android:textColor="@color/design_default_color_on_secondary"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:layout_height="wrap_content"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="24dp"
+                android:id="@+id/level"
+                android:layout_marginStart="4dp"
+                android:layout_height="24dp"
+                app:srcCompat="@drawable/ic_grade"/>
         </LinearLayout>
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:orientation="horizontal"
-       android:layout_below="@+id/num"
-       android:weightSum="3">
-       <TextView
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:gravity="center"
-           android:text="posts"
-           android:textColor="@color/design_default_color_on_secondary" />
-       <TextView
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:gravity="center"
-           android:text="following"
-           android:textColor="@color/design_default_color_on_secondary" />
-       <TextView
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:gravity="center"
-           android:text="followers"
-           android:textColor="@color/design_default_color_on_secondary" />
+        <RelativeLayout
+            android:id="@+id/usernumbers"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3"
+                android:id="@+id/num"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/numPosts"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="135"
+                    android:textColor="@color/design_default_color_on_secondary"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/numFoly"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="345"
+                    android:textColor="@color/design_default_color_on_secondary"
+                    android:textStyle="bold"  />
 
-   </LinearLayout>
+                <TextView
+                    android:id="@+id/numFolo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="200"
+                    android:textColor="@color/design_default_color_on_secondary"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/num"
+                android:weightSum="3">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="posts"
+                    android:textColor="@color/design_default_color_on_secondary" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="following"
+                    android:textColor="@color/design_default_color_on_secondary" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="followers"
+                    android:textColor="@color/design_default_color_on_secondary" />
 
-    </RelativeLayout>
+            </LinearLayout>
 
-
+        </RelativeLayout>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/followandset"
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:iconSize="24dp"
-            android:layout_below="@+id/usernumbers"
-            android:layout_toEndOf="@+id/profiledisplay"
-            android:layout_marginEnd="5dp"
-            android:layout_alignParentEnd="true"
             android:text="Follow"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+
+    </LinearLayout>
+
+
+
+
+
 
 
 
@@ -143,8 +151,17 @@
         android:text="My Hero Academia (Japanese: 僕のヒーローアカデミア, Hepburn: Boku no Hīrō Akademia) is a Japanese superhero manga series ..more"
             android:layout_margin="5dp"
         android:textColor="@color/design_default_color_on_secondary"
-            android:layout_below="@+id/followandset"/>
-
+            android:layout_below="@+id/topinfo"/>
+<!--<ImageView-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="1dp"-->
+<!--    android:src="@android:color/darker_gray"-->
+<!--    android:layout_below="@id/bio"/>-->
+<!--    <ImageView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="1dp"-->
+<!--        android:src="@android:color/darker_gray"-->
+<!--        android:layout_above="@id/bio"/>-->
 </RelativeLayout>
 
 </RelativeLayout>

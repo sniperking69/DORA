@@ -90,6 +90,7 @@ public class HActivity extends AppCompatActivity {
         TextView searchtext = (TextView) searchView.findViewById (androidx.appcompat.R.id.search_src_text);
         searchtext.setTextColor(Color.parseColor("#ffffff"));
         searchSubmit.setColorFilter (Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_ATOP);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -121,7 +122,10 @@ public class HActivity extends AppCompatActivity {
                 return false;
             }
         });
-
+        final ImageView highhome= findViewById(R.id.highhome);
+        final ImageView highprofile= findViewById(R.id.highprofile);
+        final ImageView hightrending= findViewById(R.id.hightrending);
+        final ImageView highnoti= findViewById(R.id.highnoti);
         Notification = findViewById(R.id.Notify);
         searchlayout= findViewById(R.id.search_list);
         Trending= findViewById(R.id.Trending);
@@ -139,11 +143,23 @@ public class HActivity extends AppCompatActivity {
         transaction.replace(R.id.nav_host_fragment, newFragment);
         transaction.commit();
         page=2;
+        hightrending.setVisibility(View.VISIBLE);
+
         Notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (page != 3) {
+                    if (page==1){
+                        highhome.setVisibility(View.INVISIBLE);
+                    }if (page==2){
+                     hightrending.setVisibility(View.INVISIBLE);
+                    }
+                    if (page==4){
+                        highprofile.setVisibility(View.INVISIBLE);
+                    }
+
                     page=3;
+                    highnoti.setVisibility(View.VISIBLE);
                     Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
                     Notification.startAnimation(animation);
                     Fragment newFragment;
@@ -151,6 +167,7 @@ public class HActivity extends AppCompatActivity {
                     newFragment = new Notify();
                     transaction.replace(R.id.nav_host_fragment, newFragment);
                     transaction.commit();
+
                 }
             }
         });
@@ -158,7 +175,16 @@ public class HActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (page != 2) {
+                    if (page==1){
+                        highhome.setVisibility(View.INVISIBLE);
+                    }if (page==3){
+                        highnoti.setVisibility(View.INVISIBLE);
+                    }
+                    if (page==4){
+                        highprofile.setVisibility(View.INVISIBLE);
+                    }
                     page=2;
+                    hightrending.setVisibility(View.VISIBLE);
                     Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
                     Trending.startAnimation(animation);
                     Fragment newFragment;
@@ -173,7 +199,16 @@ public class HActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (page!=1){
-                    page=1;
+                    if (page==2){
+                        hightrending.setVisibility(View.INVISIBLE);
+                    }if (page==3){
+                        highnoti.setVisibility(View.INVISIBLE);
+                    }
+                    if (page==4) {
+                        highprofile.setVisibility(View.INVISIBLE);
+                    }
+                        page=1;
+                    highhome.setVisibility(View.VISIBLE);
                     Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
                     Home.startAnimation(animation);
                     Fragment newFragment;
@@ -197,7 +232,16 @@ public class HActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (page!=4) {
+                    if (page==2){
+                        hightrending.setVisibility(View.INVISIBLE);
+                    }if (page==3){
+                        highnoti.setVisibility(View.INVISIBLE);
+                    }
+                    if (page==1) {
+                        highhome.setVisibility(View.INVISIBLE);
+                    }
                     page=4;
+                    highprofile.setVisibility(View.VISIBLE);
                     Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
                     profileImage.startAnimation(animation);
                     Fragment newFragment;

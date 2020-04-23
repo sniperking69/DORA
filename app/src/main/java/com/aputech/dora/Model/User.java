@@ -11,7 +11,6 @@ public class User {
     private String Bio;
     private String EmailAdress;
     private String Gender;
-    private int postnum;
     private ArrayList<String> followers;
     private ArrayList<String> following;
     private ArrayList<String> posts;

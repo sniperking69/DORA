@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aputech.dora.Adpater.HomeAdapter;
@@ -114,24 +115,42 @@ public class Profile extends Fragment {
         following =root.findViewById(R.id.numFoly);
         posts =root.findViewById(R.id.numPosts);
         level=root.findViewById(R.id.level);
-
+        final RelativeLayout relativeLayout= root.findViewById(R.id.noresult);
         name= root.findViewById(R.id.nametitle);
         profileimg= root.findViewById(R.id.profiledisplay);
         userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 user = documentSnapshot.toObject(User.class);
-                Query profilequery= notebookRef.whereIn(FieldPath.documentId(),user.getPosts()).orderBy("priority", Query.Direction.DESCENDING);
+                if (user.getPosts() !=null){
+                    Query profilequery= notebookRef.whereIn(FieldPath.documentId(),user.getPosts()).orderBy("priority", Query.Direction.DESCENDING);
 
-                FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                        .setQuery(profilequery, Note.class)
-                        .build();
-                adapter = new HomeAdapter(options,getActivity());
+                    FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
+                            .setQuery(profilequery, Note.class)
+                            .build();
+                    adapter = new HomeAdapter(options,getActivity());
 
-                recyclerView.setAdapter(adapter);
-                adapter.startListening();
+                    recyclerView.setAdapter(adapter);
+                    adapter.startListening();
+                    adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                        public void onItemRangeInserted(int positionStart, int itemCount) {
+                            int totalNumberOfItems = adapter.getItemCount();
+                            if(totalNumberOfItems > 0) {
+
+                                relativeLayout.setVisibility(View.INVISIBLE);
+                            }else{
+                                relativeLayout.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    });
+                    posts.setText(String.valueOf(user.getPosts().size()));
+                }else{
+                    posts.setText("0");
+                }
+
                 bio.setText(user.getBio());
-                posts.setText(String.valueOf(user.getPosts().size()));
+
+
                 if (user.getFollowers()!=null){
                     followers.setText(String.valueOf(user.getFollowers().size()));
                 }else{
@@ -177,13 +196,8 @@ public class Profile extends Fragment {
 
             }
         });
-//        final TextView textView = root.findViewById(R.id.section_label);
-//        pageViewModel.getText().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
+
+
         return root;
     }
     @Override
