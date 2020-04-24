@@ -44,8 +44,24 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull final NoteHolder holder, int position, @NonNull final Note model) {
+    protected void onBindViewHolder(@NonNull final NoteHolder holder, final int position, @NonNull final Note model) {
         holder.down.setText(String.valueOf(model.getDownnum()));
+        if (model.getUserid().equals(auth.getUid())){
+            holder.delete.setVisibility(View.VISIBLE);
+            holder.delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteItem(position);
+                }
+            });
+            holder.edit.setVisibility(View.VISIBLE);
+            holder.edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
         if (model.getLocation()!=null){
             holder.LocationIcon.setImageResource(R.drawable.ic_locationhappy);
             holder.LocationIcon.setOnClickListener(new View.OnClickListener() {
@@ -61,18 +77,8 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             holder.LocationIcon.setImageResource(R.drawable.ic_locationsad);
 
         }
-
-        //holder.commet.setText(String.valueOf(notebookRef.collection("comments").get().getResult().size()));
         holder.up.setText(String.valueOf(model.getUpnum()));
-//        if (model.getUpvote() !=null && model.getUpvote() !=null){
-//            if (model.getUpvote().contains(auth.getUid())){
-//               // holder.upicon.setImageResource(R.drawable.upvote_on);
-//            }
-//            if (model.getDownvote().contains(auth.getUid())){
-//             //   holder.downicon.setImageResource(R.drawable.downvote_on);
-//            }
-//
-//        }
+
         holder.profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +135,8 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
                                 Intent intent =new Intent(mContext, CommentActivity.class);
                                 intent.putExtra("coll",model.getRefComments().getParent().getPath());
                                 intent.putExtra("doc",model.getRefComments().getId());
-                                intent.putExtra("help",model);
+                                intent.putExtra("post",model);
+                                intent.putExtra("user",user);
                                 mContext.startActivity(intent);
                             }
                         });
@@ -150,37 +157,30 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
 
         }
 
-
-
         holder.up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 boolean ifdown= model.getDownvote().contains(auth.getUid());
                 boolean ifup= model.getUpvote().contains(auth.getUid());
-                float up =model.getUpnum();
-                float down=model.getDownnum();
-                DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
                 if (!ifup && !ifdown){
-                    documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
-                    documentReference.update("upnum", model.getUpnum()+1);
-                    up=up + 1;
+                    getSnapshots().getSnapshot(position).getReference().update("upvote", FieldValue.arrayUnion(auth.getUid()));
+                    getSnapshots().getSnapshot(position).getReference().update("upnum", model.getUpnum()+1);
+                    updatePriority(position,model.getUpnum()+1,model.getDownnum(),model.getCommentnum());
 
                 }
                 if (ifup && !ifdown){
-                    documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
-                    documentReference.update("upnum", model.getUpnum()-1);
-                    up=up - 1;
-                }if(!ifup && ifdown){
-                    documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
-                    documentReference.update("downnum", model.getDownnum()-1);
-                    down =down - 1;
-                    documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
-                    documentReference.update("upnum", model.getUpnum()+1);
-                    up=up + 1;
-
+                    getSnapshots().getSnapshot(position).getReference().update("upvote", FieldValue.arrayRemove(auth.getUid()));
+                    getSnapshots().getSnapshot(position).getReference().update("upnum", model.getUpnum()-1);
+                    updatePriority(position,model.getUpnum()-1,model.getDownnum(),model.getCommentnum());
                 }
-               documentReference.update("priority",up*0.4+down*0.2+model.getCommentnum()*0.4);
-
+                if(!ifup && ifdown){
+                    getSnapshots().getSnapshot(position).getReference().update("downvote", FieldValue.arrayRemove(auth.getUid()));
+                    getSnapshots().getSnapshot(position).getReference().update("downnum", model.getDownnum()-1);
+                    getSnapshots().getSnapshot(position).getReference().update("upvote", FieldValue.arrayUnion(auth.getUid()));
+                    getSnapshots().getSnapshot(position).getReference().update("upnum", model.getUpnum()+1);
+                    updatePriority(position,model.getUpnum()+1,model.getDownnum()-1,model.getCommentnum());
+                }
             }
         });
         holder.down.setOnClickListener(new View.OnClickListener() {
@@ -188,27 +188,23 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             public void onClick(View v) {
                 boolean ifdown= model.getDownvote().contains(auth.getUid());
                 boolean ifup= model.getUpvote().contains(auth.getUid());
-                float upi =model.getUpnum();
-                float downi=model.getDownnum();
-                DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
                 if (!ifup && !ifdown){
-                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
-                    documentReference.update("downnum", model.getDownnum()+1);
-                    downi =downi+1;
+                    getSnapshots().getSnapshot(position).getReference().update("downvote", FieldValue.arrayUnion(auth.getUid()));
+                    getSnapshots().getSnapshot(position).getReference().update("downnum", model.getDownnum()+1);
+                    updatePriority(position,model.getUpnum(),model.getDownnum()+1,model.getCommentnum());
                 }
                 if (ifdown && !ifup){
-                    documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
-                    documentReference.update("downnum", model.getDownnum()-1);
-                    downi =downi-1;
+                    getSnapshots().getSnapshot(position).getReference().update("downvote", FieldValue.arrayRemove(auth.getUid()));
+                    getSnapshots().getSnapshot(position).getReference().update("downnum", model.getDownnum()-1);
+                    updatePriority(position,model.getUpnum(),model.getDownnum()-1,model.getCommentnum());
                 }if(!ifdown && ifup){
-                    documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
-                    documentReference.update("upnum", model.getUpnum()-1);
-                    upi=upi+1;
-                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
-                    documentReference.update("downnum", model.getDownnum()+1);
-                    downi= downi+1;
+                    getSnapshots().getSnapshot(position).getReference().update("upvote", FieldValue.arrayRemove(auth.getUid()));
+                    getSnapshots().getSnapshot(position).getReference().update("upnum", model.getUpnum()-1);
+                    getSnapshots().getSnapshot(position).getReference().update("downvote", FieldValue.arrayUnion(auth.getUid()));
+                    getSnapshots().getSnapshot(position).getReference().update("downnum", model.getDownnum()+1);
+                    updatePriority(position,model.getUpnum()-1,model.getDownnum()+1,model.getCommentnum());
                 }
-                documentReference.update("priority",upi*0.4+downi*0.2+model.getCommentnum()*0.4);
+
             }
         });
     }
@@ -235,6 +231,8 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             super(itemView);
             up= itemView.findViewById(R.id.upbutton);
             down= itemView.findViewById(R.id.downbutton);
+            edit =itemView.findViewById(R.id.edit);
+            delete = itemView.findViewById(R.id.delete);
             user_name = itemView.findViewById(R.id.user_name);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
             time = itemView.findViewById(R.id.time);
@@ -245,5 +243,11 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             Commentbutton= itemView.findViewById(R.id.comment);
         }
     }
+    private void deleteItem(int position) {
+        getSnapshots().getSnapshot(position).getReference().delete();
+    }
+    private void updatePriority(int position,int up,int down,int commentnum){
+        getSnapshots().getSnapshot(position).getReference().update("priority",up*0.4+down*0.2+commentnum*0.4);
 
+    }
 }

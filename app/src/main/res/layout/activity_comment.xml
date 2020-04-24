@@ -13,8 +13,6 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-
                 <include
                     android:id="@+id/otherstuff" layout="@layout/post_detail"/>
 
@@ -32,7 +30,28 @@
         </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>
+                <RelativeLayout
+                    android:id="@+id/noresult"
+                    android:layout_below="@id/otherstuff"
+                    android:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                        <ImageView
+                            android:id="@+id/s"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_negative_comment"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:tint="@android:color/darker_gray"/>
+                        <TextView
 
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_below="@+id/s"
+                            android:text="Be the First one to Drop a Comment" />
+                </RelativeLayout>
         </RelativeLayout>
         </androidx.core.widget.NestedScrollView>
         <LinearLayout

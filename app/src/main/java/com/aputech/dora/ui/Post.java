@@ -107,6 +107,7 @@ public class Post extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap);
+            imageView.setVisibility(View.VISIBLE);
         }
         if (requestCode ==REQUEST_LOCATION){
             Bundle extras = data.getExtras();

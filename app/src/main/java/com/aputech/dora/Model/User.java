@@ -1,10 +1,13 @@
 package com.aputech.dora.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.aputech.dora.ui.Post;
 
 import java.util.ArrayList;
 
-public class User {
+public class User implements Parcelable {
 
     private String UserName;
 
@@ -39,6 +42,33 @@ public class User {
     //Optional
     private String facebookId;
     private String instaId;
+
+    protected User(Parcel in) {
+        UserName = in.readString();
+        Bio = in.readString();
+        EmailAdress = in.readString();
+        Gender = in.readString();
+        followers = in.createStringArrayList();
+        following = in.createStringArrayList();
+        posts = in.createStringArrayList();
+        Userlevel = in.readInt();
+        userid = in.readString();
+        ProfileUrl = in.readString();
+        facebookId = in.readString();
+        instaId = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getUserid() {
         return userid;
@@ -134,5 +164,26 @@ public class User {
 
     public void setUserlevel(int userlevel) {
         Userlevel = userlevel;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(UserName);
+        dest.writeString(Bio);
+        dest.writeString(EmailAdress);
+        dest.writeString(Gender);
+        dest.writeStringList(followers);
+        dest.writeStringList(following);
+        dest.writeStringList(posts);
+        dest.writeInt(Userlevel);
+        dest.writeString(userid);
+        dest.writeString(ProfileUrl);
+        dest.writeString(facebookId);
+        dest.writeString(instaId);
     }
 }

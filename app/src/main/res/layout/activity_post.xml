@@ -6,6 +6,92 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.Post">
+    <RelativeLayout
+        android:id="@+id/rellay1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/poster_profile"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+
+            android:src="@drawable/ic_ram_profile" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+
+            android:layout_toEndOf="@+id/poster_profile"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Karun Shrestha"
+                    android:textColor="@android:color/black"
+                    android:textSize="17sp" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:id="@+id/level"
+                    android:layout_height="24dp"
+                    app:srcCompat="@drawable/ic_grade"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="11 hrs"
+                android:textColor="@android:color/black"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_below="@+id/rellay1"
+            android:weightSum="5"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <EditText
+                android:id="@+id/para"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_margin="10dp"
+                android:hint="Drop A Post..."
+                android:background="@null"
+                android:maxLength="250"
+                android:inputType="textShortMessage"/>
+            <ImageView
+                android:id="@+id/dispimg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:background="@android:color/holo_red_dark"/>
+
+        </LinearLayout>
+
+
+
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_add_msg"
         android:onClick="Done"
@@ -14,37 +100,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_done" />
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="50dp"
-        android:layout_margin="10dp"
-        android:layout_height="50dp"
-        android:id="@+id/profiledisplay"
-        android:src="@drawable/ic_ram_profile"/>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_below="@+id/profiledisplay"
-    android:orientation="vertical">
-
-
-
-
-    <EditText
-        android:id="@+id/para"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:ems="10"
-        android:gravity="top"
-        android:hint="hellow"
-        android:background="@null"
-        android:inputType="textPersonName"/>
-
-<ImageView
-    android:id="@+id/dispimg"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
-</LinearLayout>
+        android:src="@drawable/ic_next" />
     <LinearLayout
         android:id="@+id/bottomlinear"
         android:layout_width="match_parent"
@@ -58,21 +114,25 @@
             android:id="@+id/Camera"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:iconSize="24dp"
+            android:layout_height="match_parent"
+            app:iconSize="40dp"
             app:iconGravity="textEnd"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-            app:icon="@android:drawable/ic_menu_camera" />
+            app:iconTintMode="add"
+            app:iconTint="@null"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:icon="@drawable/ic_camera" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/Gallery"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:iconSize="24dp"
+            app:iconSize="40dp"
+            app:iconTintMode="add"
+            app:iconTint="@null"
             app:iconGravity="textEnd"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-            app:icon="@android:drawable/ic_menu_gallery" />
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:icon="@drawable/ic_attach" />
 
 
 
@@ -81,9 +141,11 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:iconSize="24dp"
+            app:iconSize="40dp"
+            app:iconTintMode="add"
+            app:iconTint="@null"
             app:iconGravity="textEnd"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-            app:icon="@android:drawable/presence_audio_busy" />
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:icon="@drawable/ic_voice_recorder" />
     </LinearLayout>
 </RelativeLayout>

@@ -9,13 +9,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aputech.dora.Adpater.CommentAdapter;
 import com.aputech.dora.Model.Comment;
 import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
@@ -39,23 +44,61 @@ public class CommentActivity extends AppCompatActivity {
     private CommentAdapter adapter;
     MaterialButton up,down;
     private EditText editText;
+    RelativeLayout noresult;
     String Document;
     String Userid,user_name;
     int Commentnum;
     private String collection;
+    private TextView postText,userName,post_time;
+    ImageView locate,ProfileImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
        editText = findViewById(R.id.commenttext);
+       noresult= findViewById(R.id.noresult);
+       userName = findViewById(R.id.user_name);
+       post_time= findViewById(R.id.time);
+       locate =findViewById(R.id.locate);
+       postText = findViewById(R.id.text_view_description);
+       ProfileImg = findViewById(R.id.poster_profile);
         Intent intent= getIntent();
       collection = intent.getStringExtra("coll");
          Document=intent.getStringExtra("doc");
-         Userid= intent.getStringExtra("user_id");
-         user_name = intent.getStringExtra("user_name");
-         Note help= intent.getParcelableExtra("help");
-        Log.d("bigpp", "onCreate: "+help);
+         Note note= intent.getParcelableExtra("post");
+         User user = intent.getParcelableExtra("user");
+         int Type = note.getType();
+        postText.setText(note.getDescription());
+        userName.setText(user.getUserName());
+        post_time.setText(note.getUptime());
+        Glide
+                .with(CommentActivity.this)
+                .load(user.getProfileUrl())
+                .into(ProfileImg);
+        if (note.getLocation()!=null){
+            locate.setImageResource(R.drawable.ic_locationhappy);
+            locate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent1= new Intent(CommentActivity.this,DispPostLocation.class);
+                    startActivity(intent1);
+                }
+            });
+
+        }else{
+            locate.setImageResource(R.drawable.ic_locationsad);
+        }
+         if (Type==1){
+
+
+
+
+         }if (Type==2){
+
+
+        }
+
         notebookRef = db.collection(collection).document(Document).collection("comments");
         Query query = notebookRef.orderBy("priority", Query.Direction.ASCENDING);
 
@@ -68,10 +111,9 @@ public class CommentActivity extends AppCompatActivity {
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 int totalNumberOfItems = adapter.getItemCount();
                 if(totalNumberOfItems > 0) {
-
-                    Log.d("bigpp", "onItemRangeInserted: "+ totalNumberOfItems);
+                    noresult.setVisibility(View.GONE);
                 }else{
-                    Log.d("bigpp", "onItemRangeInserted: "+ totalNumberOfItems);
+                    noresult.setVisibility(View.VISIBLE);
                 }
             }
         });
