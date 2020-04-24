@@ -48,70 +48,35 @@ public class CommentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
-        editText = findViewById(R.id.commenttext);
+       editText = findViewById(R.id.commenttext);
         Intent intent= getIntent();
       collection = intent.getStringExtra("coll");
          Document=intent.getStringExtra("doc");
          Userid= intent.getStringExtra("user_id");
          user_name = intent.getStringExtra("user_name");
-        up=findViewById(R.id.up);
-        down=findViewById(R.id.down);
-        DocumentReference documentReference = db.collection(collection).document(Document);
-        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(final DocumentSnapshot documentSnapshot) {
-                final Note post =documentSnapshot.toObject(Note.class);
-                up.setText(String.valueOf(post.getUpnum()));
-                down.setText(String.valueOf(post.getDownnum()));
-                Commentnum=post.getCommentnum();
-//                up.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        boolean ifdown= post.getDownvote().contains(auth.getUid());
-//                        boolean ifup= model.getUpvote().contains(auth.getUid());
-//                        DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
-//                        if (!ifup && !ifdown){
-//                            documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
-//                        }
-//                        if (ifup && !ifdown){
-//                            documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
-//                        }if(!ifup && ifdown){
-//                            documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
-//                            documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
-//                        }
-//
-//                    }
-//                });
-//                down.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-////                boolean ifdown= model.getDownvote().contains(auth.getUid());
-////                boolean ifup= model.getUpvote().contains(auth.getUid());
-////                DocumentReference documentReference= db.collection(model.getRefComments().getParent().getPath()).document(model.getRefComments().getId());
-////                if (!ifup && !ifdown){
-////                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
-////                }
-////                if (ifdown && !ifup){
-////                    documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
-////                }if(!ifdown && ifup){
-////                    documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
-////                    documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
-////                }
-//                    }
-//                });
-            }
-        });
-
+         Note help= intent.getParcelableExtra("help");
+        Log.d("bigpp", "onCreate: "+help);
         notebookRef = db.collection(collection).document(Document).collection("comments");
-        Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
+        Query query = notebookRef.orderBy("priority", Query.Direction.ASCENDING);
 
         FirestoreRecyclerOptions<Comment> options = new FirestoreRecyclerOptions.Builder<Comment>()
                 .setQuery(query, Comment.class)
                 .build();
 
         adapter = new CommentAdapter(options,getApplicationContext());
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                int totalNumberOfItems = adapter.getItemCount();
+                if(totalNumberOfItems > 0) {
+
+                    Log.d("bigpp", "onItemRangeInserted: "+ totalNumberOfItems);
+                }else{
+                    Log.d("bigpp", "onItemRangeInserted: "+ totalNumberOfItems);
+                }
+            }
+        });
+
+        RecyclerView recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
@@ -152,7 +117,7 @@ public class CommentActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-       adapter.stopListening();
+    //   adapter.stopListening();
     }
 }
 

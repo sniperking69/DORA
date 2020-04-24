@@ -1,78 +1,62 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D3D3D3"
-    tools:context=".ui.CommentActivity">
-    <include layout="@layout/comment_bottom"/>
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:background="@drawable/comment_bottom_shape"
-        android:backgroundTint="#D3D3D3"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+                <include
+                    android:id="@+id/otherstuff" layout="@layout/post_detail"/>
+
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_below="@+id/otherstuff"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>
+
+        </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:contentScrim="@null"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:orientation="horizontal">
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/up"
-                    android:layout_weight="1"
-                    android:layout_width="wrap_content"
+            android:background="@android:color/white"
+            android:weightSum="10"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/commenttext"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:iconSize="24dp"
-                    android:layout_marginEnd="20dp"
-                    app:iconGravity="textStart"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    app:icon="@drawable/upvote" />
+                    android:ems="10"
+                    android:layout_weight="8.5"
+                    android:inputType="textPersonName"
+                    android:hint="Write a Comment...." />
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/down"
-                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:onClick="sendcomment"
+                    android:layout_weight="1.5"
+                    android:layout_height="wrap_content"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
-                    app:icon="@drawable/downvote"
-                    app:iconGravity="textStart"
-                    android:layout_marginStart="20dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    app:icon="@drawable/ic_next"/>
 
-
-            </LinearLayout>
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="vertical">
-        <EditText
-            android:id="@+id/commenttext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:hint="Write a Comment...." />
-        <Button
-            android:layout_width="match_parent"
-            android:onClick="sendcomment"
-            android:layout_height="wrap_content"
-            android:text="Button" />
-
-    </LinearLayout>
-
-
-
-
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </LinearLayout>
+</RelativeLayout>

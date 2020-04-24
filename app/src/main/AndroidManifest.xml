@@ -52,7 +52,6 @@
             android:name=".ui.ProfileDisplayActivity"
             android:label="@string/title_activity_profile_display"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.PostDetail" />
         <activity android:name=".ui.NewMessageActivity" />
         <activity android:name=".ui.CommentActivity" />
         <activity android:name=".ui.msgActivity" />

@@ -138,14 +138,13 @@ public class Profile extends Fragment {
                             if(totalNumberOfItems > 0) {
 
                                 relativeLayout.setVisibility(View.INVISIBLE);
-                            }else{
-                                relativeLayout.setVisibility(View.VISIBLE);
                             }
                         }
                     });
                     posts.setText(String.valueOf(user.getPosts().size()));
                 }else{
                     posts.setText("0");
+                    relativeLayout.setVisibility(View.VISIBLE);
                 }
 
                 bio.setText(user.getBio());
@@ -202,12 +201,12 @@ public class Profile extends Fragment {
     }
     @Override
     public void onStart() {
+
         super.onStart();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-       // adapter.stopListening();
     }
 }

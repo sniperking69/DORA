@@ -1,6 +1,7 @@
 package com.aputech.dora.Adpater;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,7 +121,7 @@ public class CommentAdapter extends FirestoreRecyclerAdapter<Comment, CommentAda
 //                }
             }
         });
-
+        Log.d("bigpp", "onItemRangeInserted: "+model.getUid());
 
 
     }

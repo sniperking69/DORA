@@ -55,8 +55,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
-        Log.d("DropChat", "onCreate: "+Calendar.getInstance().getFirstDayOfWeek() +" fksofissi "+ Calendar.getInstance().getTimeInMillis());
         auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser()!=null){
             checkifalreadyuser();

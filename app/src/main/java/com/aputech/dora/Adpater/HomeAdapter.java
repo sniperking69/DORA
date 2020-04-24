@@ -4,13 +4,10 @@ package com.aputech.dora.Adpater;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,14 +18,11 @@ import com.aputech.dora.R;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.ui.CommentActivity;
 import com.aputech.dora.ui.DispPostLocation;
-import com.aputech.dora.ui.PostDetail;
 import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,8 +30,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -137,8 +129,7 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
                                 Intent intent =new Intent(mContext, CommentActivity.class);
                                 intent.putExtra("coll",model.getRefComments().getParent().getPath());
                                 intent.putExtra("doc",model.getRefComments().getId());
-                                intent.putExtra("user_id",model.getUserid());
-                                intent.putExtra("user_name",user.getUserName());
+                                intent.putExtra("help",model);
                                 mContext.startActivity(intent);
                             }
                         });
@@ -254,4 +245,5 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             Commentbutton= itemView.findViewById(R.id.comment);
         }
     }
+
 }

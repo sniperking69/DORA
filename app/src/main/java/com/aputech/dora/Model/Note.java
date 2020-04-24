@@ -1,6 +1,8 @@
 package com.aputech.dora.Model;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -8,12 +10,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 //ups and downs are actually a list
-public class Note {
+public class Note implements Parcelable {
     private String description;
     private String imageUrl;
     private int type;
@@ -47,6 +50,32 @@ public class Note {
         this.upnum = upnum;
         this.downnum = downnum;
     }
+
+    protected Note(Parcel in) {
+        description = in.readString();
+        imageUrl = in.readString();
+        type = in.readInt();
+        userid = in.readString();
+        uptime = in.readString();
+        downvote = in.createStringArrayList();
+        upvote = in.createStringArrayList();
+        priority = in.readFloat();
+        commentnum = in.readInt();
+        upnum = in.readInt();
+        downnum = in.readInt();
+    }
+
+    public static final Creator<Note> CREATOR = new Creator<Note>() {
+        @Override
+        public Note createFromParcel(Parcel in) {
+            return new Note(in);
+        }
+
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[size];
+        }
+    };
 
     public int getCommentnum() {
         return commentnum;
@@ -151,5 +180,25 @@ public class Note {
 
     public int getType() {
         return type;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(description);
+        dest.writeString(imageUrl);
+        dest.writeInt(type);
+        dest.writeString(userid);
+        dest.writeString(uptime);
+        dest.writeStringList(downvote);
+        dest.writeStringList(upvote);
+        dest.writeFloat(priority);
+        dest.writeInt(commentnum);
+        dest.writeInt(upnum);
+        dest.writeInt(downnum);
     }
 }
