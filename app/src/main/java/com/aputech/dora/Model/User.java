@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class User implements Parcelable {
 
     private String UserName;
-
+    private int postnum;
     private String Bio;
     private String EmailAdress;
     private String Gender;

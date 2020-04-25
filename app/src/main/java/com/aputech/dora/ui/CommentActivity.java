@@ -1,9 +1,11 @@
 package com.aputech.dora.ui;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,8 +51,11 @@ public class CommentActivity extends AppCompatActivity {
     String Userid,user_name;
     int Commentnum;
     private String collection;
+    ImageView delete,edit;
+    Note note;
     private TextView postText,userName,post_time;
     ImageView locate,ProfileImg;
+    DocumentReference documentReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +66,16 @@ public class CommentActivity extends AppCompatActivity {
        userName = findViewById(R.id.user_name);
        post_time= findViewById(R.id.time);
        locate =findViewById(R.id.locate);
+       up = findViewById(R.id.upbutton);
+       delete = findViewById(R.id.delete);
+       edit = findViewById(R.id.edit);
+        down = findViewById(R.id.downbutton);
        postText = findViewById(R.id.text_view_description);
        ProfileImg = findViewById(R.id.poster_profile);
         Intent intent= getIntent();
-      collection = intent.getStringExtra("coll");
-         Document=intent.getStringExtra("doc");
-         Note note= intent.getParcelableExtra("post");
+        collection = intent.getStringExtra("coll");
+        Document=intent.getStringExtra("doc");
+          note= intent.getParcelableExtra("post");
          User user = intent.getParcelableExtra("user");
          int Type = note.getType();
         postText.setText(note.getDescription());
@@ -89,6 +98,116 @@ public class CommentActivity extends AppCompatActivity {
         }else{
             locate.setImageResource(R.drawable.ic_locationsad);
         }
+        if (user.getUserid().equals(auth.getUid())){
+           delete.setVisibility(View.VISIBLE);
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Build an AlertDialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CommentActivity.this);
+
+                    // Set a title for alert dialog
+                    builder.setTitle("Delete Post");
+
+                    // Ask the final question
+                    builder.setMessage("Are you sure to Delete This Post?");
+
+                    // Set the alert dialog yes button click listener
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do something when user clicked the Yes button
+                            // Set the TextView visibility GONE
+                            deleteItem();
+                            finish();
+                            Toast.makeText(getApplicationContext(),
+                                    "PostDeleted",Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+                    // Set the alert dialog no button click listener
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do something when No button clicked
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    // Display the alert dialog on interface
+                    dialog.show();
+                }
+            });
+            edit.setVisibility(View.VISIBLE);
+            edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("bigpp", "onClick: EditPost");
+                }
+            });
+        }
+
+        documentReference = db.collection(collection).document(Document);
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                final Note model =  documentSnapshot.toObject(Note.class);
+               up.setText(String.valueOf(model.getUpnum()));
+                down.setText(String.valueOf(model.getDownnum()));
+                up.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean ifdown= model.getDownvote().contains(auth.getUid());
+                        boolean ifup= model.getUpvote().contains(auth.getUid());
+                        if (!ifup && !ifdown){
+                            documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
+                            documentReference.update("upnum", model.getUpnum()+1);
+                            updatePriority(model.getUpnum()+1,model.getDownnum(),model.getCommentnum());
+
+
+                        }
+                        if (ifup && !ifdown){
+                            documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
+                            documentReference.update("upnum", model.getUpnum()-1);
+                            updatePriority(model.getUpnum()-1,model.getDownnum(),model.getCommentnum());
+                        }
+                        if(!ifup && ifdown){
+                            documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
+                            documentReference.update("downnum", model.getDownnum()-1);
+                            documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
+                            documentReference.update("upnum", model.getUpnum()+1);
+                            updatePriority(model.getUpnum()+1,model.getDownnum()-1,model.getCommentnum());
+                        }
+                    }
+                });
+                down.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean ifdown= model.getDownvote().contains(auth.getUid());
+                        boolean ifup= model.getUpvote().contains(auth.getUid());
+                        if (!ifup && !ifdown){
+                            documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
+                            documentReference.update("downnum", model.getDownnum()+1);
+                            updatePriority(model.getUpnum(),model.getDownnum()+1,model.getCommentnum());
+                        }
+                        if (ifdown && !ifup){
+                            documentReference.update("downvote", FieldValue.arrayRemove(auth.getUid()));
+                            documentReference.update("downnum", model.getDownnum()-1);
+                            updatePriority(model.getUpnum(),model.getDownnum()-1,model.getCommentnum());
+                        }if(!ifdown && ifup){
+                            documentReference.update("upvote", FieldValue.arrayRemove(auth.getUid()));
+                            documentReference.update("upnum", model.getUpnum()-1);
+                            documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
+                            documentReference.update("downnum", model.getDownnum()+1);
+                            updatePriority(model.getUpnum()-1,model.getDownnum()+1,model.getCommentnum());
+                        }
+
+                    }
+                });
+            }
+        });
+
          if (Type==1){
 
 
@@ -98,9 +217,8 @@ public class CommentActivity extends AppCompatActivity {
 
 
         }
-
-        notebookRef = db.collection(collection).document(Document).collection("comments");
-        Query query = notebookRef.orderBy("priority", Query.Direction.ASCENDING);
+        notebookRef =db.collection("comments");
+        Query query = notebookRef.whereEqualTo("docId",note.getRefComments()).orderBy("priority", Query.Direction.ASCENDING);
 
         FirestoreRecyclerOptions<Comment> options = new FirestoreRecyclerOptions.Builder<Comment>()
                 .setQuery(query, Comment.class)
@@ -125,27 +243,36 @@ public class CommentActivity extends AppCompatActivity {
 
     }
 
+    private void deleteItem() {
+        documentReference.delete();
+    }
+
+    private void updatePriority(int up, int down, int commentnum) {
+        documentReference.update("priority",up*0.4+down*0.2+commentnum*0.4);
+
+    }
+
     public void sendcomment(View view) {
         DocumentReference documentReference = db.collection(collection).document(Document);
         documentReference.update("commentnum",Commentnum+1);
         String comenttext= editText.getText().toString();
         Comment comment = new Comment();
+        comment.setDocId(note.getRefComments());
         comment.setCommentText(comenttext);
         comment.setUid(auth.getUid());
         comment.setPriority(0);
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
         final String date =dateFormat.format(Calendar.getInstance().getTime());
         comment.setTime(date);
-
+//
         notebookRef.add(comment);
-        notification noti = new notification();
-        noti.setDocument(Document);
-        noti.setUserid(Userid);
-        noti.setTime(date);
-        noti.setText(user_name + " Comment On Your Post");
-        CollectionReference  notiref= db.collection("Users").document(Userid).collection("notify");
-        notiref.add(noti);
+//        notification noti = new notification();
+//        noti.setDocument(Document);
+//        noti.setUserid(Userid);
+//        noti.setTime(date);
+//        noti.setText(user_name + " Comment On Your Post");
+//        CollectionReference  notiref= db.collection("Users").document(Userid).collection("notify");
+//        notiref.add(noti);
         Toast.makeText(CommentActivity.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
 
     }

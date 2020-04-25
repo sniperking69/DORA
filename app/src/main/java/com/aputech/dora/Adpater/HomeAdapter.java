@@ -2,6 +2,7 @@ package com.aputech.dora.Adpater;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Model.User;
@@ -51,7 +54,39 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    deleteItem(position);
+                    // Build an AlertDialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+                    // Set a title for alert dialog
+                    builder.setTitle("Delete Post");
+
+                    // Ask the final question
+                    builder.setMessage("Are you sure to Delete This Post?");
+
+                    // Set the alert dialog yes button click listener
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do something when user clicked the Yes button
+                            // Set the TextView visibility GONE
+                            deleteItem(position);
+                            Toast.makeText(mContext,
+                                    "PostDeleted",Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+                    // Set the alert dialog no button click listener
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do something when No button clicked
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    // Display the alert dialog on interface
+                    dialog.show();
                 }
             });
             holder.edit.setVisibility(View.VISIBLE);
@@ -133,8 +168,8 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
                             @Override
                             public void onClick(View v) {
                                 Intent intent =new Intent(mContext, CommentActivity.class);
-                                intent.putExtra("coll",model.getRefComments().getParent().getPath());
-                                intent.putExtra("doc",model.getRefComments().getId());
+                                intent.putExtra("coll",getSnapshots().getSnapshot(position).getReference().getParent().getPath());
+                                intent.putExtra("doc",getSnapshots().getSnapshot(position).getReference().getId());
                                 intent.putExtra("post",model);
                                 intent.putExtra("user",user);
                                 mContext.startActivity(intent);
@@ -244,7 +279,7 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Note, HomeAdapter.Note
         }
     }
     private void deleteItem(int position) {
-        getSnapshots().getSnapshot(position).getReference().delete();
+      // getSnapshots().getSnapshot(position).getReference().collection("comments");
     }
     private void updatePriority(int position,int up,int down,int commentnum){
         getSnapshots().getSnapshot(position).getReference().update("priority",up*0.4+down*0.2+commentnum*0.4);

@@ -130,12 +130,13 @@ public class Post extends AppCompatActivity {
             post.setDownvote(emp);
             post.setUserid(auth.getUid());
             final DocumentReference DR= db.collection("Users").document(auth.getUid());
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
             final String date =dateFormat.format(Calendar.getInstance().getTime());
             notebookRef.add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
-                    post.setRefComments(documentReference);
+                    post.setRefComments(documentReference.getId());
                     post.setUptime(date);
                     documentReference.set(post);
                     DR.update("posts", FieldValue.arrayUnion(documentReference.getId()));
@@ -149,14 +150,14 @@ public class Post extends AppCompatActivity {
         }
         if (activity==2){
             finish();
-//                CollectionReference collectionReference = db.collection("Users").document(auth.getUid()).collection("sent");
-//                message mms= new message();
-//                mms.setType(1);
-//                mms.setUptime("hehoa");
-//                mms.setUserid(auth.getUid());
-//                GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
-//                mms.setLocation(geoPoint);
-//                collectionReference.add(mms);
+                CollectionReference collectionReference = db.collection("inbox");
+                message mms= new message();
+                mms.setType(1);
+                mms.setUptime("hehoa");
+                mms.setSentBy(auth.getUid());
+                GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
+                mms.setLocation(geoPoint);
+                collectionReference.add(mms);
 
         }
 

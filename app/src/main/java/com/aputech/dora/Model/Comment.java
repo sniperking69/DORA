@@ -6,19 +6,29 @@ import java.util.ArrayList;
 public class Comment {
     private String uid,commentText,time;
     private int priority;
+    private String docId;
     private ArrayList<String> downvote;
     private ArrayList<String> upvote;
     public Comment() {
         //empty constructor needed
     }
 
-    public Comment(String uid, String commentText, String time, ArrayList<String> up,ArrayList<String> down, int priority) {
+    public Comment(String uid, String commentText, String time, int priority, String docId, ArrayList<String> downvote, ArrayList<String> upvote) {
         this.uid = uid;
         this.commentText = commentText;
         this.time = time;
-        this.upvote = up;
-        this.downvote = down;
         this.priority = priority;
+        this.docId = docId;
+        this.downvote = downvote;
+        this.upvote = upvote;
+    }
+
+    public String getDocId() {
+        return docId;
+    }
+
+    public void setDocId(String docId) {
+        this.docId = docId;
     }
 
     public String getUid() {

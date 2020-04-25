@@ -3,74 +3,86 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_margin="5dp"
     android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:id="@+id/rellay1"
-            android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/rellay1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/poster_profile"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+
+            android:src="@drawable/ic_ram_profile" />
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="15dp">
+            android:orientation="horizontal"
+            android:layout_alignParentEnd="true">
 
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/poster_profile"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-
-                android:src="@drawable/ic_ram_profile" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:id="@+id/edit"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_edit"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="34dp"
+                android:visibility="gone"
+                android:layout_height="34dp"
+                android:id="@+id/delete"
+                app:srcCompat="@drawable/ic_delete"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:id="@+id/locate"
+                app:srcCompat="@drawable/ic_locationsad"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toEndOf="@+id/poster_profile"
+            android:orientation="vertical">
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_alignParentEnd="true">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:id="@+id/locate"
-                    app:srcCompat="@drawable/ic_location_on"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-
-                android:layout_toEndOf="@+id/poster_profile"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/user_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Karun Shrestha"
-                        android:textColor="@android:color/black"
-                        android:textSize="17sp" />
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="24dp"
-                        android:id="@+id/level"
-                        android:layout_height="24dp"
-                        app:srcCompat="@drawable/ic_grade"/>
-                </LinearLayout>
-
+                android:layout_height="wrap_content">
                 <TextView
-                    android:id="@+id/time"
+                    android:id="@+id/user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:text="11 hrs"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Karun Shrestha"
                     android:textColor="@android:color/black"
-                    android:textSize="13sp" />
-
+                    android:textSize="17sp" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:id="@+id/level"
+                    android:layout_height="24dp"
+                    app:srcCompat="@drawable/ic_grade"/>
             </LinearLayout>
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="11 hrs"
+                android:textColor="@android:color/black"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
         <LinearLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
@@ -81,9 +93,7 @@
                 android:id="@+id/text_view_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="15dp"
+                android:layout_margin="10dp"
                 android:text="This is Status"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
@@ -113,6 +123,7 @@
         android:background="@android:color/darker_gray" />
 
     <LinearLayout
+        android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="2"
@@ -144,5 +155,11 @@
             android:text="100k" />
 
     </LinearLayout>
+    <ImageView
+        android:id="@+id/bottomline"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/buttons"
 
+        android:background="@android:color/darker_gray" />
     </RelativeLayout>

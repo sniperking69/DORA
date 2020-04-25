@@ -7,27 +7,21 @@ public class message {
     private String description;
     private String imageUrl;
     private int type;
-    private String userid;
+    private String sentBy;
+    private String sentTo;
     private String uptime;
     private GeoPoint location;
     public message() {
         //empty constructor needed
     }
 
-    public message(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location) {
+    public message(String description, String imageUrl, int type, String sentBy, String sentTo, String uptime, GeoPoint location) {
         this.description = description;
         this.imageUrl = imageUrl;
         this.type = type;
-        this.userid = userid;
+        this.sentBy = sentBy;
+        this.sentTo = sentTo;
         this.uptime = uptime;
-        this.location = location;
-    }
-
-    public GeoPoint getLocation() {
-        return location;
-    }
-
-    public void setLocation(GeoPoint location) {
         this.location = location;
     }
 
@@ -55,12 +49,20 @@ public class message {
         this.type = type;
     }
 
-    public String getUserid() {
-        return userid;
+    public String getSentBy() {
+        return sentBy;
     }
 
-    public void setUserid(String userid) {
-        this.userid = userid;
+    public void setSentBy(String sentBy) {
+        this.sentBy = sentBy;
+    }
+
+    public String getSentTo() {
+        return sentTo;
+    }
+
+    public void setSentTo(String sentTo) {
+        this.sentTo = sentTo;
     }
 
     public String getUptime() {
@@ -71,5 +73,11 @@ public class message {
         this.uptime = uptime;
     }
 
+    public GeoPoint getLocation() {
+        return location;
+    }
 
+    public void setLocation(GeoPoint location) {
+        this.location = location;
+    }
 }
