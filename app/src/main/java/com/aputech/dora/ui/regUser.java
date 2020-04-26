@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -74,10 +75,15 @@ public class regUser extends AppCompatActivity {
         upimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
+                //Create an Intent with action as ACTION_PICK
+                Intent intent=new Intent(Intent.ACTION_PICK);
+                // Sets the type as image/*. This ensures only components of type image are selected
                 intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+                //We pass an extra array with the accepted mime types. This will ensure only components with these MIME types as targeted.
+                String[] mimeTypes = {"image/jpeg", "image/png"};
+                intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
+                // Launching the Intent
+                startActivityForResult(intent,PICK_IMAGE_REQUEST);
             }
         });
 
@@ -100,60 +106,74 @@ public class regUser extends AppCompatActivity {
             }
         }
     }
+
     public void Continue(View view) {
-        String email= Email.getEditText().getText().toString();
-        String bio= Bio.getEditText().getText().toString();
-        String username = Uname.getEditText().getText().toString();
-        final User user = new User();
-        user.setBio(bio);
-        user.setProfileUrl(firebaseAuth.getCurrentUser().getPhotoUrl().toString());
-        user.setEmailAdress(email);
-        user.setUserid(firebaseAuth.getUid());
-        user.setGender(spinner.getSelectedItem().toString());
-        user.setUserName(username);
-        notebookRef.document(firebaseAuth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(regUser.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(regUser.this,HActivity.class);
-                startActivity(intent);
-                finish();
+        if (TextUtils.isEmpty(Uname.getEditText().getText().toString()) || TextUtils.isEmpty(Bio.getEditText().getText().toString()) ){
+            Toast.makeText(regUser.this, "Empty field not allowed!", Toast.LENGTH_SHORT).show();
+        }else {
+            String email= Email.getEditText().getText().toString();
+            String bio= Bio.getEditText().getText().toString();
+            String username = Uname.getEditText().getText().toString();
+            final User user = new User();
+            user.setBio(bio);
+            user.setEmailAdress(email);
+            user.setUserid(firebaseAuth.getUid());
+            user.setGender(spinner.getSelectedItem().toString());
+            user.setUserName(username);
+            if(filePath != null)
+            {
+                final ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setTitle("Uploading...");
+                progressDialog.show();
+
+                StorageReference ref = storageReference.child("images/"+ firebaseAuth.getUid());
+                ref.putFile(filePath)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                progressDialog.dismiss();
+                                user.setProfileUrl(taskSnapshot.getUploadSessionUri().toString());
+                                notebookRef.document(firebaseAuth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(regUser.this, "User Added Successfully", Toast.LENGTH_LONG).show();
+                                        Intent intent = new Intent(regUser.this,HActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                                Toast.makeText(regUser.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                        .getTotalByteCount());
+                                progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            }
+                        });
+            }else{
+                user.setProfileUrl(null);
+                notebookRef.document(firebaseAuth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(regUser.this, "User Added Successfully", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(regUser.this,HActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+
             }
-        });
-    }
-    private void uploadImage() {
-
-        if(filePath != null)
-        {
-
-//            final ProgressDialog progressDialog = new ProgressDialog(this);
-//            progressDialog.setTitle("Uploading...");
-//            progressDialog.show();
-//
-//            StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
-//            ref.putFile(filePath)
-//                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                            progressDialog.dismiss();
-//                            Toast.makeText(regUser.this, "Uploaded", Toast.LENGTH_SHORT).show();
-//                        }
-//                    })
-//                    .addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            progressDialog.dismiss();
-//                            Toast.makeText(regUser.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-//                        }
-//                    })
-//                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-//                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-//                                    .getTotalByteCount());
-//                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
-//                        }
-//                    });
         }
+
+
     }
 }

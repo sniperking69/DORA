@@ -55,61 +55,71 @@ import com.google.firebase.firestore.Query;
 public class HActivity extends AppCompatActivity {
 
     FragmentContainerView fragmentContainerView;
-    ImageView Home,Trending, Notification,profileImage;
+    ImageView Home, Trending, Notification, profileImage;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Toolbar myToolbar;
     RelativeLayout searchlayout;
     SearchView searchView;
-    private static int JOB_ID= 123;
-    public static final String CHANNEL_1_ID = "channel1";
+    private static int JOB_ID = 4576;
+    public static final String CHANNEL_ID = "dropChannel";
     FloatingActionButton newPost;
     LinearLayout bottomlinear;
+    ImageView highhome,highprofile,hightrending,highnoti,searchSubmit;
     private SearchAdapter adapter;
-    boolean adapterlisten=false;
+    boolean adapterlisten = false;
     RelativeLayout noresult;
-    private CollectionReference collectionReference= db.collection("Users");
-    int page=2;
-    boolean search_bool=false;
+    RecyclerView recyclerView;
+    private CollectionReference collectionReference = db.collection("Users");
+    int page = 2;
+    TextView searchtext;
+    boolean search_bool = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_h);
-          myToolbar = findViewById(R.id.my_toolbar);
+        myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        bottomlinear= findViewById(R.id.bottomlinear);
+        bottomlinear = findViewById(R.id.bottomlinear);
+        highhome = findViewById(R.id.highhome);
+        highprofile = findViewById(R.id.highprofile);
+        hightrending = findViewById(R.id.hightrending);
+        highnoti = findViewById(R.id.highnoti);
+        Notification = findViewById(R.id.Notify);
+        searchlayout = findViewById(R.id.search_list);
+        Trending = findViewById(R.id.Trending);
         fragmentContainerView = findViewById(R.id.nav_host_fragment);
-        Home= findViewById(R.id.Home);
-        noresult= findViewById(R.id.noresult);
-        searchView=findViewById(R.id.searchArea);
+        Home = findViewById(R.id.Home);
+        noresult = findViewById(R.id.noresult);
+        recyclerView = findViewById(R.id.search_rec);
+        searchView = findViewById(R.id.searchArea);
         searchView.setSubmitButtonEnabled(true);
-        final RecyclerView recyclerView = findViewById(R.id.search_rec);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        ImageView searchSubmit = (ImageView) searchView.findViewById (androidx.appcompat.R.id.search_go_btn);
-        TextView searchtext = (TextView) searchView.findViewById (androidx.appcompat.R.id.search_src_text);
+        searchSubmit = (ImageView) searchView.findViewById(androidx.appcompat.R.id.search_go_btn);
+        searchtext = (TextView) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchtext.setTextColor(Color.parseColor("#ffffff"));
-        searchSubmit.setColorFilter (Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_ATOP);
-
+        searchSubmit.setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_ATOP);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Query userquery= collectionReference.whereEqualTo("userName",query);
+                Query userquery = collectionReference.whereEqualTo("userName", query);
                 FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
                         .setQuery(userquery, User.class)
                         .build();
-                adapter = new SearchAdapter(options,HActivity.this);
+                adapter = new SearchAdapter(options, HActivity.this);
                 recyclerView.setAdapter(adapter);
 
                 adapter.startListening();
-                adapterlisten=true;
+                adapterlisten = true;
                 adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                     public void onItemRangeInserted(int positionStart, int itemCount) {
                         int totalNumberOfItems = adapter.getItemCount();
-                        if(totalNumberOfItems > 0) {
+                        if (totalNumberOfItems > 0) {
 
                             noresult.setVisibility(View.INVISIBLE);
-                        }else{
+                        } else {
                             noresult.setVisibility(View.VISIBLE);
                         }
                     }
@@ -122,43 +132,38 @@ public class HActivity extends AppCompatActivity {
                 return false;
             }
         });
-        final ImageView highhome= findViewById(R.id.highhome);
-        final ImageView highprofile= findViewById(R.id.highprofile);
-        final ImageView hightrending= findViewById(R.id.hightrending);
-        final ImageView highnoti= findViewById(R.id.highnoti);
-        Notification = findViewById(R.id.Notify);
-        searchlayout= findViewById(R.id.search_list);
-        Trending= findViewById(R.id.Trending);
+
         Fragment newFragment;
         ImageView backsearch = findViewById(R.id.backsearch);
         backsearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hideFAB();
-                search_bool=false;
+                search_bool = false;
             }
         });
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();;
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         newFragment = new Trending();
         transaction.replace(R.id.nav_host_fragment, newFragment);
         transaction.commit();
-        page=2;
+        page = 2;
         hightrending.setVisibility(View.VISIBLE);
 
         Notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (page != 3) {
-                    if (page==1){
+                    if (page == 1) {
                         highhome.setVisibility(View.INVISIBLE);
-                    }if (page==2){
-                     hightrending.setVisibility(View.INVISIBLE);
                     }
-                    if (page==4){
+                    if (page == 2) {
+                        hightrending.setVisibility(View.INVISIBLE);
+                    }
+                    if (page == 4) {
                         highprofile.setVisibility(View.INVISIBLE);
                     }
 
-                    page=3;
+                    page = 3;
                     highnoti.setVisibility(View.VISIBLE);
                     Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
                     Notification.startAnimation(animation);
@@ -175,15 +180,16 @@ public class HActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (page != 2) {
-                    if (page==1){
+                    if (page == 1) {
                         highhome.setVisibility(View.INVISIBLE);
-                    }if (page==3){
+                    }
+                    if (page == 3) {
                         highnoti.setVisibility(View.INVISIBLE);
                     }
-                    if (page==4){
+                    if (page == 4) {
                         highprofile.setVisibility(View.INVISIBLE);
                     }
-                    page=2;
+                    page = 2;
                     hightrending.setVisibility(View.VISIBLE);
                     Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
                     Trending.startAnimation(animation);
@@ -198,18 +204,19 @@ public class HActivity extends AppCompatActivity {
         Home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (page!=1){
-                    if (page==2){
+                if (page != 1) {
+                    if (page == 2) {
                         hightrending.setVisibility(View.INVISIBLE);
-                    }if (page==3){
+                    }
+                    if (page == 3) {
                         highnoti.setVisibility(View.INVISIBLE);
                     }
-                    if (page==4) {
+                    if (page == 4) {
                         highprofile.setVisibility(View.INVISIBLE);
                     }
-                        page=1;
+                    page = 1;
                     highhome.setVisibility(View.VISIBLE);
-                    Animation animation=AnimationUtils.loadAnimation(HActivity.this,R.anim.bounce);
+                    Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
                     Home.startAnimation(animation);
                     Fragment newFragment;
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -221,8 +228,8 @@ public class HActivity extends AppCompatActivity {
             }
         });
 
-      profileImage =  findViewById(R.id.toolbar_profile_image);
-        if (auth.getCurrentUser()!=null){
+        profileImage = findViewById(R.id.toolbar_profile_image);
+        if (auth.getCurrentUser() != null) {
             Glide
                     .with(this)
                     .load(auth.getCurrentUser().getPhotoUrl())
@@ -231,16 +238,17 @@ public class HActivity extends AppCompatActivity {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (page!=4) {
-                    if (page==2){
+                if (page != 4) {
+                    if (page == 2) {
                         hightrending.setVisibility(View.INVISIBLE);
-                    }if (page==3){
+                    }
+                    if (page == 3) {
                         highnoti.setVisibility(View.INVISIBLE);
                     }
-                    if (page==1) {
+                    if (page == 1) {
                         highhome.setVisibility(View.INVISIBLE);
                     }
-                    page=4;
+                    page = 4;
                     highprofile.setVisibility(View.VISIBLE);
                     Animation animation = AnimationUtils.loadAnimation(HActivity.this, R.anim.bounce);
                     profileImage.startAnimation(animation);
@@ -253,13 +261,13 @@ public class HActivity extends AppCompatActivity {
             }
         });
 
-         newPost = findViewById(R.id.fab);
+        newPost = findViewById(R.id.fab);
 
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HActivity.this,Post.class);
-                intent.putExtra("activity",1);
+                Intent intent = new Intent(HActivity.this, Post.class);
+                intent.putExtra("activity", 1);
                 startActivity(intent);
 //                AuthUI.getInstance().signOut(HActivity.this).addOnCompleteListener(new OnCompleteListener<Void>() {
 //                            public void onComplete(@NonNull Task<Void> task) {
@@ -275,6 +283,8 @@ public class HActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        createNotificationChannels();
+        MainOpen();
 
     }
 
@@ -289,10 +299,10 @@ public class HActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.search:
                 revealFAB();
-                search_bool=true;
+                search_bool = true;
                 return true;
             case R.id.mail:
-                Intent intent = new Intent(HActivity.this,PrivatePost.class);
+                Intent intent = new Intent(HActivity.this, PrivatePost.class);
                 startActivity(intent);
                 return true;
             default:
@@ -305,8 +315,8 @@ public class HActivity extends AppCompatActivity {
         final View view = findViewById(R.id.search_view);
         myToolbar.setVisibility(View.INVISIBLE);
         noresult.setVisibility(View.VISIBLE);
-        int cx = view.getWidth() -200;
-        int cy = view.getHeight()/2 ;
+        int cx = view.getWidth() - 200;
+        int cy = view.getHeight() / 2;
 
         float finalRadius = (float) Math.hypot(cx, cy);
 
@@ -326,16 +336,17 @@ public class HActivity extends AppCompatActivity {
         anim.start();
 
     }
+
     private void hideFAB() {
         final View view = findViewById(R.id.search_view);
-        if (adapterlisten){
+        if (adapterlisten) {
             adapter.stopListening();
-            adapterlisten=false;
+            adapterlisten = false;
         }
 
 
-        int cx = view.getWidth()-200;
-        int cy = view.getHeight()/2 ;
+        int cx = view.getWidth() - 200;
+        int cy = view.getHeight() / 2;
 
         float initialRadius = (float) Math.hypot(cx, cy);
 
@@ -358,12 +369,13 @@ public class HActivity extends AppCompatActivity {
 
         anim.start();
     }
+
     @Override
     public void onBackPressed() {
-        if (search_bool){
+        if (search_bool) {
             hideFAB();
-            search_bool=false;
-        }else{
+            search_bool = false;
+        } else {
             super.onBackPressed();
         }
     }
@@ -372,7 +384,8 @@ public class HActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
     }
-        public void MainOpen() {
+
+    public void MainOpen() {
         ComponentName componentName = new ComponentName(this, LocationJob.class);
         JobInfo info = new JobInfo.Builder(JOB_ID, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
@@ -380,44 +393,48 @@ public class HActivity extends AppCompatActivity {
                 .build();
 
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        if (!isJobServiceOn(getApplicationContext())){
-            int resultCode = scheduler.schedule(info);
+        if (!isJobServiceOn(getApplicationContext())) {
+            int resultCode = 0;
+            if (scheduler != null) {
+                resultCode = scheduler.schedule(info);
+            }
             if (resultCode == JobScheduler.RESULT_SUCCESS) {
-                Log.d("joblocationservice", "Job scheduled");
+                Log.d("Drop Chat Service", "Job scheduled");
             } else {
-                Log.d("joblocationservice", "Job scheduling failed");
+                Log.d("Drop Chat Service", "Job scheduling failed");
             }
         }
 
     }
+
     private void createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel1 = new NotificationChannel(
-                    CHANNEL_1_ID,
-                    "Channel 1",
+                    CHANNEL_ID,
+                    "Drop Chat Notification",
                     NotificationManager.IMPORTANCE_HIGH
             );
-            channel1.setDescription("This is Channel 1");
-
-
+            channel1.setDescription("Drop Chat Notification Channel");
             NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel1);
+            if (manager != null) {
+                manager.createNotificationChannel(channel1);
+            }
         }
     }
-    public static boolean isJobServiceOn( Context context ) {
-        JobScheduler scheduler = (JobScheduler) context.getSystemService( Context.JOB_SCHEDULER_SERVICE ) ;
 
-        boolean hasBeenScheduled = false ;
-        for (JobInfo jobInfo : scheduler.getAllPendingJobs()) {
-            if (jobInfo.getId() == JOB_ID) {
-                hasBeenScheduled = true;
-                break;
+    public static boolean isJobServiceOn(Context context) {
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        boolean hasBeenScheduled = false;
+        if (scheduler != null) {
+            for (JobInfo jobInfo : scheduler.getAllPendingJobs()) {
+                if (jobInfo.getId() == JOB_ID) {
+                    hasBeenScheduled = true;
+                    break;
+                }
+
             }
-
         }
-
-
-        return hasBeenScheduled ;
+        return hasBeenScheduled;
     }
 
 }

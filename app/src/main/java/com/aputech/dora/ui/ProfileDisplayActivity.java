@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.aputech.dora.Adpater.HomeAdapter;
+import com.aputech.dora.Adpater.FireAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
@@ -16,7 +16,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -32,7 +31,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
-import android.text.Layout;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,7 +46,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference userinfo ;
     private CollectionReference notebookRef = db.collection("Notebook");
-    private HomeAdapter adapter;
+    private FireAdapter adapter;
     FloatingActionButton editImage;
     private User user;
   private Boolean follower;
@@ -107,7 +105,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                     FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
                             .setQuery(profilequery, Note.class)
                             .build();
-                    adapter = new HomeAdapter(options,getApplicationContext());
+                    adapter = new FireAdapter(options,getApplicationContext());
 
                     recyclerView.setAdapter(adapter);
                     adapter.startListening();
@@ -187,7 +185,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                     FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
                             .setQuery(profilequery, Note.class)
                             .build();
-                    adapter = new HomeAdapter(options,getApplicationContext());
+                    adapter = new FireAdapter(options,getApplicationContext());
 
                     recyclerView.setAdapter(adapter);
                     adapter.startListening();

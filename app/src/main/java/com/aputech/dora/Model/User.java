@@ -13,49 +13,41 @@ public class User implements Parcelable {
     private int postnum;
     private String Bio;
     private String EmailAdress;
+    private int Following;
+    private int Follower;
     private String Gender;
-    private ArrayList<String> followers;
-    private ArrayList<String> following;
-    private ArrayList<String> posts;
     private int Userlevel;
+    private String userid;
+    private String ProfileUrl;
+
     public User() {
         //empty constructor needed
     }
 
-    public User(String userName, String bio, String emailAdress, String gender, ArrayList<String> followers, ArrayList<String> following, ArrayList<String> posts, int userlevel, String userid, String profileUrl, String facebookId, String instaId) {
+    public User(String userName, int postnum, String bio, String emailAdress, int following, int follower, String gender, int userlevel, String userid, String profileUrl) {
         UserName = userName;
+        this.postnum = postnum;
         Bio = bio;
         EmailAdress = emailAdress;
+        Following = following;
+        Follower = follower;
         Gender = gender;
-        this.followers = followers;
-        this.following = following;
-        this.posts = posts;
         Userlevel = userlevel;
         this.userid = userid;
         ProfileUrl = profileUrl;
-        this.facebookId = facebookId;
-        this.instaId = instaId;
     }
-
-    private String userid;
-    private String ProfileUrl; //Backend Url of Image
-    //Optional
-    private String facebookId;
-    private String instaId;
 
     protected User(Parcel in) {
         UserName = in.readString();
+        postnum = in.readInt();
         Bio = in.readString();
         EmailAdress = in.readString();
+        Following = in.readInt();
+        Follower = in.readInt();
         Gender = in.readString();
-        followers = in.createStringArrayList();
-        following = in.createStringArrayList();
-        posts = in.createStringArrayList();
         Userlevel = in.readInt();
         userid = in.readString();
         ProfileUrl = in.readString();
-        facebookId = in.readString();
-        instaId = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -70,14 +62,6 @@ public class User implements Parcelable {
         }
     };
 
-    public String getUserid() {
-        return userid;
-    }
-
-    public void setUserid(String userid) {
-        this.userid = userid;
-    }
-
     public String getUserName() {
         return UserName;
     }
@@ -86,12 +70,12 @@ public class User implements Parcelable {
         UserName = userName;
     }
 
-    public String getProfileUrl() {
-        return ProfileUrl;
+    public int getPostnum() {
+        return postnum;
     }
 
-    public void setProfileUrl(String profileUrl) {
-        ProfileUrl = profileUrl;
+    public void setPostnum(int postnum) {
+        this.postnum = postnum;
     }
 
     public String getBio() {
@@ -110,52 +94,28 @@ public class User implements Parcelable {
         EmailAdress = emailAdress;
     }
 
+    public int getFollowing() {
+        return Following;
+    }
+
+    public void setFollowing(int following) {
+        Following = following;
+    }
+
+    public int getFollower() {
+        return Follower;
+    }
+
+    public void setFollower(int follower) {
+        Follower = follower;
+    }
+
     public String getGender() {
         return Gender;
     }
 
     public void setGender(String gender) {
         Gender = gender;
-    }
-
-    public String getFacebookId() {
-        return facebookId;
-    }
-
-    public void setFacebookId(String facebookId) {
-        this.facebookId = facebookId;
-    }
-
-    public String getInstaId() {
-        return instaId;
-    }
-
-    public void setInstaId(String instaId) {
-        this.instaId = instaId;
-    }
-
-    public ArrayList<String> getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(ArrayList<String> followers) {
-        this.followers = followers;
-    }
-
-    public ArrayList<String> getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(ArrayList<String> following) {
-        this.following = following;
-    }
-
-    public ArrayList<String> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(ArrayList<String> posts) {
-        this.posts = posts;
     }
 
     public int getUserlevel() {
@@ -166,6 +126,22 @@ public class User implements Parcelable {
         Userlevel = userlevel;
     }
 
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    public String getProfileUrl() {
+        return ProfileUrl;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        ProfileUrl = profileUrl;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -174,16 +150,14 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(UserName);
+        dest.writeInt(postnum);
         dest.writeString(Bio);
         dest.writeString(EmailAdress);
+        dest.writeInt(Following);
+        dest.writeInt(Follower);
         dest.writeString(Gender);
-        dest.writeStringList(followers);
-        dest.writeStringList(following);
-        dest.writeStringList(posts);
         dest.writeInt(Userlevel);
         dest.writeString(userid);
         dest.writeString(ProfileUrl);
-        dest.writeString(facebookId);
-        dest.writeString(instaId);
     }
 }

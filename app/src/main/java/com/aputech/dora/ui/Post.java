@@ -52,12 +52,13 @@ public class Post extends AppCompatActivity {
 
     private EditText editText;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection("Notebook");
+    private CollectionReference notebookRef = db.collection("Posts");
     private ImageView imageView;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     MaterialButton camera,gallery,audio;
     boolean addaudio,addimage,addedvideo;
     private LatLng latLng;
+    int type;
     int activity;
 
     @Override
@@ -123,11 +124,8 @@ public class Post extends AppCompatActivity {
             post.setDescription(text);
             post.setType(1);
             GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
-            Log.d("bigpp", "uploadFire: "+geoPoint);
             post.setLocation(geoPoint);
-            ArrayList<String> emp=new ArrayList<String>();
-            post.setUpvote(emp);
-            post.setDownvote(emp);
+
             post.setUserid(auth.getUid());
             final DocumentReference DR= db.collection("Users").document(auth.getUid());
 
@@ -136,15 +134,16 @@ public class Post extends AppCompatActivity {
             notebookRef.add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
-                    post.setRefComments(documentReference.getId());
+                    String commentref = documentReference.getId();
+                    post.setRefComments(commentref);
                     post.setUptime(date);
                     documentReference.set(post);
                     DR.update("posts", FieldValue.arrayUnion(documentReference.getId()));
+                    Toast.makeText(Post.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
+                    finish();
 
                 }
             });
-            Toast.makeText(Post.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
-            finish();
 
 
         }

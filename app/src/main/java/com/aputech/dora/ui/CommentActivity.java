@@ -158,8 +158,8 @@ public class CommentActivity extends AppCompatActivity {
                 up.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean ifdown= model.getDownvote().contains(auth.getUid());
-                        boolean ifup= model.getUpvote().contains(auth.getUid());
+                        boolean ifdown= true;
+                        boolean ifup=false;
                         if (!ifup && !ifdown){
                             documentReference.update("upvote", FieldValue.arrayUnion(auth.getUid()));
                             documentReference.update("upnum", model.getUpnum()+1);
@@ -184,8 +184,8 @@ public class CommentActivity extends AppCompatActivity {
                 down.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean ifdown= model.getDownvote().contains(auth.getUid());
-                        boolean ifup= model.getUpvote().contains(auth.getUid());
+                        boolean ifdown=false;
+                        boolean ifup=true;
                         if (!ifup && !ifdown){
                             documentReference.update("downvote", FieldValue.arrayUnion(auth.getUid()));
                             documentReference.update("downnum", model.getDownnum()+1);
@@ -229,7 +229,7 @@ public class CommentActivity extends AppCompatActivity {
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 int totalNumberOfItems = adapter.getItemCount();
                 if(totalNumberOfItems > 0) {
-                    noresult.setVisibility(View.GONE);
+                    noresult.setVisibility(View.INVISIBLE);
                 }else{
                     noresult.setVisibility(View.VISIBLE);
                 }
@@ -253,19 +253,19 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     public void sendcomment(View view) {
-        DocumentReference documentReference = db.collection(collection).document(Document);
-        documentReference.update("commentnum",Commentnum+1);
-        String comenttext= editText.getText().toString();
-        Comment comment = new Comment();
-        comment.setDocId(note.getRefComments());
-        comment.setCommentText(comenttext);
-        comment.setUid(auth.getUid());
-        comment.setPriority(0);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
-        final String date =dateFormat.format(Calendar.getInstance().getTime());
-        comment.setTime(date);
-//
-        notebookRef.add(comment);
+//        DocumentReference documentReference = db.collection(collection).document(Document);
+//        documentReference.update("commentnum",Commentnum+1);
+//        String comenttext= editText.getText().toString();
+//        Comment comment = new Comment();
+//        comment.setDocId(note.getRefComments());
+//        comment.setCommentText(comenttext);
+//        comment.setUid(auth.getUid());
+//        comment.setPriority(0);
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
+//        final String date =dateFormat.format(Calendar.getInstance().getTime());
+//        comment.setTime(date);
+////
+//        notebookRef.add(comment);
 //        notification noti = new notification();
 //        noti.setDocument(Document);
 //        noti.setUserid(Userid);
@@ -274,6 +274,7 @@ public class CommentActivity extends AppCompatActivity {
 //        CollectionReference  notiref= db.collection("Users").document(Userid).collection("notify");
 //        notiref.add(noti);
         Toast.makeText(CommentActivity.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
+
 
     }
 
@@ -286,7 +287,7 @@ public class CommentActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-    //   adapter.stopListening();
+     adapter.stopListening();
     }
 }
 

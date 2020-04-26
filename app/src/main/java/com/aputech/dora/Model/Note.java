@@ -23,8 +23,8 @@ public class Note implements Parcelable {
     private String userid;
     private String uptime;
     private GeoPoint location;
-    private ArrayList<String> downvote;
-    private ArrayList<String> upvote;
+    private String downvoteref;
+    private String upvoteref;
     private String refComments;
     private float priority;
     private int commentnum;
@@ -35,14 +35,30 @@ public class Note implements Parcelable {
         //empty constructor needed
     }
 
+    public Note(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location, String downvoteref, String upvoteref, String refComments, float priority, int commentnum, int upnum, int downnum) {
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.type = type;
+        this.userid = userid;
+        this.uptime = uptime;
+        this.location = location;
+        this.downvoteref = downvoteref;
+        this.upvoteref = upvoteref;
+        this.refComments = refComments;
+        this.priority = priority;
+        this.commentnum = commentnum;
+        this.upnum = upnum;
+        this.downnum = downnum;
+    }
+
     protected Note(Parcel in) {
         description = in.readString();
         imageUrl = in.readString();
         type = in.readInt();
         userid = in.readString();
         uptime = in.readString();
-        downvote = in.createStringArrayList();
-        upvote = in.createStringArrayList();
+        downvoteref = in.readString();
+        upvoteref = in.readString();
         refComments = in.readString();
         priority = in.readFloat();
         commentnum = in.readInt();
@@ -61,43 +77,6 @@ public class Note implements Parcelable {
             return new Note[size];
         }
     };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(description);
-        dest.writeString(imageUrl);
-        dest.writeInt(type);
-        dest.writeString(userid);
-        dest.writeString(uptime);
-        dest.writeStringList(downvote);
-        dest.writeStringList(upvote);
-        dest.writeString(refComments);
-        dest.writeFloat(priority);
-        dest.writeInt(commentnum);
-        dest.writeInt(upnum);
-        dest.writeInt(downnum);
-    }
-
-    public Note(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location, ArrayList<String> downvote, ArrayList<String> upvote, String refComments, float priority, int commentnum, int upnum, int downnum) {
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.type = type;
-        this.userid = userid;
-        this.uptime = uptime;
-        this.location = location;
-        this.downvote = downvote;
-        this.upvote = upvote;
-        this.refComments = refComments;
-        this.priority = priority;
-        this.commentnum = commentnum;
-        this.upnum = upnum;
-        this.downnum = downnum;
-    }
 
     public String getDescription() {
         return description;
@@ -147,20 +126,20 @@ public class Note implements Parcelable {
         this.location = location;
     }
 
-    public ArrayList<String> getDownvote() {
-        return downvote;
+    public String getDownvoteref() {
+        return downvoteref;
     }
 
-    public void setDownvote(ArrayList<String> downvote) {
-        this.downvote = downvote;
+    public void setDownvoteref(String downvoteref) {
+        this.downvoteref = downvoteref;
     }
 
-    public ArrayList<String> getUpvote() {
-        return upvote;
+    public String getUpvoteref() {
+        return upvoteref;
     }
 
-    public void setUpvote(ArrayList<String> upvote) {
-        this.upvote = upvote;
+    public void setUpvoteref(String upvoteref) {
+        this.upvoteref = upvoteref;
     }
 
     public String getRefComments() {
@@ -203,7 +182,24 @@ public class Note implements Parcelable {
         this.downnum = downnum;
     }
 
-    public static Creator<Note> getCREATOR() {
-        return CREATOR;
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(description);
+        dest.writeString(imageUrl);
+        dest.writeInt(type);
+        dest.writeString(userid);
+        dest.writeString(uptime);
+        dest.writeString(downvoteref);
+        dest.writeString(upvoteref);
+        dest.writeString(refComments);
+        dest.writeFloat(priority);
+        dest.writeInt(commentnum);
+        dest.writeInt(upnum);
+        dest.writeInt(downnum);
     }
 }

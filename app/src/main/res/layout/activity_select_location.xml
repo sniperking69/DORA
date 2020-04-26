@@ -17,16 +17,20 @@
         android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:iconSize="20dp"
+        app:iconGravity="textEnd"
+        app:iconPadding="5dp"
         android:layout_alignParentEnd="true"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        app:icon="@drawable/upvote_on" />
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:text="POST"
+        app:icon="@drawable/ic_next"/>
     <com.google.android.material.button.MaterialButton
         android:id="@+id/SKIP"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:text="SKIP"/>
     <TextView
 
