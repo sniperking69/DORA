@@ -24,7 +24,7 @@ public class Trending extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection("Notebook");
+    private CollectionReference notebookRef = db.collection("Posts");
     private FireAdapter adapter;
     private  RelativeLayout relativeLayout;
     private RecyclerView.AdapterDataObserver adapterDataObserver;

@@ -192,6 +192,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
 
         }
 
+
         holder.up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
