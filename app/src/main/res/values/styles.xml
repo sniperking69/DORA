@@ -25,5 +25,7 @@
         <item name="android:windowBackground">@color/colorPrimary</item>
 
     </style>
-
+    <style name="TextLimitError" parent="TextAppearance.AppCompat.Small">
+    <item name="android:textColor">@color/colorRed</item>
+    </style>
 </resources>

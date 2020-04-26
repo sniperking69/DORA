@@ -56,7 +56,7 @@ public class Post extends AppCompatActivity {
     private ImageView imageView;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     MaterialButton camera,gallery,audio;
-    boolean addaudio,addimage,addedvideo;
+    boolean addaudio=false,addimage,addedvideo;
     private LatLng latLng;
     int type;
     int activity;
