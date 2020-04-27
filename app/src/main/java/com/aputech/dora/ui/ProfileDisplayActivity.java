@@ -100,42 +100,42 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     user = documentSnapshot.toObject(User.class);
-                    Query profilequery= notebookRef.whereIn(FieldPath.documentId(),user.getPosts()).orderBy("priority", Query.Direction.DESCENDING);
-
-                    FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                            .setQuery(profilequery, Note.class)
-                            .build();
-                    adapter = new FireAdapter(options,getApplicationContext());
-
-                    recyclerView.setAdapter(adapter);
-                    adapter.startListening();
-                    posts.setText(String.valueOf(user.getPosts().size()));
-                    if (user.getFollowing()!=null && user.getFollowers()!=null){
-                        following.setText(String.valueOf(user.getFollowing().size()));
-                        followers.setText(String.valueOf(user.getFollowers().size()));
-                    }else{
-                        following.setText(String.valueOf(0));
-                        followers.setText(String.valueOf(0));
-                    }
-
-                    if (user.getUserlevel()==0){
-                        Glide
-                                .with(getApplicationContext())
-                                .load(R.drawable.ic_grade)
-                                .into(level);
-                    }
-                    if (user.getUserlevel()==1){
-                        Glide
-                                .with(getApplicationContext())
-                                .load(R.drawable.ic_grade1)
-                                .into(level);
-                    }
-                    if (user.getUserlevel()==2){
-                        Glide
-                                .with(getApplicationContext())
-                                .load(R.drawable.ic_grade2)
-                                .into(level);
-                    }
+//                    Query profilequery= notebookRef.whereIn(FieldPath.documentId(),user.getPosts()).orderBy("priority", Query.Direction.DESCENDING);
+//
+//                    FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
+//                            .setQuery(profilequery, Note.class)
+//                            .build();
+//                    adapter = new FireAdapter(options,getApplicationContext());
+//
+//                    recyclerView.setAdapter(adapter);
+//                    adapter.startListening();
+//                    posts.setText(String.valueOf(user.getPosts().size()));
+//                    if (user.getFollowing()!=null && user.getFollowers()!=null){
+//                        following.setText(String.valueOf(user.getFollowing().size()));
+//                        followers.setText(String.valueOf(user.getFollowers().size()));
+//                    }else{
+//                        following.setText(String.valueOf(0));
+//                        followers.setText(String.valueOf(0));
+//                    }
+//
+//                    if (user.getUserlevel()==0){
+//                        Glide
+//                                .with(getApplicationContext())
+//                                .load(R.drawable.ic_grade)
+//                                .into(level);
+//                    }
+//                    if (user.getUserlevel()==1){
+//                        Glide
+//                                .with(getApplicationContext())
+//                                .load(R.drawable.ic_grade1)
+//                                .into(level);
+//                    }
+//                    if (user.getUserlevel()==2){
+//                        Glide
+//                                .with(getApplicationContext())
+//                                .load(R.drawable.ic_grade2)
+//                                .into(level);
+//                    }
                     appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
                         boolean isShow = true;
                         int scrollRange = -1;
@@ -180,42 +180,42 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     user = documentSnapshot.toObject(User.class);
-                    Query profilequery= notebookRef.whereIn(FieldPath.documentId(),user.getPosts()).orderBy("priority", Query.Direction.DESCENDING);
-
-                    FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                            .setQuery(profilequery, Note.class)
-                            .build();
-                    adapter = new FireAdapter(options,getApplicationContext());
-
-                    recyclerView.setAdapter(adapter);
-                    adapter.startListening();
-                    posts.setText(String.valueOf(user.getPosts().size()));
-                    if (user.getFollowing()!=null && user.getFollowers()!=null){
-                        following.setText(String.valueOf(user.getFollowing().size()));
-                        followers.setText(String.valueOf(user.getFollowers().size()));
-                    }else{
-                        following.setText(String.valueOf(0));
-                        followers.setText(String.valueOf(0));
-                    }
-
-                    if (user.getUserlevel()==0){
-                        Glide
-                                .with(getApplicationContext())
-                                .load(R.drawable.ic_grade)
-                                .into(level);
-                    }
-                    if (user.getUserlevel()==1){
-                        Glide
-                                .with(getApplicationContext())
-                                .load(R.drawable.ic_grade1)
-                                .into(level);
-                    }
-                    if (user.getUserlevel()==2){
-                        Glide
-                                .with(getApplicationContext())
-                                .load(R.drawable.ic_grade2)
-                                .into(level);
-                    }
+//                    Query profilequery= notebookRef.whereIn(FieldPath.documentId(),user.getPosts()).orderBy("priority", Query.Direction.DESCENDING);
+//
+//                    FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
+//                            .setQuery(profilequery, Note.class)
+//                            .build();
+//                    adapter = new FireAdapter(options,getApplicationContext());
+//
+//                    recyclerView.setAdapter(adapter);
+//                    adapter.startListening();
+                 //   posts.setText(String.valueOf(user.getPosts().size()));
+//                    if (user.getFollowing()!=null && user.getFollowers()!=null){
+//                        following.setText(String.valueOf(user.getFollowing().size()));
+//                        followers.setText(String.valueOf(user.getFollowers().size()));
+//                    }else{
+//                        following.setText(String.valueOf(0));
+//                        followers.setText(String.valueOf(0));
+//                    }
+//
+//                    if (user.getUserlevel()==0){
+//                        Glide
+//                                .with(getApplicationContext())
+//                                .load(R.drawable.ic_grade)
+//                                .into(level);
+//                    }
+//                    if (user.getUserlevel()==1){
+//                        Glide
+//                                .with(getApplicationContext())
+//                                .load(R.drawable.ic_grade1)
+//                                .into(level);
+//                    }
+//                    if (user.getUserlevel()==2){
+//                        Glide
+//                                .with(getApplicationContext())
+//                                .load(R.drawable.ic_grade2)
+//                                .into(level);
+//                    }
                     appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
                         boolean isShow = true;
                         int scrollRange = -1;
@@ -242,34 +242,34 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                             .with(getApplicationContext())
                             .load(user.getProfileUrl())
                             .into(profileimg);
-                    if (user.getFollowers()!=null){
-                        if (user.getFollowers().contains(auth.getUid())){
-                            settings.setText("UNFOLLOW");
-                        }
-                    }
+//                    if (user.getFollowers()!=null){
+//                        if (user.getFollowers().contains(auth.getUid())){
+//                            settings.setText("UNFOLLOW");
+//                        }
+//                    }
                     settings.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (user.getFollowers()!=null){
-                                if (user.getFollowers().contains(auth.getUid())){
-                                    DocumentReference documentRef= db.collection("Users").document(auth.getUid());
-                                    DocumentReference documentReference= db.collection("Users").document(user.getUserid());
-                                    documentReference.update("followers", FieldValue.arrayRemove(auth.getUid()));
-                                    documentRef.update("following", FieldValue.arrayRemove(user.getUserid()));
-                                    settings.setText("FOLLOW");
-                                }else{
-                                    DocumentReference documentRef= db.collection("Users").document(auth.getUid());
-                                    DocumentReference documentReference= db.collection("Users").document(user.getUserid());
-                                    documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
-                                    documentRef.update("following", FieldValue.arrayUnion(user.getUserid()));
-                                    settings.setText("UNFOLLOW");
-                                }
-                            }else{
-                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
-                                DocumentReference documentReference= db.collection("Users").document(user.getUserid());
-                                documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
-                                documentRef.update("following", FieldValue.arrayUnion(user.getUserid()));
-                            }
+//                            if (user.getFollowers()!=null){
+//                                if (user.getFollowers().contains(auth.getUid())){
+//                                    DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+//                                    DocumentReference documentReference= db.collection("Users").document(user.getUserid());
+//                                    documentReference.update("followers", FieldValue.arrayRemove(auth.getUid()));
+//                                    documentRef.update("following", FieldValue.arrayRemove(user.getUserid()));
+//                                    settings.setText("FOLLOW");
+//                                }else{
+//                                    DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+//                                    DocumentReference documentReference= db.collection("Users").document(user.getUserid());
+//                                    documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
+//                                    documentRef.update("following", FieldValue.arrayUnion(user.getUserid()));
+//                                    settings.setText("UNFOLLOW");
+//                                }
+//                            }else{
+//                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+//                                DocumentReference documentReference= db.collection("Users").document(user.getUserid());
+//                                documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
+//                                documentRef.update("following", FieldValue.arrayUnion(user.getUserid()));
+//                            }
 
                         }
                     });

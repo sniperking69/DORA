@@ -34,6 +34,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.gson.internal.$Gson$Types;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,8 +59,7 @@ public class Post extends AppCompatActivity {
     MaterialButton camera,gallery,audio;
     boolean addaudio=false,addimage,addedvideo;
     private LatLng latLng;
-    int type;
-    int activity;
+    private int type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,7 @@ public class Post extends AppCompatActivity {
         imageView = findViewById(R.id.dispimg);
         audio = findViewById(R.id.Audio);
         Intent intent= getIntent();
-        activity= intent.getIntExtra("activity",0);
+        type=1;
         gallery=findViewById(R.id.Gallery);
         camera =findViewById(R.id.Camera);
         audio.setOnClickListener(new View.OnClickListener() {
@@ -113,24 +113,33 @@ public class Post extends AppCompatActivity {
         if (requestCode ==REQUEST_LOCATION){
             Bundle extras = data.getExtras();
             latLng = (LatLng) extras.get("LatLng");
+            boolean skipcheck= (boolean) extras.get("skip");
             Toast.makeText(Post.this,latLng.toString(),Toast.LENGTH_LONG).show();
-            uploadFire();
+            uploadFire(type,skipcheck);
         }
     }
-    private void uploadFire(){
-        if (activity==1){
-            String text= editText.getText().toString();
-            final Note post = new Note();
-            post.setDescription(text);
-            post.setType(1);
+    private void uploadFire(int type,boolean skip){
+        String text= editText.getText().toString();
+        final Note post = new Note();
+        if (!skip){
             GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
             post.setLocation(geoPoint);
+        }else{
+            post.setLocation(null);
+        }
+        post.setType(type);
+        post.setDescription(text);
+        post.setUserid(auth.getUid());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
+        if (type==2){
+            post.setImageUrl("sdasda");
+        }if (type==3) {
+            post.setVideoUrl("sdadadasd");
 
-            post.setUserid(auth.getUid());
-            final DocumentReference DR= db.collection("Users").document(auth.getUid());
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
-            final String date =dateFormat.format(Calendar.getInstance().getTime());
+        }if (type==4){
+          post.setAudioUrl("dnaoidaoid");
+        }
+        final String date =dateFormat.format(Calendar.getInstance().getTime());
             notebookRef.add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
@@ -138,27 +147,23 @@ public class Post extends AppCompatActivity {
                     post.setRefComments(commentref);
                     post.setUptime(date);
                     documentReference.set(post);
-                    DR.update("posts", FieldValue.arrayUnion(documentReference.getId()));
                     Toast.makeText(Post.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
                     finish();
 
                 }
             });
-
-
-        }
-        if (activity==2){
-            finish();
-                CollectionReference collectionReference = db.collection("inbox");
-                message mms= new message();
-                mms.setType(1);
-                mms.setUptime("hehoa");
-                mms.setSentBy(auth.getUid());
-                GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
-                mms.setLocation(geoPoint);
-                collectionReference.add(mms);
-
-        }
+//        if (activity==2){
+//            finish();
+//                CollectionReference collectionReference = db.collection("inbox");
+//                message mms= new message();
+//                mms.setType(1);
+//                mms.setUptime("hehoa");
+//                mms.setSentBy(auth.getUid());
+//                GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
+//                mms.setLocation(geoPoint);
+//                collectionReference.add(mms);
+//
+//        }
 
     }
 }

@@ -70,8 +70,9 @@ public class Profile extends Fragment {
     private Uri filePath;
     private RelativeLayout relativeLayout;
     private CircleImageView profileimg;
-    private TextView following, posts, followers, name, bio;
+    private TextView following, posts, followers, name, bio,email;
     private ImageView level;
+    RecyclerView.AdapterDataObserver observer;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -122,6 +123,7 @@ public class Profile extends Fragment {
         followers = root.findViewById(R.id.numFolo);
         following = root.findViewById(R.id.numFoly);
         posts = root.findViewById(R.id.numPosts);
+
         level = root.findViewById(R.id.level);
         name = root.findViewById(R.id.nametitle);
         profileimg = root.findViewById(R.id.profiledisplay);
@@ -134,6 +136,23 @@ public class Profile extends Fragment {
                 startActivity(intent);
             }
         });
+        observer =new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount) {
+                if (itemCount > 0) {
+                    relativeLayout.setVisibility(View.GONE);
+                } else {
+                    relativeLayout.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                if (itemCount == 1) {
+                    relativeLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        };
         Query profilequery = collectionReference.whereEqualTo("userid", auth.getUid()).orderBy("priority", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
                 .setQuery(profilequery, Note.class)
@@ -141,17 +160,7 @@ public class Profile extends Fragment {
         adapter = new FireAdapter(options, getActivity());
         recyclerView.setAdapter(adapter);
         adapter.startListening();
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                int totalNumberOfItems = adapter.getItemCount();
-                if (totalNumberOfItems > 0) {
 
-                    relativeLayout.setVisibility(View.INVISIBLE);
-                } else {
-                    relativeLayout.setVisibility(View.VISIBLE);
-                }
-            }
-        });
         userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -179,10 +188,13 @@ public class Profile extends Fragment {
                             .into(level);
                 }
                 name.setText(user.getUserName());
-                Glide
-                        .with(getActivity())
-                        .load(user.getProfileUrl())
-                        .into(profileimg);
+                if (user.getProfileUrl()!=null){
+                    Glide
+                            .with(getActivity())
+                            .load(user.getProfileUrl())
+                            .into(profileimg);
+                }
+
 
             }
         });
@@ -208,8 +220,9 @@ public class Profile extends Fragment {
 
     @Override
     public void onStart() {
-
         super.onStart();
+        adapter.startListening();
+        adapter.registerAdapterDataObserver(observer);
     }
 
     @Override
@@ -233,6 +246,7 @@ public class Profile extends Fragment {
         super.onStop();
         if (adapter != null) {
             adapter.stopListening();
+            adapter.unregisterAdapterDataObserver(observer);
         }
     }
 

@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aputech.dora.Adpater.SearchAdapter;
 import com.aputech.dora.LocationJob;
 import com.aputech.dora.Model.User;
+import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.Fragments.Notify;
 import com.aputech.dora.ui.Fragments.Profile;
@@ -267,15 +268,7 @@ public class HActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HActivity.this, Post.class);
-                intent.putExtra("activity", 1);
                 startActivity(intent);
-//                AuthUI.getInstance().signOut(HActivity.this).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                            public void onComplete(@NonNull Task<Void> task) {
-//                                // user is now signed out
-//                               // startActivity(new Intent(HActivity.this, Post.class));
-//                                finish();
-//                            }
-//                        });
             }
         });
     }

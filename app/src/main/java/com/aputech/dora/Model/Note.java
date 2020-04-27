@@ -27,6 +27,8 @@ public class Note implements Parcelable {
     private String upvoteref;
     private String refComments;
     private float priority;
+    private String videoUrl;
+    private String audioUrl;
     private int commentnum;
     private int upnum;
     private int downnum;
@@ -35,7 +37,7 @@ public class Note implements Parcelable {
         //empty constructor needed
     }
 
-    public Note(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location, String downvoteref, String upvoteref, String refComments, float priority, int commentnum, int upnum, int downnum) {
+    public Note(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location, String downvoteref, String upvoteref, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum) {
         this.description = description;
         this.imageUrl = imageUrl;
         this.type = type;
@@ -46,6 +48,8 @@ public class Note implements Parcelable {
         this.upvoteref = upvoteref;
         this.refComments = refComments;
         this.priority = priority;
+        this.videoUrl = videoUrl;
+        this.audioUrl = audioUrl;
         this.commentnum = commentnum;
         this.upnum = upnum;
         this.downnum = downnum;
@@ -61,6 +65,8 @@ public class Note implements Parcelable {
         upvoteref = in.readString();
         refComments = in.readString();
         priority = in.readFloat();
+        videoUrl = in.readString();
+        audioUrl = in.readString();
         commentnum = in.readInt();
         upnum = in.readInt();
         downnum = in.readInt();
@@ -158,6 +164,22 @@ public class Note implements Parcelable {
         this.priority = priority;
     }
 
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
+    public String getAudioUrl() {
+        return audioUrl;
+    }
+
+    public void setAudioUrl(String audioUrl) {
+        this.audioUrl = audioUrl;
+    }
+
     public int getCommentnum() {
         return commentnum;
     }
@@ -198,6 +220,8 @@ public class Note implements Parcelable {
         dest.writeString(upvoteref);
         dest.writeString(refComments);
         dest.writeFloat(priority);
+        dest.writeString(videoUrl);
+        dest.writeString(audioUrl);
         dest.writeInt(commentnum);
         dest.writeInt(upnum);
         dest.writeInt(downnum);

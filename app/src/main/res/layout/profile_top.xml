@@ -14,7 +14,7 @@
         android:id="@+id/profiledisplay"
         android:layout_margin="10dp"
 
-        android:src="@drawable/ic_ram_profile"/>
+        android:src="@drawable/ic_user"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/editimage"
         android:layout_width="wrap_content"
@@ -22,7 +22,8 @@
         app:fabSize="mini"
         android:layout_alignBottom="@+id/profiledisplay"
         android:layout_alignEnd="@+id/profiledisplay"
-        android:src="@android:drawable/ic_menu_upload" />
+        android:tint="@android:color/white"
+        android:src="@drawable/ic_upload" />
     <LinearLayout
         android:id="@+id/topinfo"
         android:layout_width="match_parent"
@@ -40,7 +41,6 @@
             <TextView
                 android:id="@+id/nametitle"
                 android:layout_width="wrap_content"
-                android:text="Mr Wilson"
                 android:gravity="center"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
@@ -71,7 +71,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_weight="1"
-                    android:text="135"
                     android:textColor="@color/design_default_color_on_secondary"
                     android:textStyle="bold" />
                 <TextView
@@ -80,7 +79,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_weight="1"
-                    android:text="345"
                     android:textColor="@color/design_default_color_on_secondary"
                     android:textStyle="bold"  />
 
@@ -90,7 +88,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_weight="1"
-                    android:text="200"
                     android:textColor="@color/design_default_color_on_secondary"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -131,37 +128,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:iconSize="24dp"
-            android:text="Follow"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-
     </LinearLayout>
-
-
-
-
-
-
-
 
         <TextView
             android:id="@+id/bio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My Hero Academia (Japanese: 僕のヒーローアカデミア, Hepburn: Boku no Hīrō Akademia) is a Japanese superhero manga series ..more"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
         android:textColor="@color/design_default_color_on_secondary"
-            android:layout_below="@+id/topinfo"/>
-<!--<ImageView-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="1dp"-->
-<!--    android:src="@android:color/darker_gray"-->
-<!--    android:layout_below="@id/bio"/>-->
-<!--    <ImageView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="1dp"-->
-<!--        android:src="@android:color/darker_gray"-->
-<!--        android:layout_above="@id/bio"/>-->
+            android:layout_below="@+id/email"/>
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/design_default_color_on_secondary"
+        android:layout_below="@+id/topinfo"/>
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:src="@android:color/darker_gray"
+    android:layout_below="@id/bio"/>
 </RelativeLayout>
 
 </RelativeLayout>

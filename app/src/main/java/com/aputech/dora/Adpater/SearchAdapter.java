@@ -59,11 +59,11 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                     mContext.startActivity(intent);
                 }
             });
-            if (model.getFollowers()!=null){
-                if (model.getFollowers().contains(auth.getUid())){
-                    holder.followbutton.setText("UNFOLLOW");
-                }
-            }
+//            if (model.getFollowers()!=null){
+//                if (model.getFollowers().contains(auth.getUid())){
+//                    holder.followbutton.setText("UNFOLLOW");
+//                }
+//            }
             if (model.getUserid().equals(auth.getUid())){
                 holder.followbutton.setText("Settings");
                 holder.followbutton.setOnClickListener(new View.OnClickListener() {
@@ -75,32 +75,32 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                 });
 
             }else{
-                holder.followbutton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (model.getFollowers()!=null){
-                            if (model.getFollowers().contains(auth.getUid())){
-                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
-                                DocumentReference documentReference= db.collection("Users").document(model.getUserid());
-                                documentReference.update("followers", FieldValue.arrayRemove(auth.getUid()));
-                                documentRef.update("following", FieldValue.arrayRemove(model.getUserid()));
-                                holder.followbutton.setText("FOLLOW");
-                            }else{
-                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
-                                DocumentReference documentReference= db.collection("Users").document(model.getUserid());
-                                documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
-                                documentRef.update("following", FieldValue.arrayUnion(model.getUserid()));
-                                holder.followbutton.setText("UNFOLLOW");
-                            }
-                        }else{
-                            DocumentReference documentRef= db.collection("Users").document(auth.getUid());
-                            DocumentReference documentReference= db.collection("Users").document(model.getUserid());
-                            documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
-                            documentRef.update("following", FieldValue.arrayUnion(model.getUserid()));
-                        }
-
-                    }
-                });
+//                holder.followbutton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        if (model.getFollowers()!=null){
+//                            if (model.getFollowers().contains(auth.getUid())){
+//                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+//                                DocumentReference documentReference= db.collection("Users").document(model.getUserid());
+//                                documentReference.update("followers", FieldValue.arrayRemove(auth.getUid()));
+//                                documentRef.update("following", FieldValue.arrayRemove(model.getUserid()));
+//                                holder.followbutton.setText("FOLLOW");
+//                            }else{
+//                                DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+//                                DocumentReference documentReference= db.collection("Users").document(model.getUserid());
+//                                documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
+//                                documentRef.update("following", FieldValue.arrayUnion(model.getUserid()));
+//                                holder.followbutton.setText("UNFOLLOW");
+//                            }
+//                        }else{
+//                            DocumentReference documentRef= db.collection("Users").document(auth.getUid());
+//                            DocumentReference documentReference= db.collection("Users").document(model.getUserid());
+//                            documentReference.update("followers", FieldValue.arrayUnion(auth.getUid()));
+//                            documentRef.update("following", FieldValue.arrayUnion(model.getUserid()));
+//                        }
+//
+//                    }
+//                });
 
             }
 

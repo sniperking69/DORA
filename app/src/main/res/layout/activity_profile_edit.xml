@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.regUser">
+    tools:context=".ui.ProfileEditActivity">
     <RelativeLayout
         android:id="@+id/imglayout"
         android:layout_width="match_parent"
@@ -109,33 +109,33 @@
         android:layout_margin="10dp"
         android:layout_below="@+id/pGender"
         android:layout_height="wrap_content" />
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_below="@id/spinner">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/spinner">
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:elevation="5dp"
-        android:focusable="true"
-        android:text="@string/Continue"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:layout_centerHorizontal="true"
-        android:textColor="@android:color/white"
-        app:backgroundTint="@color/colorPrimary"
-        app:icon="@drawable/ic_next"
-        app:cornerRadius="20dp"
-        android:layout_centerVertical="true"
-        app:iconGravity="textEnd"
-        android:onClick="Continue"
-        app:iconTint="@null"
-        app:rippleColor="@android:color/white" />
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:elevation="5dp"
+            android:focusable="true"
+            android:text="SAVE"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/colorPrimary"
+            app:icon="@drawable/ic_save"
+            app:cornerRadius="20dp"
+            android:layout_centerVertical="true"
+            app:iconGravity="textStart"
+            android:onClick="SAVE"
+            app:iconTint="@android:color/white"
+            app:rippleColor="@android:color/white" />
 
 
-</RelativeLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
