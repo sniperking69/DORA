@@ -27,7 +27,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.ProfileEditActivity"></activity>
+        <activity android:name=".ui.PostDisplay"></activity>
+        <activity android:name=".ui.ProfileEditActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

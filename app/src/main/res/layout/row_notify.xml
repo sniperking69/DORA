@@ -2,59 +2,68 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    xmlns:card_view="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/profiledisplay"
-        android:src="@drawable/ic_ram_profile"/>
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="20dp"
-        android:id="@+id/level"
-        android:layout_height="20dp"
-        android:layout_alignBottom="@+id/profiledisplay"
-        android:layout_alignEnd="@+id/profiledisplay"
-        app:srcCompat="@drawable/ic_grade"/>
-    <LinearLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/notidoc"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="4dp"
-        android:weightSum="10"
-        android:layout_toEndOf="@+id/profiledisplay"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/notidesc"
-            android:layout_width="wrap_content"
-            android:text="Wilson Commented on Your Post"
-            android:layout_weight="7"
-            android:gravity="center"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:layout_height="0dp"/>
-        <TextView
-            android:id="@+id/notitime"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="3"
-            android:fontFamily="sans-serif"
-            android:text="11 hrs"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray" />
-
-    </LinearLayout>
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/delete"
-        android:layout_width="30dp"
         android:layout_height="wrap_content"
-        app:iconSize="20dp"
-        android:layout_alignParentEnd="true"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        app:icon="@drawable/ic_delete" />
+        android:layout_margin="4dp"
+        card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardCornerRadius="5dp"
+        card_view:cardElevation="5dp">
+        <RelativeLayout
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/profiledisplay"
+            android:src="@drawable/ic_user"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="20dp"
+            android:id="@+id/level"
+            android:layout_height="20dp"
+            android:layout_alignBottom="@+id/profiledisplay"
+            android:layout_alignEnd="@+id/profiledisplay"
+            app:srcCompat="@drawable/ic_grade"/>
+
+
+                <TextView
+                    android:id="@+id/notidesc"
+                    android:layout_width="wrap_content"
+                    android:text="Wilson Commented on Your Post"
+                    android:ellipsize="end"
+                    android:layout_margin="4dp"
+                    android:layout_toEndOf="@+id/profiledisplay"
+                    android:maxLines="2"
+                    android:textColor="@android:color/black"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/notitime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:fontFamily="sans-serif"
+                    android:text="11 hrs"
+                    android:textSize="12sp"
+                    android:layout_alignBottom="@+id/delete"
+                    android:layout_toStartOf="@+id/delete"
+                    android:textColor="@android:color/darker_gray"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/delete"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:icon="@drawable/ic_delete" />
+
+
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
 
 </RelativeLayout>

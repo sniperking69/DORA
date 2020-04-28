@@ -17,12 +17,15 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextClock;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aputech.dora.Model.Comment;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,6 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class Post extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -60,6 +65,10 @@ public class Post extends AppCompatActivity {
     boolean addaudio=false,addimage,addedvideo;
     private LatLng latLng;
     private int type;
+    private TextView user_name;
+    private TextView time;
+    private ImageView level;
+    private CircleImageView profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +77,11 @@ public class Post extends AppCompatActivity {
         editText=findViewById(R.id.para);
         imageView = findViewById(R.id.dispimg);
         audio = findViewById(R.id.Audio);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
+        user_name = findViewById(R.id.user_name);
+        time = findViewById(R.id.time);
+        level= findViewById(R.id.level);
+        profile=findViewById(R.id.poster_profile);
         Intent intent= getIntent();
         type=1;
         gallery=findViewById(R.id.Gallery);

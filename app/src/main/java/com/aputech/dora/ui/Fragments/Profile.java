@@ -72,6 +72,7 @@ public class Profile extends Fragment {
     private CircleImageView profileimg;
     private TextView following, posts, followers, name, bio,email;
     private ImageView level;
+
     RecyclerView.AdapterDataObserver observer;
 
     // TODO: Rename and change types of parameters
@@ -123,8 +124,8 @@ public class Profile extends Fragment {
         followers = root.findViewById(R.id.numFolo);
         following = root.findViewById(R.id.numFoly);
         posts = root.findViewById(R.id.numPosts);
-
         level = root.findViewById(R.id.level);
+        email =root.findViewById(R.id.email);
         name = root.findViewById(R.id.nametitle);
         profileimg = root.findViewById(R.id.profiledisplay);
         MaterialButton settings = root.findViewById(R.id.followandset);
@@ -160,13 +161,13 @@ public class Profile extends Fragment {
         adapter = new FireAdapter(options, getActivity());
         recyclerView.setAdapter(adapter);
         adapter.startListening();
-
         userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 user = documentSnapshot.toObject(User.class);
                 posts.setText(String.valueOf(user.getPostnum()));
                 bio.setText(user.getBio());
+
                 followers.setText(String.valueOf(user.getFollower()));
                 following.setText(String.valueOf(user.getFollowing()));
                 if (user.getUserlevel() == 0) {

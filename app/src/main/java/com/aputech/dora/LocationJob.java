@@ -82,6 +82,7 @@ public class LocationJob extends JobService {
     }
     public void sendOnChannel1(notification noti) {
         Intent intent = new Intent(this, HActivity.class);
+      //  intent.putExtra("activity",1);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)

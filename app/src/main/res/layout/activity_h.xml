@@ -5,40 +5,11 @@
     android:background="@android:color/transparent"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <RelativeLayout
-        android:id="@+id/search_list"
-        android:visibility="visible"
-        android:layout_width="match_parent"
+    <include layout="@layout/searchlayout"
+        android:layout_below="@+id/my_toolbar"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:layout_below="@+id/my_toolbar">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/search_rec"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        <RelativeLayout
-            android:id="@+id/noresult"
-            android:visibility="invisible"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/searchicon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_search"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:tint="@android:color/darker_gray"/>
-            <TextView
+        android:layout_width="match_parent"/>
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/searchicon"
-                android:text="No result Found" />
-        </RelativeLayout>
-
-    </RelativeLayout>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"

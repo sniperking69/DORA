@@ -3,11 +3,13 @@ package com.aputech.dora.ui.Fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +39,8 @@ public class Notify extends Fragment {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private CollectionReference notebookRef = db.collection("Users").document(auth.getUid()).collection("notify");
     private NotiAdapter adapter;
-
+    RelativeLayout relativeLayout;
+    RecyclerView.AdapterDataObserver observer;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -79,30 +82,51 @@ public class Notify extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_notify, container, false);
-        Query query = notebookRef;
-
+        Query query = notebookRef.orderBy("timestamp",Query.Direction.DESCENDING);
+       relativeLayout= root.findViewById(R.id.noresult);
         FirestoreRecyclerOptions<notification> options = new FirestoreRecyclerOptions.Builder<notification>()
                 .setQuery(query, notification.class)
                 .build();
 
         adapter = new NotiAdapter(options,getContext());
-
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
-        final RelativeLayout relativeLayout= root.findViewById(R.id.noresult);
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+        observer =new RecyclerView.AdapterDataObserver() {
+            @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                int totalNumberOfItems = adapter.getItemCount();
-                if(totalNumberOfItems > 0) {
-
+                super.onItemRangeInserted(positionStart, itemCount);
+                if (itemCount > 0) {
                     relativeLayout.setVisibility(View.INVISIBLE);
-                }else{
+                } else {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
-        });
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                Log.d("bigpp", "onItemRangeRemoved: "+positionStart + "  "+ itemCount);
+                if (itemCount == 1) {
+                    if (positionStart==0){
+                        relativeLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount) {
+                super.onItemRangeChanged(positionStart, itemCount);
+                Log.d("bigpp", "nItemRangeChanged: "+positionStart + "  "+ itemCount);
+                if (itemCount > 0) {
+                    relativeLayout.setVisibility(View.INVISIBLE);
+                } else {
+                    relativeLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -122,11 +146,17 @@ public class Notify extends Fragment {
     public void onStart() {
         super.onStart();
         adapter.startListening();
+        adapter.registerAdapterDataObserver(observer);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        adapter.stopListening();
+        if (adapter != null) {
+            adapter.stopListening();
+            adapter.unregisterAdapterDataObserver(observer);
+        }
     }
+
+
 }

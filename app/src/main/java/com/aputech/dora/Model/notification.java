@@ -1,16 +1,31 @@
 package com.aputech.dora.Model;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
 public class notification {
-    private String Text,Document,userid,time;
+    @ServerTimestamp
+    private Date timestamp;
+    private String Text,Document,userid;
     public notification() {
         //empty constructor needed
     }
 
-    public notification(String text, String document, String userid, String time) {
+    public notification(Date timestamp, String text, String document, String userid) {
+        this.timestamp = timestamp;
         Text = text;
         Document = document;
         this.userid = userid;
-        this.time = time;
+
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getText() {
@@ -37,11 +52,4 @@ public class notification {
         this.userid = userid;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
 }

@@ -98,7 +98,9 @@ public class Trending extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-           adapter.stopListening();
-          adapter.unregisterAdapterDataObserver(adapterDataObserver);
+        if (adapter != null) {
+            adapter.stopListening();
+            adapter.unregisterAdapterDataObserver(adapterDataObserver);
+        }
     }
 }

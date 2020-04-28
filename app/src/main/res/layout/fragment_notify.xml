@@ -5,6 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.Fragments.home">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:layout_height="match_parent" />
     <RelativeLayout
         android:id="@+id/noresult"
         android:visibility="invisible"
@@ -26,9 +33,4 @@
             android:layout_below="@+id/s"
             android:text="No Notifications" />
     </RelativeLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 </RelativeLayout>

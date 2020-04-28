@@ -35,22 +35,26 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aputech.dora.Adpater.SearchAdapter;
+import com.aputech.dora.Adpater.SAdapter;
 import com.aputech.dora.LocationJob;
 import com.aputech.dora.Model.User;
-import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.Fragments.Notify;
 import com.aputech.dora.ui.Fragments.Profile;
 import com.aputech.dora.ui.Fragments.Trending;
 import com.aputech.dora.ui.Fragments.home;
 import com.bumptech.glide.Glide;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 
 public class HActivity extends AppCompatActivity {
@@ -66,14 +70,18 @@ public class HActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "dropChannel";
     FloatingActionButton newPost;
     LinearLayout bottomlinear;
+    ArrayList<User> users = new ArrayList<>();
     ImageView highhome,highprofile,hightrending,highnoti,searchSubmit;
-    private SearchAdapter adapter;
+    private SAdapter adapter;
     boolean adapterlisten = false;
     RelativeLayout noresult;
     RecyclerView recyclerView;
     private CollectionReference collectionReference = db.collection("Users");
     int page = 2;
+    ListenerRegistration listenerRegistration;
+    EventListener eventListener;
     TextView searchtext;
+    RecyclerView.AdapterDataObserver adapterDataObserver;
     boolean search_bool = false;
 
     @Override
@@ -102,38 +110,43 @@ public class HActivity extends AppCompatActivity {
         searchtext = (TextView) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchtext.setTextColor(Color.parseColor("#ffffff"));
         searchSubmit.setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_ATOP);
+        eventListener =new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    User usr = documentSnapshot.toObject(User.class);
+                    users.add(usr);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        };
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Query userquery = collectionReference.whereEqualTo("userName", query);
-                FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
-                        .setQuery(userquery, User.class)
-                        .build();
-                adapter = new SearchAdapter(options, HActivity.this);
-                recyclerView.setAdapter(adapter);
-
-                adapter.startListening();
-                adapterlisten = true;
-                adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                    public void onItemRangeInserted(int positionStart, int itemCount) {
-                        int totalNumberOfItems = adapter.getItemCount();
-                        if (totalNumberOfItems > 0) {
-
-                            noresult.setVisibility(View.INVISIBLE);
-                        } else {
-                            noresult.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
+                filter(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                filter(newText);
                 return false;
             }
         });
-
+        adapterDataObserver = new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount) {
+                super.onItemRangeChanged(positionStart, itemCount);
+                if (itemCount > 0) {
+                    noresult.setVisibility(View.INVISIBLE);
+                } else {
+                    noresult.setVisibility(View.VISIBLE);
+                }
+            }
+        };
         Fragment newFragment;
         ImageView backsearch = findViewById(R.id.backsearch);
         backsearch.setOnClickListener(new View.OnClickListener() {
@@ -143,12 +156,15 @@ public class HActivity extends AppCompatActivity {
                 search_bool = false;
             }
         });
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        newFragment = new Trending();
-        transaction.replace(R.id.nav_host_fragment, newFragment);
-        transaction.commit();
-        page = 2;
-        hightrending.setVisibility(View.VISIBLE);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            newFragment = new Trending();
+            transaction.replace(R.id.nav_host_fragment, newFragment);
+            transaction.commit();
+            page = 2;
+            hightrending.setVisibility(View.VISIBLE);
+
+
+
 
         Notification.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -269,8 +285,27 @@ public class HActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(HActivity.this, Post.class);
                 startActivity(intent);
+
+//        notification noti = new notification();
+//        noti.setDocument("oihdidsafisd");
+//        noti.setUserid(auth.getUid());
+//        noti.setText(" Comment On Your Post");
+//        CollectionReference  notiref= db.collection("Users").document(auth.getUid()).collection("notify");
+//        notiref.add(noti);
             }
         });
+    }
+
+    private void filter(String text) {
+        ArrayList<User> filteredList = new ArrayList<>();
+
+        for (User item : users) {
+            if (item.getUserName().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+
+        adapter.filterList(filteredList);
     }
 
     @Override
@@ -292,6 +327,12 @@ public class HActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.search:
                 revealFAB();
+
+                adapter = new SAdapter(users,HActivity.this);
+                recyclerView.setAdapter(adapter);
+                listenerRegistration=collectionReference.addSnapshotListener(this,eventListener);
+                adapter.registerAdapterDataObserver(adapterDataObserver);
+                adapterlisten = true;
                 search_bool = true;
                 return true;
             case R.id.mail:
@@ -333,7 +374,9 @@ public class HActivity extends AppCompatActivity {
     private void hideFAB() {
         final View view = findViewById(R.id.search_view);
         if (adapterlisten) {
-            adapter.stopListening();
+            listenerRegistration.remove();
+            users.clear();
+            adapter.unregisterAdapterDataObserver(adapterDataObserver);
             adapterlisten = false;
         }
 
@@ -349,7 +392,6 @@ public class HActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-
                 view.setVisibility(View.INVISIBLE);
                 searchlayout.setVisibility(View.INVISIBLE);
                 myToolbar.setVisibility(View.VISIBLE);
