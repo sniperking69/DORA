@@ -68,15 +68,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class regUser extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int GALLERY = 2;
-    TextInputLayout Email,Uname,Bio;
+    TextInputLayout Email, Uname, Bio;
     Spinner spinner;
     FloatingActionButton upimg;
     CircleImageView dispimg;
-    FirebaseStorage storage ;
-    StorageReference storageReference ;
+    FirebaseStorage storage;
+    StorageReference storageReference;
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection("Users");;
+    private CollectionReference notebookRef = db.collection("Users");
     private Uri filePath;
     boolean permission;
 
@@ -84,14 +84,14 @@ public class regUser extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reg_user);
-        spinner= findViewById(R.id.spinner);
+        spinner = findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.genderspinner, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         spinner.setAdapter(adapter);
-        Email=findViewById(R.id.email);
+        Email = findViewById(R.id.email);
         Uname = findViewById(R.id.Uname);
         Bio = findViewById(R.id.Bio);
         spinner = findViewById(R.id.spinner);
@@ -103,10 +103,10 @@ public class regUser extends AppCompatActivity {
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()){
-                            permission=true;
-                        }else{
-                            permission=false;
+                        if (report.areAllPermissionsGranted()) {
+                            permission = true;
+                        } else {
+                            permission = false;
                         }
                     }
 
@@ -118,9 +118,9 @@ public class regUser extends AppCompatActivity {
         upimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (permission){
+                if (permission) {
                     showPictureDialog();
-                }else{
+                } else {
                     Toast.makeText(regUser.this, "Permission not Granted", Toast.LENGTH_SHORT).show();
                 }
 
@@ -129,6 +129,7 @@ public class regUser extends AppCompatActivity {
 
 
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -140,7 +141,7 @@ public class regUser extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             dispimg.setImageBitmap(imageBitmap);
-            filePath = getImageUri(regUser.this,imageBitmap);
+            filePath = getImageUri(regUser.this, imageBitmap);
 
 
         }
@@ -155,18 +156,20 @@ public class regUser extends AppCompatActivity {
             }
         }
     }
+
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "ProfileImage", null);
         return Uri.parse(path);
     }
+
     public void Continue(View view) {
-        if (TextUtils.isEmpty(Uname.getEditText().getText().toString()) || TextUtils.isEmpty(Bio.getEditText().getText().toString()) ){
+        if (TextUtils.isEmpty(Uname.getEditText().getText().toString()) || TextUtils.isEmpty(Bio.getEditText().getText().toString())) {
             Toast.makeText(regUser.this, "Empty field not allowed!", Toast.LENGTH_SHORT).show();
-        }else {
-            String email= Email.getEditText().getText().toString();
-            String bio= Bio.getEditText().getText().toString();
+        } else {
+            String email = Email.getEditText().getText().toString();
+            String bio = Bio.getEditText().getText().toString();
             String username = Uname.getEditText().getText().toString();
             final User user = new User();
             user.setBio(bio);
@@ -174,20 +177,19 @@ public class regUser extends AppCompatActivity {
             user.setUserid(firebaseAuth.getUid());
             user.setGender(spinner.getSelectedItem().toString());
             user.setUserName(username);
-            if(filePath != null)
-            {
+            if (filePath != null) {
 
                 final ProgressDialog progressDialog = new ProgressDialog(this);
                 progressDialog.setTitle("Uploading...");
                 progressDialog.setCancelable(false);
                 progressDialog.show();
 
-                final StorageReference ref = storageReference.child("images/"+ firebaseAuth.getUid());
+                final StorageReference ref = storageReference.child("images/" + firebaseAuth.getUid());
                 ref.putFile(filePath)
                         .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
@@ -197,14 +199,14 @@ public class regUser extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Toast.makeText(regUser.this, "User Added Successfully", Toast.LENGTH_LONG).show();
-                                                    Intent intent = new Intent(regUser.this,HActivity.class);
+                                                    Intent intent = new Intent(regUser.this, HActivity.class);
                                                     startActivity(intent);
                                                     finish();
                                                 }
                                             });
                                         }
                                     });
-                                }else{
+                                } else {
 
                                     progressDialog.dismiss();
                                     Toast.makeText(regUser.this, "Upload Failed Network Error", Toast.LENGTH_LONG).show();
@@ -216,24 +218,24 @@ public class regUser extends AppCompatActivity {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 progressDialog.dismiss();
-                                Toast.makeText(regUser.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(regUser.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                                double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                         .getTotalByteCount());
-                                progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                                progressDialog.setMessage("Uploaded " + (int) progress + "%");
                             }
                         });
-            }else{
+            } else {
                 user.setProfileUrl(null);
                 notebookRef.document(firebaseAuth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(regUser.this, "User Added Successfully", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(regUser.this,HActivity.class);
+                        Intent intent = new Intent(regUser.this, HActivity.class);
                         startActivity(intent);
                         finish();
                     }
@@ -244,14 +246,14 @@ public class regUser extends AppCompatActivity {
 
 
     }
-    private void showPictureDialog(){
+
+    private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Action");
         pictureDialog.setIcon(R.drawable.ic_upload);
-
         String[] pictureDialogItems = {
                 "Gallery",
-                "Camera" };
+                "Camera"};
         pictureDialog.setItems(pictureDialogItems,
                 new DialogInterface.OnClickListener() {
                     @Override

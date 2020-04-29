@@ -2,6 +2,7 @@ package com.aputech.dora.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.aputech.dora.Adpater.CommentAdapter;
 import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,5 +51,8 @@ public class PostDisplay extends AppCompatActivity {
         down = findViewById(R.id.downbutton);
         postText = findViewById(R.id.text_view_description);
         ProfileImg = findViewById(R.id.poster_profile);
+        Intent intent= getIntent();
+        note= intent.getParcelableExtra("post");
+        int Type = note.getType();
     }
 }

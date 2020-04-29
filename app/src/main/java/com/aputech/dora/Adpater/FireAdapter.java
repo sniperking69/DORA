@@ -17,10 +17,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Model.User;
+import com.aputech.dora.Model.Vote;
 import com.aputech.dora.R;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.ui.CommentActivity;
 import com.aputech.dora.ui.DispPostLocation;
+import com.aputech.dora.ui.PostDisplay;
 import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -49,6 +51,23 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
     @Override
     protected void onBindViewHolder(@NonNull final NoteHolder holder, final int position, @NonNull final Note model) {
         holder.down.setText(String.valueOf(model.getDownnum()));
+        holder.up.setText(String.valueOf(model.getUpnum()));
+        holder.textViewDescription.setText(model.getDescription());
+        holder.time.setText(String.valueOf(model.getUptime()));
+        holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(mContext, PostDisplay.class);
+                intent.putExtra("post",model);
+                mContext.startActivity(intent);
+            }
+        });
+        holder.textViewDescription.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         if (model.getUserid().equals(auth.getUid())){
             holder.delete.setVisibility(View.VISIBLE);
             holder.delete.setOnClickListener(new View.OnClickListener() {
@@ -112,8 +131,6 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
             holder.LocationIcon.setImageResource(R.drawable.ic_locationsad);
 
         }
-        holder.up.setText(String.valueOf(model.getUpnum()));
-
         holder.profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,19 +179,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
 
                     }
                     if( model.getType()==1){
-                        holder.textViewDescription.setText(model.getDescription());
-                        holder.time.setText(String.valueOf(model.getUptime()));
-                        holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent =new Intent(mContext, CommentActivity.class);
-                                intent.putExtra("coll",getSnapshots().getSnapshot(position).getReference().getParent().getPath());
-                                intent.putExtra("doc",getSnapshots().getSnapshot(position).getReference().getId());
-                                intent.putExtra("post",model);
-                                intent.putExtra("user",user);
-                                mContext.startActivity(intent);
-                            }
-                        });
+
                     }
                     if(model.getType()==2){
                         holder.img.setVisibility(View.VISIBLE);
@@ -184,8 +189,6 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
                                 .into(holder.img);
                         holder.textViewDescription.setText(model.getDescription());
                         holder.time.setText(String.valueOf(model.getUptime()));
-
-
                     }
                 }
             });
@@ -194,86 +197,98 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
 
 
         holder.up.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View v) {
+                                             final DocumentReference postrefrence = db.collection("Posts").document(model.getRefComments());
+                                             final DocumentReference Reference = db.collection("Posts").document(model.getRefComments()).collection("vote").document(auth.getUid());
+                                             Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                 @Override
+                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                     if (task.isSuccessful()) {
+                                                         DocumentSnapshot document = task.getResult();
+                                                         if (document.exists()) {
+                                                             Vote vote = document.toObject(Vote.class);
+                                                             if (vote.isVotecheck()) {
+                                                                 holder.up.setIconTintResource(R.color.colorPrimary);
+                                                                 Reference.delete();
+                                                                 postrefrence.update("upnum", model.getUpnum() - 1);
+                                                                 postrefrence.update("priority", (model.getUpnum() - 1) * 0.4 + (model.getDownnum()) * 0.2 + model.getCommentnum() * 0.4);
+                                                             }else{
+                                                                 holder.up.setIconTintResource(R.color.level2);
+                                                                 Reference.update("votecheck",true);
+                                                                 postrefrence.update("upnum", model.getUpnum() + 1);
+                                                                 postrefrence.update("downnum", model.getDownnum() - 1);
+                                                                 postrefrence.update("priority", (model.getUpnum() + 1) * 0.4 + (model.getDownnum()-1) * 0.2 + model.getCommentnum() * 0.4);
+                                                             }
+                                                         } else {
+                                                             holder.up.setIconTintResource(R.color.level2);
+                                                             Vote v= new Vote();
+                                                             v.setVotecheck(true);
+                                                             Reference.set(v);
+                                                             postrefrence.update("upnum", model.getUpnum() + 1);
+                                                             postrefrence.update("priority", (model.getUpnum() + 1) * 0.4 + (model.getDownnum()) * 0.2 + model.getCommentnum() * 0.4);
+                                                         }
+
+                                                     }
+                                                 }
+
+                                             });
+                                         }
+                                     });
+        final DocumentReference Reference = db.collection("Posts").document(model.getRefComments()).collection("vote").document(auth.getUid());
+       Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onClick(View v) {
-                final DocumentReference upReference =db.collection("Posts").document(model.getRefComments()).collection("upvote").document(auth.getUid());
-                final DocumentReference downReference =db.collection("Posts").document(model.getRefComments()).collection("downvote").document(auth.getUid());
-               upReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                   @Override
-                   public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                       if (task.isSuccessful()) {
-                           DocumentSnapshot document = task.getResult();
-                           if (document.exists()) {
-                               upReference.delete();
-                               getSnapshots().getSnapshot(position).getReference().update("upnum", model.getUpnum()-1);
-                               updatePriority(position,model.getUpnum()-1,model.getDownnum(),model.getCommentnum());
-                           } else {
-                              // dum temp = new dum();
-                              // upReference.set(temp);
-                               upReference.update("exists","yes");
-                               getSnapshots().getSnapshot(position).getReference().update("upnum", model.getUpnum()+1);
-                               downReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                   @Override
-                                   public void onSuccess(Void aVoid) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Vote vote = document.toObject(Vote.class);
+                        if (vote.isVotecheck()) {
+                            holder.up.setIconTintResource(R.color.level2);
+                        }else{
+                            holder.down.setIconTintResource(R.color.level2);
+                        }
+                    }
+                }
 
-                                   }
-                               })
-                                       .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                           @Override
-                                           public void onComplete(@NonNull Task<Void> task) {
-                                               if (task.isSuccessful()){
-                                                   getSnapshots().getSnapshot(position).getReference().update("downnum", model.getDownnum()-1);
-                                                   updatePriority(position,model.getUpnum()+1,model.getDownnum()-1,model.getCommentnum());
-                                               }else{
-                                                   updatePriority(position,model.getUpnum()+1,model.getDownnum(),model.getCommentnum());
-                                               }
-
-                                           }
-                                       });
-                           }
-                       } else {
-                           Log.d("DROP CHAT", "Failed with: ", task.getException());
-                       }
-                   }
-               });
             }
         });
         holder.down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final DocumentReference upReference =db.collection("Posts").document(model.getRefComments()).collection("upvote").document(auth.getUid());
-                final DocumentReference downReference =db.collection("Posts").document(model.getRefComments()).collection("downvote").document(auth.getUid());
-                downReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                final DocumentReference postrefrence = db.collection("Posts").document(model.getRefComments());
+
+                Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
-                                downReference.delete();
-                                getSnapshots().getSnapshot(position).getReference().update("downnum", model.getDownnum()-1);
-                                updatePriority(position,model.getUpnum(),model.getDownnum()-1,model.getCommentnum());
+                                Vote vote = document.toObject(Vote.class);
+                                if (!vote.isVotecheck()) {
+                                    holder.down.setIconTintResource(R.color.colorPrimary);
+                                    Reference.delete();
+                                    postrefrence.update("downnum", model.getDownnum() - 1);
+                                    postrefrence.update("priority", (model.getUpnum()) * 0.4 + (model.getDownnum() -1) * 0.2 + model.getCommentnum() * 0.4);
+                                }else{
+                                    holder.down.setIconTintResource(R.color.level2);
+                                    Reference.update("votecheck",false);
+                                    postrefrence.update("downnum", model.getDownnum() + 1);
+                                    postrefrence.update("upnum", model.getUpnum() - 1);
+                                    postrefrence.update("priority", (model.getUpnum() - 1) * 0.4 + (model.getDownnum()+1) * 0.2 + model.getCommentnum() * 0.4);
+                                }
                             } else {
-                              //  dum temp = new dum();
-                               // downReference.set(temp);
-                                getSnapshots().getSnapshot(position).getReference().update("downnum", model.getDownnum()+1);
-                                upReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()){
-                                            getSnapshots().getSnapshot(position).getReference().update("upnum", model.getUpnum()-1);
-                                            updatePriority(position,model.getUpnum()-1,model.getDownnum()+1,model.getCommentnum());
-
-                                        }else{
-                                            updatePriority(position,model.getUpnum(),model.getDownnum()+1,model.getCommentnum());
-                                        }
-                                    }
-                                });
-
+                                holder.down.setIconTintResource(R.color.level2);
+                                Vote v= new Vote();
+                                v.setVotecheck(false);
+                                Reference.set(v);
+                                postrefrence.update("downnum", model.getDownnum() + 1);
+                                postrefrence.update("priority", (model.getDownnum()) * 0.4 + (model.getDownnum() + 1) * 0.2 + model.getCommentnum() * 0.4);
                             }
-                        } else {
-                            Log.d("DROP CHAT", "Failed with: ", task.getException());
+
                         }
                     }
+
                 });
             }
         });

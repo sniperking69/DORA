@@ -23,8 +23,6 @@ public class Note implements Parcelable {
     private String userid;
     private String uptime;
     private GeoPoint location;
-    private String downvoteref;
-    private String upvoteref;
     private String refComments;
     private float priority;
     private String videoUrl;
@@ -37,15 +35,13 @@ public class Note implements Parcelable {
         //empty constructor needed
     }
 
-    public Note(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location, String downvoteref, String upvoteref, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum) {
+    public Note(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum) {
         this.description = description;
         this.imageUrl = imageUrl;
         this.type = type;
         this.userid = userid;
         this.uptime = uptime;
         this.location = location;
-        this.downvoteref = downvoteref;
-        this.upvoteref = upvoteref;
         this.refComments = refComments;
         this.priority = priority;
         this.videoUrl = videoUrl;
@@ -61,8 +57,6 @@ public class Note implements Parcelable {
         type = in.readInt();
         userid = in.readString();
         uptime = in.readString();
-        downvoteref = in.readString();
-        upvoteref = in.readString();
         refComments = in.readString();
         priority = in.readFloat();
         videoUrl = in.readString();
@@ -130,22 +124,6 @@ public class Note implements Parcelable {
 
     public void setLocation(GeoPoint location) {
         this.location = location;
-    }
-
-    public String getDownvoteref() {
-        return downvoteref;
-    }
-
-    public void setDownvoteref(String downvoteref) {
-        this.downvoteref = downvoteref;
-    }
-
-    public String getUpvoteref() {
-        return upvoteref;
-    }
-
-    public void setUpvoteref(String upvoteref) {
-        this.upvoteref = upvoteref;
     }
 
     public String getRefComments() {
@@ -216,8 +194,6 @@ public class Note implements Parcelable {
         dest.writeInt(type);
         dest.writeString(userid);
         dest.writeString(uptime);
-        dest.writeString(downvoteref);
-        dest.writeString(upvoteref);
         dest.writeString(refComments);
         dest.writeFloat(priority);
         dest.writeString(videoUrl);

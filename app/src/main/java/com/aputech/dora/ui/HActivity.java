@@ -81,7 +81,6 @@ public class HActivity extends AppCompatActivity {
     ListenerRegistration listenerRegistration;
     EventListener eventListener;
     TextView searchtext;
-    RecyclerView.AdapterDataObserver adapterDataObserver;
     boolean search_bool = false;
 
     @Override
@@ -120,33 +119,24 @@ public class HActivity extends AppCompatActivity {
                     User usr = documentSnapshot.toObject(User.class);
                     users.add(usr);
                 }
-                adapter.notifyDataSetChanged();
+
+
             }
         };
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                Log.d("bigpp", "onQueryTextSubmit: "+query);
                 filter(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filter(newText);
                 return false;
             }
         });
-        adapterDataObserver = new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeChanged(int positionStart, int itemCount) {
-                super.onItemRangeChanged(positionStart, itemCount);
-                if (itemCount > 0) {
-                    noresult.setVisibility(View.INVISIBLE);
-                } else {
-                    noresult.setVisibility(View.VISIBLE);
-                }
-            }
-        };
+
         Fragment newFragment;
         ImageView backsearch = findViewById(R.id.backsearch);
         backsearch.setOnClickListener(new View.OnClickListener() {
@@ -304,8 +294,14 @@ public class HActivity extends AppCompatActivity {
                 filteredList.add(item);
             }
         }
-
         adapter.filterList(filteredList);
+        if (adapter.getItemCount()==0){
+            noresult.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.INVISIBLE);
+        }else {
+            recyclerView.setVisibility(View.VISIBLE);
+            noresult.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -327,11 +323,10 @@ public class HActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.search:
                 revealFAB();
-
+                recyclerView.setVisibility(View.INVISIBLE);
                 adapter = new SAdapter(users,HActivity.this);
                 recyclerView.setAdapter(adapter);
                 listenerRegistration=collectionReference.addSnapshotListener(this,eventListener);
-                adapter.registerAdapterDataObserver(adapterDataObserver);
                 adapterlisten = true;
                 search_bool = true;
                 return true;
@@ -376,7 +371,6 @@ public class HActivity extends AppCompatActivity {
         if (adapterlisten) {
             listenerRegistration.remove();
             users.clear();
-            adapter.unregisterAdapterDataObserver(adapterDataObserver);
             adapterlisten = false;
         }
 
