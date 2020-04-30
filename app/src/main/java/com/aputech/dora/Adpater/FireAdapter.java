@@ -4,7 +4,6 @@ package com.aputech.dora.Adpater;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +19,14 @@ import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.Vote;
 import com.aputech.dora.R;
 import com.aputech.dora.Model.Note;
-import com.aputech.dora.ui.CommentActivity;
 import com.aputech.dora.ui.DispPostLocation;
 import com.aputech.dora.ui.PostDisplay;
 import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,20 +52,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
         holder.up.setText(String.valueOf(model.getUpnum()));
         holder.textViewDescription.setText(model.getDescription());
         holder.time.setText(String.valueOf(model.getUptime()));
-        holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent =new Intent(mContext, PostDisplay.class);
-                intent.putExtra("post",model);
-                mContext.startActivity(intent);
-            }
-        });
-        holder.textViewDescription.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
         if (model.getUserid().equals(auth.getUid())){
             holder.delete.setVisibility(View.VISIBLE);
             holder.delete.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +73,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
                         public void onClick(DialogInterface dialog, int which) {
                             // Do something when user clicked the Yes button
                             // Set the TextView visibility GONE
-                            deleteItem(position);
+                            //deleteItem(position);
                             Toast.makeText(mContext,
                                     "PostDeleted",Toast.LENGTH_SHORT).show();
 
@@ -178,29 +163,50 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
                                     .into(holder.level);
 
                     }
-                    if( model.getType()==1){
-
-                    }
-                    if(model.getType()==2){
-                        holder.img.setVisibility(View.VISIBLE);
-                        Glide
-                                .with(mContext)
-                                .load(model.getImageUrl())
-                                .into(holder.img);
-                        holder.textViewDescription.setText(model.getDescription());
-                        holder.time.setText(String.valueOf(model.getUptime()));
-                    }
+                    holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent =new Intent(mContext, PostDisplay.class);
+                            intent.putExtra("post",model);
+                            intent.putExtra("user",user);
+                            mContext.startActivity(intent);
+                        }
+                    });
+                    holder.textViewDescription.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent =new Intent(mContext, PostDisplay.class);
+                            intent.putExtra("post",model);
+                            intent.putExtra("user",user);
+                            mContext.startActivity(intent);
+                        }
+                    });
                 }
             });
 
         }
+        if(model.getType()==2){
+            holder.img.setVisibility(View.VISIBLE);
+            Glide
+                    .with(mContext)
+                    .load(model.getImageUrl())
+                    .into(holder.img);
+        }
+        if(model.getType()==3){
 
-
+            holder.img.setVisibility(View.VISIBLE);
+            Glide
+                    .with(mContext)
+                    .load(model.getImageUrl())
+                    .into(holder.img);
+        }
+        final DocumentReference postrefrence = db.collection("Posts").document(model.getRefComments());
+        final DocumentReference Reference = db.collection("Posts").document(model.getRefComments()).collection("vote").document(auth.getUid());
         holder.up.setOnClickListener(new View.OnClickListener() {
                                          @Override
                                          public void onClick(View v) {
-                                             final DocumentReference postrefrence = db.collection("Posts").document(model.getRefComments());
-                                             final DocumentReference Reference = db.collection("Posts").document(model.getRefComments()).collection("vote").document(auth.getUid());
+                                             holder.down.setIconTintResource(R.color.colorPrimary);
+                                             holder.up.setIconTintResource(R.color.colorPrimary);
                                              Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                  @Override
                                                  public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -209,12 +215,14 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
                                                          if (document.exists()) {
                                                              Vote vote = document.toObject(Vote.class);
                                                              if (vote.isVotecheck()) {
+                                                                 holder.down.setIconTintResource(R.color.colorPrimary);
                                                                  holder.up.setIconTintResource(R.color.colorPrimary);
                                                                  Reference.delete();
                                                                  postrefrence.update("upnum", model.getUpnum() - 1);
                                                                  postrefrence.update("priority", (model.getUpnum() - 1) * 0.4 + (model.getDownnum()) * 0.2 + model.getCommentnum() * 0.4);
                                                              }else{
                                                                  holder.up.setIconTintResource(R.color.level2);
+                                                                 holder.down.setIconTintResource(R.color.colorPrimary);
                                                                  Reference.update("votecheck",true);
                                                                  postrefrence.update("upnum", model.getUpnum() + 1);
                                                                  postrefrence.update("downnum", model.getDownnum() - 1);
@@ -222,6 +230,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
                                                              }
                                                          } else {
                                                              holder.up.setIconTintResource(R.color.level2);
+                                                             holder.down.setIconTintResource(R.color.colorPrimary);
                                                              Vote v= new Vote();
                                                              v.setVotecheck(true);
                                                              Reference.set(v);
@@ -235,7 +244,6 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
                                              });
                                          }
                                      });
-        final DocumentReference Reference = db.collection("Posts").document(model.getRefComments()).collection("vote").document(auth.getUid());
        Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -256,28 +264,33 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
         holder.down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final DocumentReference postrefrence = db.collection("Posts").document(model.getRefComments());
-
+                holder.down.setIconTintResource(R.color.colorPrimary);
+                holder.up.setIconTintResource(R.color.colorPrimary);
                 Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 Vote vote = document.toObject(Vote.class);
                                 if (!vote.isVotecheck()) {
                                     holder.down.setIconTintResource(R.color.colorPrimary);
+                                    holder.up.setIconTintResource(R.color.colorPrimary);
                                     Reference.delete();
                                     postrefrence.update("downnum", model.getDownnum() - 1);
                                     postrefrence.update("priority", (model.getUpnum()) * 0.4 + (model.getDownnum() -1) * 0.2 + model.getCommentnum() * 0.4);
                                 }else{
+                                    holder.up.setIconTintResource(R.color.colorPrimary);
                                     holder.down.setIconTintResource(R.color.level2);
+
                                     Reference.update("votecheck",false);
                                     postrefrence.update("downnum", model.getDownnum() + 1);
                                     postrefrence.update("upnum", model.getUpnum() - 1);
                                     postrefrence.update("priority", (model.getUpnum() - 1) * 0.4 + (model.getDownnum()+1) * 0.2 + model.getCommentnum() * 0.4);
                                 }
                             } else {
+                                holder.up.setIconTintResource(R.color.colorPrimary);
                                 holder.down.setIconTintResource(R.color.level2);
                                 Vote v= new Vote();
                                 v.setVotecheck(false);
@@ -311,12 +324,14 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
         ImageView level;
         ImageView LocationIcon,delete,edit;
         CircleImageView profile;
+     //   SimpleExoPlayerView playerView;
         MaterialButton Commentbutton;
         public NoteHolder(View itemView) {
             super(itemView);
             up= itemView.findViewById(R.id.upbutton);
             down= itemView.findViewById(R.id.downbutton);
             edit =itemView.findViewById(R.id.edit);
+           // playerView = itemView.findViewById(R.id.video_view);
             delete = itemView.findViewById(R.id.delete);
             user_name = itemView.findViewById(R.id.user_name);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
@@ -328,9 +343,11 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
             Commentbutton= itemView.findViewById(R.id.comment);
         }
     }
-    private void deleteItem(int position) {
-        // getSnapshots().getSnapshot(position).getReference().collection("comments");
+    private void initializePlayer(SimpleExoPlayer player) {
+     //   player = ExoPlayerFactory.newSimpleInstance(this);
+       // playerView.setPlayer(player);
     }
+
     private void updatePriority(int position,int up,int down,int commentnum){
         getSnapshots().getSnapshot(position).getReference().update("priority",up*0.4+down*0.2+commentnum*0.4);
 

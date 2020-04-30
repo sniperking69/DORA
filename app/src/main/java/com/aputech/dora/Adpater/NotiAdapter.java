@@ -108,6 +108,9 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
     public void deleteItem(int position) {
         getSnapshots().getSnapshot(position).getReference().delete();
     }
-    // Add this
 
+    @Override
+    public int getItemCount() {
+        return getSnapshots().size();
+    }
 }

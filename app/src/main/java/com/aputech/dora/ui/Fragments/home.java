@@ -11,11 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.R;
-import com.aputech.dora.Adpater.FireAdapter;
 import com.aputech.dora.Model.Note;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.ObservableSnapshotArray;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,7 +34,6 @@ public class home extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Posts");
-    HomeAdapter adapter;
     ArrayList<String> Following= new ArrayList<>();
     FirebaseAuth auth= FirebaseAuth.getInstance();
 
@@ -83,9 +79,9 @@ public class home extends Fragment {
                         relativeLayout.setVisibility(View.VISIBLE);
                     }
                  //   adapter = new HomeAdapter(options, getActivity(),Following);
-                    recyclerView.setHasFixedSize(true);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    recyclerView.setAdapter(adapter);
+//                    recyclerView.setHasFixedSize(true);
+//                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//                    recyclerView.setAdapter(adapter);
                 }
             }
         });

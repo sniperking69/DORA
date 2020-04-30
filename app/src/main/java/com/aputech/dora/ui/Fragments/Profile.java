@@ -78,16 +78,14 @@ public class Profile extends Fragment {
     private RelativeLayout relativeLayout;
     private CircleImageView profileimg;
     ImageView editImage;
-    ListenerRegistration listenerRegistration;
-    EventListener eventListener;
     private Uri filePath;
-    boolean adapterlisten;
+    FireAdapter adapter;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageReference = storage.getReference();
     private TextView following, posts, followers, name, bio,email;
     private ImageView level;
     RecyclerView recyclerView;
-
+    private RecyclerView.AdapterDataObserver observer;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -149,7 +147,7 @@ public class Profile extends Fragment {
         FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
                 .setQuery(query, Note.class)
                 .build();
-        FireAdapter adapter = new FireAdapter(options,getActivity());
+        adapter = new FireAdapter(options,getActivity());
         recyclerView.setAdapter(adapter);
         settings.setText("SETTINGS");
         settings.setOnClickListener(new View.OnClickListener() {
@@ -159,25 +157,24 @@ public class Profile extends Fragment {
                 startActivity(intent);
             }
         });
-//        eventListener =new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
-//                if (e != null) {
-//                    return;
-//                }
-//                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-//                    Note post = documentSnapshot.toObject(Note.class);
-//                    Posts.add(post);
-//                }
-//                mAdapter.notifyDataSetChanged();
-//                if (Posts.size()>0){
-//                    relativeLayout.setVisibility(View.INVISIBLE);
-//                }else{
-//                    relativeLayout.setVisibility(View.VISIBLE);
-//                }
-//
-//            }
-//        };
+        relativeLayout.setVisibility(View.VISIBLE);
+        observer =new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                if (adapter.getItemCount()==0){
+                    relativeLayout.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                if (adapter.getItemCount() >0){
+                    relativeLayout.setVisibility(View.INVISIBLE);
+                }else{
+                    relativeLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        };
 
         userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -214,8 +211,7 @@ public class Profile extends Fragment {
                             .into(profileimg);
                 }
 
-//                listenerRegistration =query.addSnapshotListener(getActivity(),eventListener);
-                adapterlisten=true;
+
             }
         });
         editImage.setOnClickListener(new View.OnClickListener() {
@@ -228,10 +224,6 @@ public class Profile extends Fragment {
         return root;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getActivity());
         pictureDialog.setTitle("Select Action");
@@ -350,13 +342,19 @@ public class Profile extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+        adapter.registerAdapterDataObserver(observer);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-//        if (adapterlisten){
-//            listenerRegistration.remove();
-//            Posts.clear();
-//            adapterlisten=false;
-//        }
+        if (adapter != null) {
+            adapter.stopListening();
+            adapter.unregisterAdapterDataObserver(observer);
+        }
     }
 
 

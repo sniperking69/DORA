@@ -55,11 +55,7 @@
             android:name=".ui.PrivatePost"
             android:label="@string/title_activity_private_post" />
         <activity
-            android:name=".ui.ProfileDisplayActivity"
-            android:label="@string/title_activity_profile_display"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.NewMessageActivity" />
-        <activity android:name=".ui.CommentActivity" />
+            android:name=".ui.ProfileDisplayActivity" />
         <activity android:name=".ui.msgActivity" />
         <activity
             android:name=".ui.regUser"
