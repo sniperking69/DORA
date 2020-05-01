@@ -70,13 +70,11 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PrivatePost.this,Post.class);
-                intent.putExtra("activity",2);
+                Intent intent = new Intent(PrivatePost.this,MakePP.class);
+                //intent.putExtra("activity",2);
                 startActivity(intent);
             }
         });
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);

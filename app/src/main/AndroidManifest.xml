@@ -27,7 +27,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.SelectPrivateLocation"></activity>
+        <activity android:name=".ui.MakePP"></activity>
+        <activity android:name=".ui.SelectPrivateLocation" />
         <activity android:name=".ui.SelectUser" />
         <activity android:name=".ui.PrivatePostDisplay" />
         <activity android:name=".ui.PostDisplay" />
@@ -54,9 +55,7 @@
         <activity
             android:name=".ui.PrivatePost"
             android:label="@string/title_activity_private_post" />
-        <activity
-            android:name=".ui.ProfileDisplayActivity" />
-        <activity android:name=".ui.msgActivity" />
+        <activity android:name=".ui.ProfileDisplayActivity" />
         <activity
             android:name=".ui.regUser"
             android:label="Profile" />
