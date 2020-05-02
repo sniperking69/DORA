@@ -1,17 +1,21 @@
 package com.aputech.dora.ui.Fragments;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import androidx.lifecycle.LiveData;
@@ -21,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.aputech.dora.Adpater.FireAdapter;
-import com.aputech.dora.Adpater.PostViewHolder;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.aputech.dora.Model.Post;
@@ -49,6 +52,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -133,8 +138,8 @@ public class home extends Fragment {
                     return;
                 }
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    Post usr = documentSnapshot.toObject(Post.class);
-                    Following.add(usr.getUserid());
+                    //Post usr = documentSnapshot.toObject(Post.class);
+                    Following.add(documentSnapshot.getId());
                 }
                 Query mQuery = mPostsCollection.orderBy("priority", Query.Direction.DESCENDING);
                 FirestorePagingOptions options = new FirestorePagingOptions.Builder<Post>()
@@ -169,16 +174,26 @@ public class home extends Fragment {
                     }
 
                     @Override
-                    protected void onBindViewHolder(@NonNull PostViewHolder viewHolder, int i, @NonNull Post post) {
-                        // Bind to ViewHolder
-                       // Log.d("bigpp", "onBindViewHolder: "+Following+"   "+post.getUserid());
-                            viewHolder.bind(post);
-
-
-
+                    public int getItemCount() {
+                        return super.getItemCount();
                     }
 
+                    @Override
+                    protected void onBindViewHolder(@NonNull PostViewHolder holder, int i, @NonNull Post post) {
+                        // Bind to ViewHolder
+                       // Log.d("bigpp", "onBindViewHolder: "+Following+"   "+post.getUserid());
+                        if (!Following.contains(post.getUserid())){
+                            holder.cardView.setVisibility(View.GONE);
+                        }
 
+                      //  viewHolder.itemView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Nullable
+                    @Override
+                    protected DocumentSnapshot getItem(int position) {
+                        return super.getItem(position);
+                    }
 
                     @Override
                     protected void onError(@NonNull Exception e) {
@@ -190,12 +205,17 @@ public class home extends Fragment {
                     protected void onLoadingStateChanged(@NonNull LoadingState state) {
                         switch (state) {
                             case LOADING_INITIAL:
+
+
+//                                    mAdapter.getCurrentList().remove()
                             case LOADING_MORE:
                                 mSwipeRefreshLayout.setRefreshing(true);
                                 break;
 
                             case LOADED:
                                 mSwipeRefreshLayout.setRefreshing(false);
+
+
                                 break;
 
                             case ERROR:
@@ -227,7 +247,37 @@ public class home extends Fragment {
 
 
     }
+   public static class PostViewHolder extends RecyclerView.ViewHolder {
 
+        TextView user_name;
+        TextView textViewDescription;
+        TextView time;
+        MaterialButton up, down;
+        ImageView img;
+        ImageView level;
+        CardView cardView;
+        ImageView LocationIcon, delete, edit;
+        CircleImageView profile;
+        MaterialButton Commentbutton;
+
+        PostViewHolder(@NonNull View itemView) {
+            super(itemView);
+            cardView=itemView.findViewById(R.id.card);
+            up = itemView.findViewById(R.id.upbutton);
+            down = itemView.findViewById(R.id.downbutton);
+            edit = itemView.findViewById(R.id.edit);
+            // playerView = itemView.findViewById(R.id.video_view);
+            delete = itemView.findViewById(R.id.delete);
+            user_name = itemView.findViewById(R.id.user_name);
+            textViewDescription = itemView.findViewById(R.id.text_view_description);
+            time = itemView.findViewById(R.id.time);
+            level = itemView.findViewById(R.id.level);
+            LocationIcon = itemView.findViewById(R.id.locate);
+            profile = itemView.findViewById(R.id.poster_profile);
+            img = itemView.findViewById(R.id.img);
+            Commentbutton = itemView.findViewById(R.id.comment);
+        }
+    }
     @Override
     public void onStop() {
         super.onStop();
