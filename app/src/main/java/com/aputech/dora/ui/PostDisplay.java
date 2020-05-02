@@ -81,7 +81,7 @@ public class PostDisplay extends AppCompatActivity {
         int Type = note.getType();
         postText.setText(note.getDescription());
         userName.setText(user.getUserName());
-        post_time.setText(note.getUptime());
+        //post_time.setText(note.getUptime());
         Glide
                 .with(PostDisplay.this)
                 .load(user.getProfileUrl())

@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aputech.dora.LocationJob;
@@ -35,11 +36,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -69,7 +72,7 @@ public class regUser extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int GALLERY = 2;
     TextInputLayout Email, Uname, Bio;
-    Spinner spinner;
+
     FloatingActionButton upimg;
     CircleImageView dispimg;
     FirebaseStorage storage;
@@ -79,24 +82,57 @@ public class regUser extends AppCompatActivity {
     private CollectionReference notebookRef = db.collection("Users");
     private Uri filePath;
     boolean permission;
+    MaterialButton Continue;
+    FloatingActionButton remove;
+    boolean act;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reg_user);
-        spinner = findViewById(R.id.spinner);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.genderspinner, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
-        spinner.setAdapter(adapter);
         Email = findViewById(R.id.email);
         Uname = findViewById(R.id.Uname);
         Bio = findViewById(R.id.Bio);
-        spinner = findViewById(R.id.spinner);
+        remove = findViewById(R.id.remove);
         dispimg = findViewById(R.id.profiledefault);
+        Continue = findViewById(R.id.button_next);
         upimg = findViewById(R.id.upimage);
+        Intent intent= getIntent();
+         act=intent.getBooleanExtra("edit",false);
+        if (act){
+            Continue.setText("UPDATE");
+            DocumentReference documentReference =db.collection("Users").document(firebaseAuth.getUid());
+            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    User user= documentSnapshot.toObject(User.class);
+                    Uname.getEditText().setText(user.getUserName());
+                    Bio.getEditText().setText(user.getBio());
+                    Email.getEditText().setText(user.getEmailAdress());
+                }
+            });
+            Continue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Continue();
+                }
+            });
+
+        }else{
+            Continue.setText("CONTINUE");
+            Continue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Continue();
+                }
+            });
+        }
         Dexter.withActivity(regUser.this).withPermissions(Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -130,6 +166,8 @@ public class regUser extends AppCompatActivity {
 
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -142,7 +180,15 @@ public class regUser extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             dispimg.setImageBitmap(imageBitmap);
             filePath = getImageUri(regUser.this, imageBitmap);
-
+            remove.setVisibility(View.VISIBLE);
+            remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    filePath=null;
+                    dispimg.setImageResource(R.drawable.ic_user);
+                    remove.setVisibility(View.INVISIBLE);
+                }
+            });
 
         }
         if (requestCode == GALLERY && resultCode == RESULT_OK
@@ -151,6 +197,15 @@ public class regUser extends AppCompatActivity {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(regUser.this.getContentResolver(), filePath);
                 dispimg.setImageBitmap(bitmap);
+                remove.setVisibility(View.VISIBLE);
+                remove.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        filePath=null;
+                        dispimg.setImageResource(R.drawable.ic_user);
+                        remove.setVisibility(View.INVISIBLE);
+                    }
+                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -164,7 +219,7 @@ public class regUser extends AppCompatActivity {
         return Uri.parse(path);
     }
 
-    public void Continue(View view) {
+    public void Continue() {
         if (TextUtils.isEmpty(Uname.getEditText().getText().toString()) || TextUtils.isEmpty(Bio.getEditText().getText().toString())) {
             Toast.makeText(regUser.this, "Empty field not allowed!", Toast.LENGTH_SHORT).show();
         } else {
@@ -175,7 +230,6 @@ public class regUser extends AppCompatActivity {
             user.setBio(bio);
             user.setEmailAdress(email);
             user.setUserid(firebaseAuth.getUid());
-            user.setGender(spinner.getSelectedItem().toString());
             user.setUserName(username);
             if (filePath != null) {
 
@@ -230,7 +284,9 @@ public class regUser extends AppCompatActivity {
                             }
                         });
             } else {
-                user.setProfileUrl(null);
+                if (!act){
+                    user.setProfileUrl(null);
+                }
                 notebookRef.document(firebaseAuth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

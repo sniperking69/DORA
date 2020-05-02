@@ -4,9 +4,11 @@ package com.aputech.dora.Adpater;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +36,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Date;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.NoteHolder> {
@@ -51,45 +55,33 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
         holder.down.setText(String.valueOf(model.getDownnum()));
         holder.up.setText(String.valueOf(model.getUpnum()));
         holder.textViewDescription.setText(model.getDescription());
-        holder.time.setText(String.valueOf(model.getUptime()));
-
+        if (model.getTimestamp() != null) {
+            Date date = model.getTimestamp();
+            String df = DateFormat.getDateFormat(mContext).format(date).concat("  ").concat(DateFormat.getTimeFormat(mContext).format(date));
+            holder.time.setText(df);
+        }
         if (model.getUserid().equals(auth.getUid())){
             holder.delete.setVisibility(View.VISIBLE);
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Build an AlertDialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
-                    // Set a title for alert dialog
                     builder.setTitle("Delete Post");
-
-                    // Ask the final question
-                    builder.setMessage("Are you sure to Delete This Post?");
-
-                    // Set the alert dialog yes button click listener
+                    builder.setMessage("Delete This Post?");
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            // Do something when user clicked the Yes button
-                            // Set the TextView visibility GONE
                             //deleteItem(position);
-                            Toast.makeText(mContext,
-                                    "PostDeleted",Toast.LENGTH_SHORT).show();
 
                         }
                     });
 
-                    // Set the alert dialog no button click listener
                     builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            // Do something when No button clicked
                         }
                     });
-
                     AlertDialog dialog = builder.create();
-                    // Display the alert dialog on interface
                     dialog.show();
                 }
             });
@@ -97,7 +89,26 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
             holder.edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("Name");
+                    final View customLayout =  LayoutInflater.from(mContext).inflate(R.layout.custom_alert, null);
+                    builder.setView(customLayout);
 
+                    builder.setPositiveButton("DONE", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            EditText editText = customLayout.findViewById(R.id.editText);
+                            Toast.makeText(mContext,  editText.getText().toString(),Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Pass
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             });
         }
@@ -116,22 +127,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
             holder.LocationIcon.setImageResource(R.drawable.ic_locationsad);
 
         }
-        holder.profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
-                intent.putExtra("user_id",model.getUserid());
-                mContext.startActivity(intent);
-            }
-        });
-        holder.user_name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
-                intent.putExtra("user_id",model.getUserid());
-                mContext.startActivity(intent);
-            }
-        });
+
         if ( model.getUserid() != null) {
             notebookRef = db.collection("Users").document(model.getUserid());
             notebookRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -144,25 +140,40 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
                             .load(user.getProfileUrl())
                             .into(holder.profile);
 
-                        if (user.getUserlevel()==0){
-                            Glide
-                                    .with(mContext)
-                                    .load(R.drawable.ic_grade)
-                                    .into(holder.level);
-                        }
-                        if (user.getUserlevel()==1){
-                            Glide
-                                    .with(mContext)
-                                    .load(R.drawable.ic_grade1)
-                                    .into(holder.level);
-                        }
-                        if (user.getUserlevel()==2){
-                            Glide
-                                    .with(mContext)
-                                    .load(R.drawable.ic_grade2)
-                                    .into(holder.level);
-
+                    if (user.getPostnum() < 100) {
+                        Glide
+                                .with(mContext)
+                                .load(R.drawable.ic_grade)
+                                .into(holder.level);
                     }
+                    if (user.getPostnum() < 100 && user.getPostnum() > 500) {
+                        Glide
+                                .with(mContext)
+                                .load(R.drawable.ic_grade1)
+                                .into(holder.level);
+                    }
+                    if (user.getPostnum() > 500) {
+                        Glide
+                                .with(mContext)
+                                .load(R.drawable.ic_grade2)
+                                .into(holder.level);
+                    }
+                    holder.profile.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
+                            intent.putExtra("user",user);
+                            mContext.startActivity(intent);
+                        }
+                    });
+                    holder.user_name.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
+                            intent.putExtra("user",user);
+                            mContext.startActivity(intent);
+                        }
+                    });
                     holder.Commentbutton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

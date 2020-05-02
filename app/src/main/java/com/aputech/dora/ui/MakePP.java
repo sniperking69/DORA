@@ -151,7 +151,7 @@ public class MakePP extends AppCompatActivity {
             public void onSuccess(DocumentReference documentReference) {
                 String commentref = documentReference.getId();
                 post.setRefComments(commentref);
-                post.setUptime(date);
+               // post.setUptime(date);
                 documentReference.set(post);
                 Toast.makeText(MakePP.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
                 finish();

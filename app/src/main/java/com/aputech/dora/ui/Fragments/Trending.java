@@ -1,6 +1,7 @@
 package com.aputech.dora.ui.Fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,7 +16,9 @@ import android.widget.RelativeLayout;
 import com.aputech.dora.Adpater.FireAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.R;
+import com.aputech.dora.ui.MapView;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -28,7 +31,7 @@ public class Trending extends Fragment {
     private FireAdapter adapter;
     private  RelativeLayout relativeLayout;
     private RecyclerView.AdapterDataObserver adapterDataObserver;
-
+    private MaterialButton map_View;
     public Trending() {
         // Required empty public constructor
     }
@@ -58,13 +61,19 @@ public class Trending extends Fragment {
         relativeLayout =root.findViewById(R.id.noresult);
         Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
         RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
+        map_View= root.findViewById(R.id.map_style);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
                 .setQuery(query, Note.class)
                 .build();
-
+        map_View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MapView.class);
+                startActivity(intent);
+            }
+        });
         adapter = new FireAdapter(options,getActivity());
         recyclerView.setAdapter(adapter);
         adapterDataObserver = new RecyclerView.AdapterDataObserver() {

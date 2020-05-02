@@ -112,24 +112,24 @@ public class CommentAdapter extends FirestoreRecyclerAdapter<Comment, CommentAda
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     User user = task.getResult().toObject(User.class);
                     holder.NameUser.setText(user.getUserName());
-                        if (user.getUserlevel()==0){
-                            Glide
-                                    .with(mContext)
-                                    .load(R.drawable.ic_grade)
-                                    .into(holder.level);
-                        }
-                        if (user.getUserlevel()==1){
-                            Glide
-                                    .with(mContext)
-                                    .load(R.drawable.ic_grade1)
-                                    .into(holder.level);
-                        }
-                        if (user.getUserlevel()==2){
-                            Glide
-                                    .with(mContext)
-                                    .load(R.drawable.ic_grade2)
-                                    .into(holder.level);
-                        }
+//                        if (user.getUserlevel()==0){
+//                            Glide
+//                                    .with(mContext)
+//                                    .load(R.drawable.ic_grade)
+//                                    .into(holder.level);
+//                        }
+//                        if (user.getUserlevel()==1){
+//                            Glide
+//                                    .with(mContext)
+//                                    .load(R.drawable.ic_grade1)
+//                                    .into(holder.level);
+//                        }
+//                        if (user.getUserlevel()==2){
+//                            Glide
+//                                    .with(mContext)
+//                                    .load(R.drawable.ic_grade2)
+//                                    .into(holder.level);
+//                        }
                 }
             });
         }

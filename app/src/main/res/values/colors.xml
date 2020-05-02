@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#013220</color>
     <color name="bg">#CCCCCC</color>
-    <color name="level1">#8c8c8c</color>
+    <color name="level1">#013220</color>
     <color name="level2">#996515</color>
     <color name="level3">#490f87</color>
     <color name="colorRed">#ff0000</color>

@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.aputech.dora.Adpater.FireAdapter;
 import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.User;
+import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.aputech.dora.ui.ProfileSettings;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
@@ -130,8 +131,6 @@ public class Profile extends Fragment {
        recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-
         bio = root.findViewById(R.id.bio);
         editImage = root.findViewById(R.id.editimage);
         relativeLayout = root.findViewById(R.id.noresult);
@@ -185,19 +184,19 @@ public class Profile extends Fragment {
                 email.setText(user.getEmailAdress());
                 followers.setText(String.valueOf(user.getFollower()));
                 following.setText(String.valueOf(user.getFollowing()));
-                if (user.getUserlevel() == 0) {
+                if (user.getPostnum() < 100) {
                     Glide
                             .with(getActivity())
                             .load(R.drawable.ic_grade)
                             .into(level);
                 }
-                if (user.getUserlevel() == 1) {
+                if (user.getPostnum() < 100 && user.getPostnum() > 500 ) {
                     Glide
                             .with(getActivity())
                             .load(R.drawable.ic_grade1)
                             .into(level);
                 }
-                if (user.getUserlevel() == 2) {
+                if (user.getPostnum() > 500) {
                     Glide
                             .with(getActivity())
                             .load(R.drawable.ic_grade2)

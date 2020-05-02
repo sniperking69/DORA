@@ -8,20 +8,23 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.ServerTimestamp;
 
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 //ups and downs are actually a list
 public class Note implements Parcelable {
+    @ServerTimestamp
+    private Date timestamp;
     private String description;
     private String imageUrl;
     private int type;
     private String userid;
-    private String uptime;
     private GeoPoint location;
     private String refComments;
     private float priority;
@@ -35,12 +38,12 @@ public class Note implements Parcelable {
         //empty constructor needed
     }
 
-    public Note(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum) {
+    public Note(Date timestamp, String description, String imageUrl, int type, String userid, GeoPoint location, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum) {
+        this.timestamp = timestamp;
         this.description = description;
         this.imageUrl = imageUrl;
         this.type = type;
         this.userid = userid;
-        this.uptime = uptime;
         this.location = location;
         this.refComments = refComments;
         this.priority = priority;
@@ -56,7 +59,6 @@ public class Note implements Parcelable {
         imageUrl = in.readString();
         type = in.readInt();
         userid = in.readString();
-        uptime = in.readString();
         refComments = in.readString();
         priority = in.readFloat();
         videoUrl = in.readString();
@@ -77,6 +79,14 @@ public class Note implements Parcelable {
             return new Note[size];
         }
     };
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public String getDescription() {
         return description;
@@ -108,14 +118,6 @@ public class Note implements Parcelable {
 
     public void setUserid(String userid) {
         this.userid = userid;
-    }
-
-    public String getUptime() {
-        return uptime;
-    }
-
-    public void setUptime(String uptime) {
-        this.uptime = uptime;
     }
 
     public GeoPoint getLocation() {
@@ -193,7 +195,6 @@ public class Note implements Parcelable {
         dest.writeString(imageUrl);
         dest.writeInt(type);
         dest.writeString(userid);
-        dest.writeString(uptime);
         dest.writeString(refComments);
         dest.writeFloat(priority);
         dest.writeString(videoUrl);

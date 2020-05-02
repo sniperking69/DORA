@@ -144,7 +144,7 @@ public class Post extends AppCompatActivity {
         post.setType(type);
         post.setDescription(text);
         post.setUserid(auth.getUid());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
+       // SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
         if (type==2){
             post.setImageUrl("sdasda");
         }if (type==3) {
@@ -153,13 +153,11 @@ public class Post extends AppCompatActivity {
         }if (type==4){
           post.setAudioUrl("dnaoidaoid");
         }
-        final String date =dateFormat.format(Calendar.getInstance().getTime());
             notebookRef.add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
                     String commentref = documentReference.getId();
                     post.setRefComments(commentref);
-                    post.setUptime(date);
                     documentReference.set(post);
                     Toast.makeText(Post.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
                     finish();
@@ -178,6 +176,11 @@ public class Post extends AppCompatActivity {
 //                collectionReference.add(mms);
 //
 //        }
-
+//        notification noti = new notification();
+//        noti.setDocument("oihdidsafisd");
+//        noti.setUserid(auth.getUid());
+//        noti.setText(" Comment On Your Post");
+//        CollectionReference  notiref= db.collection("Users").document(auth.getUid()).collection("notify");
+//        notiref.add(noti);
     }
 }

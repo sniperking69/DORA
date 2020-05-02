@@ -82,6 +82,7 @@
             app:counterOverflowTextAppearance="@style/TextLimitError">
 
             <EditText
+                android:id="@+id/para"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/bg"

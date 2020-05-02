@@ -9,13 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.ProfileDisplayActivity;
-import com.aputech.dora.ui.ProfileSettings;
 import com.bumptech.glide.Glide;
-import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -23,23 +24,24 @@ import java.util.ArrayList;
 
 public class SAdapter extends RecyclerView.Adapter<SAdapter.UserViewHolder> {
     private ArrayList<User> UserList;
-    private ArrayList<User> UserListFull;
     private Context mContext;
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
         ImageView img;
+        CardView user_card;
+
         UserViewHolder(View itemView) {
             super(itemView);
+            user_card=itemView.findViewById(R.id.user_card);
             textViewTitle = itemView.findViewById(R.id.nametitle);
-            img =itemView.findViewById(R.id.profiledisplay);
+            img = itemView.findViewById(R.id.profiledisplay);
         }
     }
 
     public SAdapter(ArrayList<User> UserList, Context mContext) {
         this.UserList = UserList;
-        this.mContext=mContext;
+        this.mContext = mContext;
     }
 
     @NonNull
@@ -59,23 +61,15 @@ public class SAdapter extends RecyclerView.Adapter<SAdapter.UserViewHolder> {
                 .load(currentItem.getProfileUrl())
                 .into(holder.img);
         holder.textViewTitle.setText(currentItem.getUserName());
-        holder.textViewTitle.setOnClickListener(new View.OnClickListener() {
+        holder.user_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
-                intent.putExtra("user_id",currentItem.getUserid());
-                if (currentItem.getUserid().equals(auth.getUid())){
-                    intent.putExtra("act",0);
-                }else{
-                    intent.putExtra("act",1);
-                }
-
+                intent.putExtra("user", currentItem);
                 mContext.startActivity(intent);
             }
         });
-
-        }
-
+    }
 
 
     @Override
