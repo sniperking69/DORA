@@ -1,57 +1,33 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.app.Notification;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aputech.dora.Model.Comment;
-import com.aputech.dora.Model.Note;
-import com.aputech.dora.Model.message;
+import com.aputech.dora.Model.Post;
 import com.aputech.dora.R;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.gson.internal.$Gson$Types;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Post extends AppCompatActivity {
+public class makePost extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_LOCATION = 345;
@@ -73,7 +49,7 @@ public class Post extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post);
+        setContentView(R.layout.activity_make_post);
         editText=findViewById(R.id.para);
         imageView = findViewById(R.id.dispimg);
         audio = findViewById(R.id.Audio);
@@ -112,7 +88,7 @@ public class Post extends AppCompatActivity {
     }
 
     public void Done(View view) {
-        Intent intent= new Intent(Post.this,SelectLocation.class);
+        Intent intent= new Intent(makePost.this,SelectLocation.class);
         startActivityForResult(intent,REQUEST_LOCATION);
     }
     @Override
@@ -128,13 +104,13 @@ public class Post extends AppCompatActivity {
             Bundle extras = data.getExtras();
             latLng = (LatLng) extras.get("LatLng");
             boolean skipcheck= (boolean) extras.get("skip");
-            Toast.makeText(Post.this,latLng.toString(),Toast.LENGTH_LONG).show();
+            Toast.makeText(makePost.this,latLng.toString(),Toast.LENGTH_LONG).show();
             uploadFire(type,skipcheck);
         }
     }
     private void uploadFire(int type,boolean skip){
         String text= editText.getText().toString();
-        final Note post = new Note();
+        final Post post = new Post();
         if (!skip){
             GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
             post.setLocation(geoPoint);
@@ -159,7 +135,7 @@ public class Post extends AppCompatActivity {
                     String commentref = documentReference.getId();
                     post.setRefComments(commentref);
                     documentReference.set(post);
-                    Toast.makeText(Post.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
+                    Toast.makeText(makePost.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
                     finish();
 
                 }

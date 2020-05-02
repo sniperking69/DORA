@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.Post">
+    tools:context=".ui.makePost">
     <RelativeLayout
         android:id="@+id/rellay1"
         android:layout_width="match_parent"

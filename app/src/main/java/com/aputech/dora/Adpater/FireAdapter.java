@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.Vote;
 import com.aputech.dora.R;
-import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.Post;
 import com.aputech.dora.ui.DispPostLocation;
 import com.aputech.dora.ui.PostDisplay;
 import com.aputech.dora.ui.ProfileDisplayActivity;
@@ -40,18 +40,18 @@ import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.NoteHolder> {
+public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.NoteHolder> {
     private Context mContext;
     private FirebaseAuth auth=FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference notebookRef;
-    public FireAdapter(@NonNull FirestoreRecyclerOptions<Note> options, Context mContext) {
+    public FireAdapter(@NonNull FirestoreRecyclerOptions<Post> options, Context mContext) {
         super(options);
         this.mContext=mContext;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull final NoteHolder holder, final int position, @NonNull final Note model) {
+    protected void onBindViewHolder(@NonNull final NoteHolder holder, final int position, @NonNull final Post model) {
         holder.down.setText(String.valueOf(model.getDownnum()));
         holder.up.setText(String.valueOf(model.getUpnum()));
         holder.textViewDescription.setText(model.getDescription());
@@ -60,6 +60,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Note, FireAdapter.Note
             String df = DateFormat.getDateFormat(mContext).format(date).concat("  ").concat(DateFormat.getTimeFormat(mContext).format(date));
             holder.time.setText(df);
         }
+
         if (model.getUserid().equals(auth.getUid())){
             holder.delete.setVisibility(View.VISIBLE);
             holder.delete.setOnClickListener(new View.OnClickListener() {

@@ -25,9 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aputech.dora.Adpater.FireAdapter;
-import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
-import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.aputech.dora.ui.ProfileSettings;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
@@ -41,9 +40,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -90,7 +87,7 @@ public class Profile extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private ArrayList<Note> Posts = new ArrayList<>();
+    private ArrayList<Post> Posts = new ArrayList<>();
 
 
     public Profile() {
@@ -143,8 +140,8 @@ public class Profile extends Fragment {
         profileimg = root.findViewById(R.id.profiledisplay);
         MaterialButton settings = root.findViewById(R.id.followandset);
         Query query = collectionReference.whereEqualTo("userid",auth.getUid()).orderBy("priority", Query.Direction.DESCENDING);
-        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                .setQuery(query, Note.class)
+        FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
+                .setQuery(query, Post.class)
                 .build();
         adapter = new FireAdapter(options,getActivity());
         recyclerView.setAdapter(adapter);

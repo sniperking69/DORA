@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.aputech.dora.Adpater.FireAdapter;
-import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.Post;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.MapView;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -64,8 +64,8 @@ public class Trending extends Fragment {
         map_View= root.findViewById(R.id.map_style);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                .setQuery(query, Note.class)
+        FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
+                .setQuery(query, Post.class)
                 .build();
         map_View.setOnClickListener(new View.OnClickListener() {
             @Override

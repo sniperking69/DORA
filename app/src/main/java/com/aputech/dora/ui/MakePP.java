@@ -1,7 +1,6 @@
 package com.aputech.dora.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.Post;
 import com.aputech.dora.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -124,7 +123,7 @@ public class MakePP extends AppCompatActivity {
 
     private void uploadFire(int type, boolean skip) {
         String text = editText.getText().toString();
-        final Note post = new Note();
+        final Post post = new Post();
         if (!skip) {
             GeoPoint geoPoint = new GeoPoint(latLng.latitude, latLng.longitude);
             post.setLocation(geoPoint);

@@ -10,10 +10,9 @@ import android.os.Bundle;
 
 import com.aputech.dora.Adpater.FireAdapter;
 import com.aputech.dora.Model.Fol;
-import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
-import com.aputech.dora.ui.Fragments.Profile;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,8 +27,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -237,8 +234,8 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                 }
             });
         }
-        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                .setQuery(query, Note.class)
+        FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
+                .setQuery(query, Post.class)
                 .build();
         adapter = new FireAdapter(options,ProfileDisplayActivity.this);
         recyclerView.setAdapter(adapter);

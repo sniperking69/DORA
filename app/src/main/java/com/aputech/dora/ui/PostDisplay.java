@@ -20,10 +20,9 @@ import android.widget.Toast;
 
 import com.aputech.dora.Adpater.CommentAdapter;
 import com.aputech.dora.Model.Comment;
-import com.aputech.dora.Model.Note;
+import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.Vote;
-import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -33,7 +32,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -55,7 +53,7 @@ public class PostDisplay extends AppCompatActivity {
     EventListener<DocumentSnapshot> eventListener;
     ImageView delete,edit;
     String TAG="bigp";
-    Note note;
+    Post post;
     ListenerRegistration listenerRegistration;
     private TextView postText,userName,post_time;
     ImageView locate,ProfileImg;
@@ -76,17 +74,17 @@ public class PostDisplay extends AppCompatActivity {
         postText = findViewById(R.id.text_view_description);
         ProfileImg = findViewById(R.id.poster_profile);
         Intent intent= getIntent();
-        note= intent.getParcelableExtra("post");
+        post = intent.getParcelableExtra("post");
         User user = intent.getParcelableExtra("user");
-        int Type = note.getType();
-        postText.setText(note.getDescription());
+        int Type = post.getType();
+        postText.setText(post.getDescription());
         userName.setText(user.getUserName());
         //post_time.setText(note.getUptime());
         Glide
                 .with(PostDisplay.this)
                 .load(user.getProfileUrl())
                 .into(ProfileImg);
-        if (note.getLocation()!=null){
+        if (post.getLocation()!=null){
             locate.setImageResource(R.drawable.ic_locationhappy);
             locate.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -151,17 +149,17 @@ public class PostDisplay extends AppCompatActivity {
         if (Type==2){
 
         }
-        documentReference = db.collection("Posts").document(note.getRefComments());
+        documentReference = db.collection("Posts").document(post.getRefComments());
          eventListener =new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-              Note n = documentSnapshot.toObject(Note.class);
+              Post n = documentSnapshot.toObject(Post.class);
               up.setText(String.valueOf(n.getUpnum()));
                 down.setText(String.valueOf(n.getDownnum()));
             }
         };
-        final DocumentReference postrefrence = db.collection("Posts").document(note.getRefComments());
-        final DocumentReference Reference = db.collection("Posts").document(note.getRefComments()).collection("vote").document(auth.getUid());
+        final DocumentReference postrefrence = db.collection("Posts").document(post.getRefComments());
+        final DocumentReference Reference = db.collection("Posts").document(post.getRefComments()).collection("vote").document(auth.getUid());
         listenerRegistration=documentReference.addSnapshotListener(eventListener);
         up.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,7 +167,7 @@ public class PostDisplay extends AppCompatActivity {
                 postrefrence.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        final Note doc = documentSnapshot.toObject(Note.class);
+                        final Post doc = documentSnapshot.toObject(Post.class);
                         Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -230,7 +228,7 @@ public class PostDisplay extends AppCompatActivity {
                 postrefrence.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        final Note doc = documentSnapshot.toObject(Note.class);
+                        final Post doc = documentSnapshot.toObject(Post.class);
                         Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -268,12 +266,12 @@ public class PostDisplay extends AppCompatActivity {
 
             }
         });
-        notebookRef =db.collection("Posts").document(note.getRefComments()).collection("comments");
+        notebookRef =db.collection("Posts").document(post.getRefComments()).collection("comments");
         Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Comment> options = new FirestoreRecyclerOptions.Builder<Comment>()
                 .setQuery(query, Comment.class)
                 .build();
-        adapter = new CommentAdapter(options,note.getRefComments(),PostDisplay.this);
+        adapter = new CommentAdapter(options, post.getRefComments(),PostDisplay.this);
         RecyclerView recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
@@ -301,8 +299,8 @@ public class PostDisplay extends AppCompatActivity {
     public void sendcomment(View view) {
         String comenttext= editText.getText().toString();
         if (!comenttext.isEmpty()){
-            DocumentReference documentReference = db.collection("Posts").document(note.getRefComments());
-            final CollectionReference col=db.collection("Posts").document(note.getRefComments()).collection("comments");
+            DocumentReference documentReference = db.collection("Posts").document(post.getRefComments());
+            final CollectionReference col=db.collection("Posts").document(post.getRefComments()).collection("comments");
             documentReference.update("commentnum",Commentnum+1);
             Comment comment = new Comment();
             comment.setUid(auth.getUid());

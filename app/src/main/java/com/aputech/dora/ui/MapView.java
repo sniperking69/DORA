@@ -8,20 +8,13 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.aputech.dora.Model.Note;
-import com.aputech.dora.Model.message;
+import com.aputech.dora.Model.Post;
 import com.aputech.dora.R;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -42,33 +35,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FetchPlaceResponse;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mancj.materialsearchbar.MaterialSearchBar;
-import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MapView extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Posts");
-    private ArrayList<Note> posts=new ArrayList<>();
+    private ArrayList<Post> posts=new ArrayList<>();
 
     private Location mLastKnownLocation;
     private LocationCallback locationCallback;
@@ -86,11 +65,11 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    Note p = documentSnapshot.toObject(Note.class);
+                    Post p = documentSnapshot.toObject(Post.class);
                     posts.add(p);
                 }
                 for (int x=0;x<posts.size();x++){
-                    Note msg = posts.get(x);
+                    Post msg = posts.get(x);
                     if (msg.getLocation()!=null){
                         final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(),msg.getLocation().getLongitude());
                         Marker marker=mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).title("Click to Edit Message"));

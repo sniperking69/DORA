@@ -1,24 +1,16 @@
 package com.aputech.dora.Model;
 
-import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ServerTimestamp;
 
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 //ups and downs are actually a list
-public class Note implements Parcelable {
+public class Post implements Parcelable {
     @ServerTimestamp
     private Date timestamp;
     private String description;
@@ -34,11 +26,11 @@ public class Note implements Parcelable {
     private int upnum;
     private int downnum;
 
-    public Note() {
+    public Post() {
         //empty constructor needed
     }
 
-    public Note(Date timestamp, String description, String imageUrl, int type, String userid, GeoPoint location, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum) {
+    public Post(Date timestamp, String description, String imageUrl, int type, String userid, GeoPoint location, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum) {
         this.timestamp = timestamp;
         this.description = description;
         this.imageUrl = imageUrl;
@@ -54,7 +46,7 @@ public class Note implements Parcelable {
         this.downnum = downnum;
     }
 
-    protected Note(Parcel in) {
+    protected Post(Parcel in) {
         description = in.readString();
         imageUrl = in.readString();
         type = in.readInt();
@@ -68,15 +60,15 @@ public class Note implements Parcelable {
         downnum = in.readInt();
     }
 
-    public static final Creator<Note> CREATOR = new Creator<Note>() {
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
         @Override
-        public Note createFromParcel(Parcel in) {
-            return new Note(in);
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
         }
 
         @Override
-        public Note[] newArray(int size) {
-            return new Note[size];
+        public Post[] newArray(int size) {
+            return new Post[size];
         }
     };
 

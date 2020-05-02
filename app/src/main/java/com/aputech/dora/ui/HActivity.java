@@ -287,7 +287,7 @@ public class HActivity extends AppCompatActivity {
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HActivity.this, Post.class);
+                Intent intent = new Intent(HActivity.this, makePost.class);
                 startActivity(intent);
 
 

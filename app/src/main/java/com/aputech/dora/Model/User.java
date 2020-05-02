@@ -3,10 +3,6 @@ package com.aputech.dora.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.aputech.dora.ui.Post;
-
-import java.util.ArrayList;
-
 public class User implements Parcelable {
 
     private String UserName;
