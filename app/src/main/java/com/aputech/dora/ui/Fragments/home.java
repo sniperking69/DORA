@@ -136,7 +136,7 @@ public class home extends Fragment {
                     Post usr = documentSnapshot.toObject(Post.class);
                     Following.add(usr.getUserid());
                 }
-                Query mQuery = mPostsCollection.whereEqualTo("userid",).orderBy("priority", Query.Direction.DESCENDING);
+                Query mQuery = mPostsCollection.orderBy("priority", Query.Direction.DESCENDING);
                 FirestorePagingOptions options = new FirestorePagingOptions.Builder<Post>()
                         .setLifecycleOwner(getActivity())
                         .setQuery(mQuery, config, Post.class
