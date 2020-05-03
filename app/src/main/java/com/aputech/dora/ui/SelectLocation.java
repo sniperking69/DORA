@@ -120,7 +120,7 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.putExtra("LatLng", latLngfinal);
-                intent.putExtra("geocode", geocode);
+
                 intent.putExtra("skip", true);
                 setResult(RESULT_OK, intent);
                 finish();
@@ -132,7 +132,7 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
 
                 Intent intent = new Intent();
                 intent.putExtra("LatLng", latLngfinal);
-                intent.putExtra("geocode", geocode);
+
                 intent.putExtra("skip", false);
                 setResult(RESULT_OK, intent);
                 finish();

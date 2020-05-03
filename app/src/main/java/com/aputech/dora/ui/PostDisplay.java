@@ -48,7 +48,6 @@ public class PostDisplay extends AppCompatActivity {
     MaterialButton up,down;
     private EditText editText;
     RelativeLayout noresult;
-    String Userid,user_name;
     int Commentnum;
     EventListener<DocumentSnapshot> eventListener;
     ImageView delete,edit;
@@ -75,9 +74,13 @@ public class PostDisplay extends AppCompatActivity {
         ProfileImg = findViewById(R.id.poster_profile);
         Intent intent= getIntent();
         post = intent.getParcelableExtra("post");
-        User user = intent.getParcelableExtra("user");
         int Type = post.getType();
         postText.setText(post.getDescription());
+        DocumentReference docrefuser= db.collection("Users").document(post.getUserid());
+        docrefuser.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+              User user = documentSnapshot.toObject(User.class);
         userName.setText(user.getUserName());
         //post_time.setText(note.getUptime());
         Glide
@@ -146,6 +149,12 @@ public class PostDisplay extends AppCompatActivity {
                 }
             });
         }
+
+
+
+
+            }
+        });
         if (Type==2){
 
         }

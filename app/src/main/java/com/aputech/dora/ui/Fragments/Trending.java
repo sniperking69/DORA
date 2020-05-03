@@ -76,19 +76,20 @@ public class Trending extends Fragment {
         });
         adapter = new FireAdapter(options,getActivity());
         recyclerView.setAdapter(adapter);
+        relativeLayout.setVisibility(View.VISIBLE);
         adapterDataObserver = new RecyclerView.AdapterDataObserver() {
             @Override
-            public void onItemRangeChanged(int positionStart, int itemCount) {
-                if (itemCount > 0) {
-                    relativeLayout.setVisibility(View.GONE);
-                } else {
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                if (adapter.getItemCount()==0){
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
-            public void onItemRangeRemoved(int positionStart, int itemCount) {
-                if (itemCount == 1) {
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                if (adapter.getItemCount() >0){
+                    relativeLayout.setVisibility(View.INVISIBLE);
+                }else{
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }

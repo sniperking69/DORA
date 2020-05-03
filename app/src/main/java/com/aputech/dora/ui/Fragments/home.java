@@ -35,6 +35,7 @@ import com.firebase.ui.firestore.SnapshotParser;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -73,11 +74,9 @@ public class home extends Fragment {
     ObservableSnapshotArray followposts;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private FirestorePagingAdapter<Post, PostViewHolder> mAdapter;
     private CollectionReference mPostsCollection = db.collection("Posts");
+    private EventListener<QuerySnapshot> eventListener;
 
-    private EventListener eventListener;
-    ListenerRegistration listenerRegistration;
     public static home newInstance(int index) {
         home fragment = new home();
         Bundle bundle = new Bundle();
@@ -96,194 +95,77 @@ public class home extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_h, container, false);
-        mRecyclerView = root.findViewById(R.id.recycler_view);
-
-        mSwipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout);
-
-        // Init mRecyclerView
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        setupAdapter();
-
-
-        // Refresh Action on Swipe Refresh Layout
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        relativeLayout =root.findViewById(R.id.noresult);
+        Query query = db.collection("Posts").orderBy("priority", Query.Direction.DESCENDING);
+        final RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
+        map_View= root.findViewById(R.id.map_style);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
+                .setQuery(query, Post.class)
+                .build();
+        map_View.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                mAdapter.refresh();
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MapView.class);
+                startActivity(intent);
             }
+        });
+
+        adapter = new FireAdapter(options,getActivity());
+
+        notebookRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    Following.add(documentSnapshot.getId());
+                }
+                relativeLayout.setVisibility(View.VISIBLE);
+
+                adapterDataObserver = new RecyclerView.AdapterDataObserver() {
+                    @Override
+                    public void onItemRangeRemoved(int positionStart, int itemCount) {
+                        if (adapter.getItemCount()==0){
+                            relativeLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onItemRangeInserted(int positionStart, int itemCount) {
+
+//                        for (int y=0;y<adapter.getSnapshots().size();y++){
+//                            if (!Following.contains(adapter.getSnapshots().get(y).getUserid())){
+//                                adapter.getSnapshots().remove(y);
+//                            }
+//                        }
+                        if (adapter.getItemCount() >0){
+                            relativeLayout.setVisibility(View.INVISIBLE);
+                        }else{
+                            relativeLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+                };
+                adapter.registerAdapterDataObserver(adapterDataObserver);
+                recyclerView.setAdapter(adapter);
+                adapter.startListening();
+            }
+
         });
 
         return root;
     }
-
     @Override
     public void onStart() {
         super.onStart();
 
     }
-    private void setupAdapter() {
 
-        // Init Paging Configuration
-        final PagedList.Config config = new PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setPrefetchDistance(2)
-                .setPageSize(10)
-                .build();
-        eventListener =new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
-                if (e != null) {
-                    return;
-                }
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    //Post usr = documentSnapshot.toObject(Post.class);
-                    Following.add(documentSnapshot.getId());
-                }
-                Query mQuery = mPostsCollection.orderBy("priority", Query.Direction.DESCENDING);
-                FirestorePagingOptions options = new FirestorePagingOptions.Builder<Post>()
-                        .setLifecycleOwner(getActivity())
-                        .setQuery(mQuery, config, Post.class
-//                                new SnapshotParser<Post>() {
-//                            @NonNull
-//                            @Override
-//                            public Post parseSnapshot(@NonNull DocumentSnapshot snapshot) {
-//                                Post p = snapshot.toObject(Post.class);
-//                                if (p != null) {
-//                                    if (Following.contains(p.getUserid())) {
-//                                        return p;
-//                                    } else {
-//                                        return null;
-//                                    }
-//                                }else{
-//                                    return null;
-//                                }
-//
-//                            }
-//                        }
-                        ).build();
-
-                // Instantiate Paging Adapter
-                mAdapter = new FirestorePagingAdapter<Post, PostViewHolder>(options) {
-                    @NonNull
-                    @Override
-                    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        View view = getLayoutInflater().inflate(R.layout.row_feed, parent, false);
-                        return new PostViewHolder(view);
-                    }
-
-                    @Override
-                    public int getItemCount() {
-                        return super.getItemCount();
-                    }
-
-                    @Override
-                    protected void onBindViewHolder(@NonNull PostViewHolder holder, int i, @NonNull Post post) {
-                        // Bind to ViewHolder
-                       // Log.d("bigpp", "onBindViewHolder: "+Following+"   "+post.getUserid());
-                        if (!Following.contains(post.getUserid())){
-                            holder.cardView.setVisibility(View.GONE);
-                        }
-
-                      //  viewHolder.itemView.setVisibility(View.VISIBLE);
-                    }
-
-                    @Nullable
-                    @Override
-                    protected DocumentSnapshot getItem(int position) {
-                        return super.getItem(position);
-                    }
-
-                    @Override
-                    protected void onError(@NonNull Exception e) {
-                        super.onError(e);
-                        Log.e("MainActivity", e.getMessage());
-                    }
-
-                    @Override
-                    protected void onLoadingStateChanged(@NonNull LoadingState state) {
-                        switch (state) {
-                            case LOADING_INITIAL:
-
-
-//                                    mAdapter.getCurrentList().remove()
-                            case LOADING_MORE:
-                                mSwipeRefreshLayout.setRefreshing(true);
-                                break;
-
-                            case LOADED:
-                                mSwipeRefreshLayout.setRefreshing(false);
-
-
-                                break;
-
-                            case ERROR:
-                                Toast.makeText(
-                                        getActivity(),
-                                        "Error Occurred!",
-                                        Toast.LENGTH_SHORT
-                                ).show();
-
-                                mSwipeRefreshLayout.setRefreshing(false);
-                                break;
-
-                            case FINISHED:
-                                mSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                        }
-                    }
-
-                };
-
-                // Finally Set the Adapter to mRecyclerView
-                mRecyclerView.setAdapter(mAdapter);
-
-
-            }
-        };
-        listenerRegistration= notebookRef.addSnapshotListener(eventListener);
-        // Init Adapter Configuration
-
-
-    }
-   public static class PostViewHolder extends RecyclerView.ViewHolder {
-
-        TextView user_name;
-        TextView textViewDescription;
-        TextView time;
-        MaterialButton up, down;
-        ImageView img;
-        ImageView level;
-        CardView cardView;
-        ImageView LocationIcon, delete, edit;
-        CircleImageView profile;
-        MaterialButton Commentbutton;
-
-        PostViewHolder(@NonNull View itemView) {
-            super(itemView);
-            cardView=itemView.findViewById(R.id.card);
-            up = itemView.findViewById(R.id.upbutton);
-            down = itemView.findViewById(R.id.downbutton);
-            edit = itemView.findViewById(R.id.edit);
-            // playerView = itemView.findViewById(R.id.video_view);
-            delete = itemView.findViewById(R.id.delete);
-            user_name = itemView.findViewById(R.id.user_name);
-            textViewDescription = itemView.findViewById(R.id.text_view_description);
-            time = itemView.findViewById(R.id.time);
-            level = itemView.findViewById(R.id.level);
-            LocationIcon = itemView.findViewById(R.id.locate);
-            profile = itemView.findViewById(R.id.poster_profile);
-            img = itemView.findViewById(R.id.img);
-            Commentbutton = itemView.findViewById(R.id.comment);
-        }
-    }
     @Override
     public void onStop() {
         super.onStop();
-        if (listenerRegistration!=null){
-            listenerRegistration.remove();
+        if (adapter != null) {
+            adapter.stopListening();
+            adapter.unregisterAdapterDataObserver(adapterDataObserver);
         }
-
     }
 }

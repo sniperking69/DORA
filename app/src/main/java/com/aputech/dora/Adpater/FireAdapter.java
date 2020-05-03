@@ -27,6 +27,7 @@ import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.firebase.ui.firestore.ObservableSnapshotArray;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -180,7 +181,6 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                         public void onClick(View v) {
                             Intent intent =new Intent(mContext, PostDisplay.class);
                             intent.putExtra("post",model);
-                            intent.putExtra("user",user);
                             mContext.startActivity(intent);
                         }
                     });
@@ -189,7 +189,6 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                         public void onClick(View v) {
                             Intent intent =new Intent(mContext, PostDisplay.class);
                             intent.putExtra("post",model);
-                            intent.putExtra("user",user);
                             mContext.startActivity(intent);
                         }
                     });
@@ -356,12 +355,17 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
         }
     }
     private void initializePlayer(SimpleExoPlayer player) {
-     //   player = ExoPlayerFactory.newSimpleInstance(this);
-       // playerView.setPlayer(player);
+
     }
 
-    private void updatePriority(int position,int up,int down,int commentnum){
-        getSnapshots().getSnapshot(position).getReference().update("priority",up*0.4+down*0.2+commentnum*0.4);
+    @NonNull
+    @Override
+    public ObservableSnapshotArray<Post> getSnapshots() {
+        return getSnapshots();
+    }
+
+    private void updatePriority(int position, int up, int down, int commentnum){
+
 
     }
 }
