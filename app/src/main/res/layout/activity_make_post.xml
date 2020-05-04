@@ -68,45 +68,71 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rellay1"
         android:layout_marginTop="0dp"
-        android:weightSum="10"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="5dp">
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/post"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/firstCardId"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="3"
-            app:counterEnabled="true"
-            app:counterMaxLength="50"
-            app:counterOverflowTextAppearance="@style/TextLimitError">
-
-            <EditText
-                android:id="@+id/para"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/bg"
-                android:hint="post here"
-                android:inputType="textPersonName"
-                android:maxLength="50"
-                android:textSize="16sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             >
-
-            <ImageView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
+                android:layout_height="match_parent">
 
-            <VideoView
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                     <EditText
+
+                         android:layout_width="match_parent"
+                         android:padding="20dp"
+                         android:layout_height="wrap_content"
+                         android:text="Android is a mobile Android is a mobile operating system based on a modified version of the Linux kernel and other open source software, designed operating system based on a modified version of the Linux kernel and other open source Android is a mobile operating system based on a modified version of the Linux kernel and other open source software, designedsoftware, designed primarily for touchscreen mobile devices such as smartphones and tablets. ... Some well known derivatives include Android TV for televisions and Wear OS for wearables, both developed by Google."
+                         android:background="@drawable/radius_card_first">
+
+                      </EditText>
+
+                </ScrollView>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="410dp"
+            app:cardCornerRadius="15dp"
+            android:layout_below="@id/firstCardId"
+            android:layout_marginTop="3dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </RelativeLayout>
+                android:layout_height="match_parent">
 
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/dani">
+
+                    </ImageView>
+
+                 </ScrollView>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 
