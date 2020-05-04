@@ -1,27 +1,39 @@
 package com.aputech.dora.Model;
 
-import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.ServerTimestamp;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import java.util.Date;
 
 public class Comment {
-    private String uid,commentText,time;
+    @ServerTimestamp
+    private Date timestamp;
+    private String uid,commentText;
     private int priority;
-    private CollectionReference downvote;
-    private CollectionReference upvote;
+    private int upnum;
+    private int downnum;
+    private String commentid;
+
 
     public Comment() {
         //empty constructor needed
     }
 
-    public Comment(String uid, String commentText, String time, int priority, CollectionReference downvote, CollectionReference upvote) {
+    public Comment(Date timestamp, String uid, String commentText, int priority, int upnum, int downnum, String commentid) {
+        this.timestamp = timestamp;
         this.uid = uid;
         this.commentText = commentText;
-        this.time = time;
         this.priority = priority;
-        this.downvote = downvote;
-        this.upvote = upvote;
+        this.upnum = upnum;
+        this.downnum = downnum;
+        this.commentid = commentid;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getUid() {
@@ -40,14 +52,6 @@ public class Comment {
         this.commentText = commentText;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     public int getPriority() {
         return priority;
     }
@@ -56,19 +60,27 @@ public class Comment {
         this.priority = priority;
     }
 
-    public CollectionReference getDownvote() {
-        return downvote;
+    public int getUpnum() {
+        return upnum;
     }
 
-    public void setDownvote(CollectionReference downvote) {
-        this.downvote = downvote;
+    public void setUpnum(int upnum) {
+        this.upnum = upnum;
     }
 
-    public CollectionReference getUpvote() {
-        return upvote;
+    public int getDownnum() {
+        return downnum;
     }
 
-    public void setUpvote(CollectionReference upvote) {
-        this.upvote = upvote;
+    public void setDownnum(int downnum) {
+        this.downnum = downnum;
+    }
+
+    public String getCommentid() {
+        return commentid;
+    }
+
+    public void setCommentid(String commentid) {
+        this.commentid = commentid;
     }
 }

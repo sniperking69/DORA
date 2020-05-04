@@ -27,8 +27,12 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.PostDisplay"></activity>
-        <activity android:name=".ui.ProfileEditActivity" />
+        <activity android:name=".ui.MapView"></activity>
+        <activity android:name=".ui.MakePP" />
+        <activity android:name=".ui.SelectPrivateLocation" />
+        <activity android:name=".ui.SelectUser" />
+        <activity android:name=".ui.PrivatePostDisplay" />
+        <activity android:name=".ui.PostDisplay" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -51,17 +55,11 @@
         <activity
             android:name=".ui.PrivatePost"
             android:label="@string/title_activity_private_post" />
-        <activity
-            android:name=".ui.ProfileDisplayActivity"
-            android:label="@string/title_activity_profile_display"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.NewMessageActivity" />
-        <activity android:name=".ui.CommentActivity" />
-        <activity android:name=".ui.msgActivity" />
+        <activity android:name=".ui.ProfileDisplayActivity" />
         <activity
             android:name=".ui.regUser"
             android:label="Profile" />
-        <activity android:name=".ui.Post" />
+        <activity android:name=".ui.makePost" />
         <activity
             android:name=".ui.HActivity"
             android:label="@string/title_activity_h" />

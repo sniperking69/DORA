@@ -1,30 +1,23 @@
 package com.aputech.dora.Model;
 
-import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.ServerTimestamp;
 
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.Date;
 
 //ups and downs are actually a list
-public class Note implements Parcelable {
+public class Post implements Parcelable {
+    @ServerTimestamp
+    private Date timestamp;
     private String description;
     private String imageUrl;
     private int type;
     private String userid;
-    private String uptime;
     private GeoPoint location;
-    private String downvoteref;
-    private String upvoteref;
     private String refComments;
     private float priority;
     private String videoUrl;
@@ -33,19 +26,17 @@ public class Note implements Parcelable {
     private int upnum;
     private int downnum;
 
-    public Note() {
+    public Post() {
         //empty constructor needed
     }
 
-    public Note(String description, String imageUrl, int type, String userid, String uptime, GeoPoint location, String downvoteref, String upvoteref, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum) {
+    public Post(Date timestamp, String description, String imageUrl, int type, String userid, GeoPoint location, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum) {
+        this.timestamp = timestamp;
         this.description = description;
         this.imageUrl = imageUrl;
         this.type = type;
         this.userid = userid;
-        this.uptime = uptime;
         this.location = location;
-        this.downvoteref = downvoteref;
-        this.upvoteref = upvoteref;
         this.refComments = refComments;
         this.priority = priority;
         this.videoUrl = videoUrl;
@@ -55,14 +46,11 @@ public class Note implements Parcelable {
         this.downnum = downnum;
     }
 
-    protected Note(Parcel in) {
+    protected Post(Parcel in) {
         description = in.readString();
         imageUrl = in.readString();
         type = in.readInt();
         userid = in.readString();
-        uptime = in.readString();
-        downvoteref = in.readString();
-        upvoteref = in.readString();
         refComments = in.readString();
         priority = in.readFloat();
         videoUrl = in.readString();
@@ -72,17 +60,25 @@ public class Note implements Parcelable {
         downnum = in.readInt();
     }
 
-    public static final Creator<Note> CREATOR = new Creator<Note>() {
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
         @Override
-        public Note createFromParcel(Parcel in) {
-            return new Note(in);
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
         }
 
         @Override
-        public Note[] newArray(int size) {
-            return new Note[size];
+        public Post[] newArray(int size) {
+            return new Post[size];
         }
     };
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public String getDescription() {
         return description;
@@ -116,36 +112,12 @@ public class Note implements Parcelable {
         this.userid = userid;
     }
 
-    public String getUptime() {
-        return uptime;
-    }
-
-    public void setUptime(String uptime) {
-        this.uptime = uptime;
-    }
-
     public GeoPoint getLocation() {
         return location;
     }
 
     public void setLocation(GeoPoint location) {
         this.location = location;
-    }
-
-    public String getDownvoteref() {
-        return downvoteref;
-    }
-
-    public void setDownvoteref(String downvoteref) {
-        this.downvoteref = downvoteref;
-    }
-
-    public String getUpvoteref() {
-        return upvoteref;
-    }
-
-    public void setUpvoteref(String upvoteref) {
-        this.upvoteref = upvoteref;
     }
 
     public String getRefComments() {
@@ -215,9 +187,6 @@ public class Note implements Parcelable {
         dest.writeString(imageUrl);
         dest.writeInt(type);
         dest.writeString(userid);
-        dest.writeString(uptime);
-        dest.writeString(downvoteref);
-        dest.writeString(upvoteref);
         dest.writeString(refComments);
         dest.writeFloat(priority);
         dest.writeString(videoUrl);

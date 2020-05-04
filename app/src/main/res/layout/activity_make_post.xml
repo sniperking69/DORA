@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.Post">
+    tools:context=".ui.makePost">
     <RelativeLayout
         android:id="@+id/rellay1"
         android:layout_width="match_parent"
@@ -62,35 +62,53 @@
 
     </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_below="@+id/rellay1"
-            android:weightSum="5"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rellay1"
+        android:layout_marginTop="0dp"
+        android:weightSum="10"
+        android:orientation="vertical">
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/post"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="3"
+            app:counterEnabled="true"
+            app:counterMaxLength="50"
+            app:counterOverflowTextAppearance="@style/TextLimitError">
 
             <EditText
                 android:id="@+id/para"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/bg"
+                android:hint="post here"
+                android:inputType="textPersonName"
+                android:maxLength="50"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                android:layout_margin="10dp"
-                android:hint="Drop A Post..."
-                android:background="@null"
-                android:maxLength="250"
-                android:inputType="textShortMessage"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
             <ImageView
-                android:id="@+id/dispimg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                />
 
-                android:background="@android:color/holo_red_dark"/>
+            <VideoView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
 
-        </LinearLayout>
 
-
-
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_add_msg"

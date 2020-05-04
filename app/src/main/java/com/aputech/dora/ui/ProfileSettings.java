@@ -5,19 +5,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
+import com.aputech.dora.LocationJob;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.Fragments.Profile;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import static com.aputech.dora.ui.HActivity.JOB_ID;
+
 public class ProfileSettings extends AppCompatActivity {
     CardView profileedit,logout;
     private Toolbar myToolbar;
+    Switch notiswitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +37,31 @@ public class ProfileSettings extends AppCompatActivity {
         profileedit= findViewById(R.id.editProfile);
         logout = findViewById(R.id.logout);
         myToolbar = findViewById(R.id.my_toolbar);
+        notiswitch=findViewById(R.id.notiswitch);
         myToolbar.setTitle("Settings");
         setSupportActionBar(myToolbar);
-
+        if (isJobServiceOn(ProfileSettings.this)){
+            notiswitch.setChecked(true);
+        }else{
+            notiswitch.setChecked(false);
+        }
+        notiswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//                    MainOpen();
+//                }else{
+//                    JobScheduler jobScheduler =
+//                            (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//                    jobScheduler.cancel(JOB_ID);
+//                }
+            }
+        });
         profileedit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProfileSettings.this,ProfileSettings.class);
+                Intent intent = new Intent(ProfileSettings.this,regUser.class);
+                intent.putExtra("edit",true);
                 startActivity(intent);
             }
         });
@@ -50,5 +79,40 @@ public class ProfileSettings extends AppCompatActivity {
             }
         });
 
+    }
+    public void MainOpen() {
+        ComponentName componentName = new ComponentName(this, LocationJob.class);
+        JobInfo info = new JobInfo.Builder(JOB_ID, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setPersisted(true)
+                .build();
+
+        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        if (!isJobServiceOn(getApplicationContext())) {
+            int resultCode = 0;
+            if (scheduler != null) {
+                resultCode = scheduler.schedule(info);
+            }
+            if (resultCode == JobScheduler.RESULT_SUCCESS) {
+                Log.d("Drop Chat Service", "Job scheduled");
+            } else {
+                Log.d("Drop Chat Service", "Job scheduling failed");
+            }
+        }
+
+    }
+    public static boolean isJobServiceOn(Context context) {
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        boolean hasBeenScheduled = false;
+        if (scheduler != null) {
+            for (JobInfo jobInfo : scheduler.getAllPendingJobs()) {
+                if (jobInfo.getId() == JOB_ID) {
+                    hasBeenScheduled = true;
+                    break;
+                }
+
+            }
+        }
+        return hasBeenScheduled;
     }
 }

@@ -3,20 +3,17 @@ package com.aputech.dora.ui.Fragments;
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.aputech.dora.Adpater.NotiAdapter;
-import com.aputech.dora.Model.Note;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -87,41 +84,25 @@ public class Notify extends Fragment {
         FirestoreRecyclerOptions<notification> options = new FirestoreRecyclerOptions.Builder<notification>()
                 .setQuery(query, notification.class)
                 .build();
-
         adapter = new NotiAdapter(options,getContext());
-        RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
+        final RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+        relativeLayout.setVisibility(View.VISIBLE);
         observer =new RecyclerView.AdapterDataObserver() {
             @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-                if (itemCount > 0) {
-                    relativeLayout.setVisibility(View.INVISIBLE);
-                } else {
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                if (adapter.getItemCount()==0){
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
-            public void onItemRangeRemoved(int positionStart, int itemCount) {
-                super.onItemRangeRemoved(positionStart, itemCount);
-                Log.d("bigpp", "onItemRangeRemoved: "+positionStart + "  "+ itemCount);
-                if (itemCount == 1) {
-                    if (positionStart==0){
-                        relativeLayout.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void onItemRangeChanged(int positionStart, int itemCount) {
-                super.onItemRangeChanged(positionStart, itemCount);
-                Log.d("bigpp", "nItemRangeChanged: "+positionStart + "  "+ itemCount);
-                if (itemCount > 0) {
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                if (adapter.getItemCount() >0){
                     relativeLayout.setVisibility(View.INVISIBLE);
-                } else {
+                }else{
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }

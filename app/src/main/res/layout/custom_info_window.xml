@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cosd"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:iconSize="20dp"
+        android:textSize="12sp"
+        app:iconGravity="textStart"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:icon="@drawable/ic_comment_btn"
+        android:text="Comments"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/commesdnt"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:iconSize="20dp"
+        android:textSize="12sp"
+        app:iconGravity="textStart"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:icon="@drawable/ic_comment_btn"
+        android:text="Comments"/>
+</LinearLayout>

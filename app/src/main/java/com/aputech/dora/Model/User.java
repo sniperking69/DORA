@@ -3,10 +3,6 @@ package com.aputech.dora.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.aputech.dora.ui.Post;
-
-import java.util.ArrayList;
-
 public class User implements Parcelable {
 
     private String UserName;
@@ -15,8 +11,6 @@ public class User implements Parcelable {
     private String EmailAdress;
     private int Following;
     private int Follower;
-    private String Gender;
-    private int Userlevel;
     private String userid;
     private String ProfileUrl;
 
@@ -24,15 +18,13 @@ public class User implements Parcelable {
         //empty constructor needed
     }
 
-    public User(String userName, int postnum, String bio, String emailAdress, int following, int follower, String gender, int userlevel, String userid, String profileUrl) {
+    public User(String userName, int postnum, String bio, String emailAdress, int following, int follower, String userid, String profileUrl) {
         UserName = userName;
         this.postnum = postnum;
         Bio = bio;
         EmailAdress = emailAdress;
         Following = following;
         Follower = follower;
-        Gender = gender;
-        Userlevel = userlevel;
         this.userid = userid;
         ProfileUrl = profileUrl;
     }
@@ -44,10 +36,25 @@ public class User implements Parcelable {
         EmailAdress = in.readString();
         Following = in.readInt();
         Follower = in.readInt();
-        Gender = in.readString();
-        Userlevel = in.readInt();
         userid = in.readString();
         ProfileUrl = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(UserName);
+        dest.writeInt(postnum);
+        dest.writeString(Bio);
+        dest.writeString(EmailAdress);
+        dest.writeInt(Following);
+        dest.writeInt(Follower);
+        dest.writeString(userid);
+        dest.writeString(ProfileUrl);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -110,22 +117,6 @@ public class User implements Parcelable {
         Follower = follower;
     }
 
-    public String getGender() {
-        return Gender;
-    }
-
-    public void setGender(String gender) {
-        Gender = gender;
-    }
-
-    public int getUserlevel() {
-        return Userlevel;
-    }
-
-    public void setUserlevel(int userlevel) {
-        Userlevel = userlevel;
-    }
-
     public String getUserid() {
         return userid;
     }
@@ -140,24 +131,5 @@ public class User implements Parcelable {
 
     public void setProfileUrl(String profileUrl) {
         ProfileUrl = profileUrl;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(UserName);
-        dest.writeInt(postnum);
-        dest.writeString(Bio);
-        dest.writeString(EmailAdress);
-        dest.writeInt(Following);
-        dest.writeInt(Follower);
-        dest.writeString(Gender);
-        dest.writeInt(Userlevel);
-        dest.writeString(userid);
-        dest.writeString(ProfileUrl);
     }
 }

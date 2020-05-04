@@ -3,7 +3,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_h">HActivity</string>
     <string name="title_post">Post</string>
-    <string name="gender">Gender :</string>
     <string name="Continue">Continue</string>
 
 
@@ -20,7 +19,6 @@
     <!-- Messages Preferences -->
 
     <!-- Sync Preferences -->
-    <string name="title_activity_profile_display">ProfileDisplayActivity</string>
     <string name="title_activity_private_post">Map</string>
     <string name="title_activity_disp_post_location">Map</string>
     <string name="title_activity_select_location">Map</string>

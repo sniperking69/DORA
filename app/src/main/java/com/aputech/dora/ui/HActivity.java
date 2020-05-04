@@ -44,9 +44,12 @@ import com.aputech.dora.ui.Fragments.Profile;
 import com.aputech.dora.ui.Fragments.Trending;
 import com.aputech.dora.ui.Fragments.home;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -66,7 +69,7 @@ public class HActivity extends AppCompatActivity {
     private Toolbar myToolbar;
     RelativeLayout searchlayout;
     SearchView searchView;
-    private static int JOB_ID = 4576;
+    public static int JOB_ID = 4576;
     public static final String CHANNEL_ID = "dropChannel";
     FloatingActionButton newPost;
     LinearLayout bottomlinear;
@@ -81,7 +84,6 @@ public class HActivity extends AppCompatActivity {
     ListenerRegistration listenerRegistration;
     EventListener eventListener;
     TextView searchtext;
-    RecyclerView.AdapterDataObserver adapterDataObserver;
     boolean search_bool = false;
 
     @Override
@@ -120,33 +122,24 @@ public class HActivity extends AppCompatActivity {
                     User usr = documentSnapshot.toObject(User.class);
                     users.add(usr);
                 }
-                adapter.notifyDataSetChanged();
+
+
             }
         };
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                Log.d("bigpp", "onQueryTextSubmit: "+query);
                 filter(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filter(newText);
                 return false;
             }
         });
-        adapterDataObserver = new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeChanged(int positionStart, int itemCount) {
-                super.onItemRangeChanged(positionStart, itemCount);
-                if (itemCount > 0) {
-                    noresult.setVisibility(View.INVISIBLE);
-                } else {
-                    noresult.setVisibility(View.VISIBLE);
-                }
-            }
-        };
+
         Fragment newFragment;
         ImageView backsearch = findViewById(R.id.backsearch);
         backsearch.setOnClickListener(new View.OnClickListener() {
@@ -247,10 +240,21 @@ public class HActivity extends AppCompatActivity {
 
         profileImage = findViewById(R.id.toolbar_profile_image);
         if (auth.getCurrentUser() != null) {
-            Glide
-                    .with(this)
-                    .load(auth.getCurrentUser().getPhotoUrl())
-                    .into(profileImage);
+            final DocumentReference documentReference = db.collection("Users").document(auth.getUid());
+            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    User user= documentSnapshot.toObject(User.class);
+                    if (user.getProfileUrl()!=null){
+                        Glide
+                                .with(HActivity.this)
+                                .load(auth.getCurrentUser().getPhotoUrl())
+                                .into(profileImage);
+                    }
+
+                }
+            });
+
         }
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,15 +287,10 @@ public class HActivity extends AppCompatActivity {
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HActivity.this, Post.class);
+                Intent intent = new Intent(HActivity.this, makePost.class);
                 startActivity(intent);
 
-//        notification noti = new notification();
-//        noti.setDocument("oihdidsafisd");
-//        noti.setUserid(auth.getUid());
-//        noti.setText(" Comment On Your Post");
-//        CollectionReference  notiref= db.collection("Users").document(auth.getUid()).collection("notify");
-//        notiref.add(noti);
+
             }
         });
     }
@@ -304,8 +303,14 @@ public class HActivity extends AppCompatActivity {
                 filteredList.add(item);
             }
         }
-
         adapter.filterList(filteredList);
+        if (adapter.getItemCount()==0){
+            noresult.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.INVISIBLE);
+        }else {
+            recyclerView.setVisibility(View.VISIBLE);
+            noresult.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -327,11 +332,10 @@ public class HActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.search:
                 revealFAB();
-
+                recyclerView.setVisibility(View.INVISIBLE);
                 adapter = new SAdapter(users,HActivity.this);
                 recyclerView.setAdapter(adapter);
                 listenerRegistration=collectionReference.addSnapshotListener(this,eventListener);
-                adapter.registerAdapterDataObserver(adapterDataObserver);
                 adapterlisten = true;
                 search_bool = true;
                 return true;
@@ -376,7 +380,6 @@ public class HActivity extends AppCompatActivity {
         if (adapterlisten) {
             listenerRegistration.remove();
             users.clear();
-            adapter.unregisterAdapterDataObserver(adapterDataObserver);
             adapterlisten = false;
         }
 
