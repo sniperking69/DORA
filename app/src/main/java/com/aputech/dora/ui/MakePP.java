@@ -46,7 +46,7 @@ public class MakePP extends AppCompatActivity {
     private TextView time;
     private ImageView level;
     private CircleImageView profile;
-    private BottomSheetBehavior mBottomSheetBehavior;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +60,12 @@ public class MakePP extends AppCompatActivity {
         time = findViewById(R.id.time);
         level = findViewById(R.id.level);
         MaterialButton button= findViewById(R.id.AddUser);
-        View bottomSheet = findViewById(R.id.bottom_sheet);
-        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                Intent intent = new Intent(MakePP.this,SelectUser.class);
+                startActivity(intent);
+                overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
             }
         });
         profile = findViewById(R.id.poster_profile);

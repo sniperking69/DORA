@@ -27,7 +27,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MapView"></activity>
+        <activity android:name=".ui.NearBy"></activity>
+        <activity android:name=".ui.MapView" />
         <activity android:name=".ui.MakePP" />
         <activity android:name=".ui.SelectPrivateLocation" />
         <activity android:name=".ui.SelectUser" />

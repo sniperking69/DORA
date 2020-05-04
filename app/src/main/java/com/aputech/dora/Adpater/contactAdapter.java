@@ -1,5 +1,6 @@
 package com.aputech.dora.Adpater;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -16,16 +17,13 @@ import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.bumptech.glide.Glide;
-import com.google.android.material.card.MaterialCardView;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
-
-public class SAdapter extends RecyclerView.Adapter<SAdapter.UserViewHolder> {
+public class contactAdapter extends RecyclerView.Adapter<contactAdapter.UserViewHolder> {
     private ArrayList<User> UserList;
     private Context mContext;
-
+    ContactInterface contactInterface;
     static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
         ImageView img;
@@ -39,9 +37,10 @@ public class SAdapter extends RecyclerView.Adapter<SAdapter.UserViewHolder> {
         }
     }
 
-    public SAdapter(ArrayList<User> UserList, Context mContext) {
+    public contactAdapter(ArrayList<User> UserList, Context mContext,ContactInterface contactInterface) {
         this.UserList = UserList;
         this.mContext = mContext;
+        this.contactInterface=contactInterface;
     }
 
     @NonNull
@@ -66,9 +65,7 @@ public class SAdapter extends RecyclerView.Adapter<SAdapter.UserViewHolder> {
         holder.user_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ProfileDisplayActivity.class);
-                intent.putExtra("user", currentItem);
-                mContext.startActivity(intent);
+                contactInterface.onClick(currentItem);
             }
         });
     }

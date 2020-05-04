@@ -129,10 +129,8 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         Forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent();
                 intent.putExtra("LatLng", latLngfinal);
-
                 intent.putExtra("skip", false);
                 setResult(RESULT_OK, intent);
                 finish();

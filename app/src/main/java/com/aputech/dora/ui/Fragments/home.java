@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.aputech.dora.Adpater.FireAdapter;
+import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.aputech.dora.Model.Post;
@@ -66,7 +67,7 @@ public class home extends Fragment {
     FirebaseAuth auth= FirebaseAuth.getInstance();
     private CollectionReference notebookRef = db.collection("Users").document(auth.getUid()).collection("Following");
     ArrayList<String> Following= new ArrayList<>();
-    private FireAdapter adapter;
+    private HomeAdapter adapter;
     private  RelativeLayout relativeLayout;
     private RecyclerView.AdapterDataObserver adapterDataObserver;
     private MaterialButton map_View;
@@ -96,14 +97,12 @@ public class home extends Fragment {
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_h, container, false);
         relativeLayout =root.findViewById(R.id.noresult);
-        Query query = db.collection("Posts").orderBy("priority", Query.Direction.DESCENDING);
+
         final RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         map_View= root.findViewById(R.id.map_style);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
-                .setQuery(query, Post.class)
-                .build();
+
         map_View.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,7 +111,7 @@ public class home extends Fragment {
             }
         });
 
-        adapter = new FireAdapter(options,getActivity());
+        relativeLayout.setVisibility(View.VISIBLE);
 
         notebookRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -120,25 +119,24 @@ public class home extends Fragment {
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                     Following.add(documentSnapshot.getId());
                 }
-                relativeLayout.setVisibility(View.VISIBLE);
 
+                Query query = db.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING);
+                FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
+                        .setQuery(query, Post.class)
+                        .build();
+
+                adapter = new HomeAdapter(options,getActivity(),Following);
                 adapterDataObserver = new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onItemRangeRemoved(int positionStart, int itemCount) {
-                        if (adapter.getItemCount()==0){
+                        if (adapter.ActualSize()==0){
                             relativeLayout.setVisibility(View.VISIBLE);
                         }
-                    }
 
+                    }
                     @Override
                     public void onItemRangeInserted(int positionStart, int itemCount) {
-
-//                        for (int y=0;y<adapter.getSnapshots().size();y++){
-//                            if (!Following.contains(adapter.getSnapshots().get(y).getUserid())){
-//                                adapter.getSnapshots().remove(y);
-//                            }
-//                        }
-                        if (adapter.getItemCount() >0){
+                        if (adapter.ActualSize() > 0){
                             relativeLayout.setVisibility(View.INVISIBLE);
                         }else{
                             relativeLayout.setVisibility(View.VISIBLE);

@@ -107,7 +107,7 @@ public class HActivity extends AppCompatActivity {
         searchView = findViewById(R.id.searchArea);
         searchView.setSubmitButtonEnabled(true);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(HActivity.this));
         searchSubmit = (ImageView) searchView.findViewById(androidx.appcompat.R.id.search_go_btn);
         searchtext = (TextView) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchtext.setTextColor(Color.parseColor("#ffffff"));

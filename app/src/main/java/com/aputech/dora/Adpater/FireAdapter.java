@@ -354,18 +354,9 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
             Commentbutton= itemView.findViewById(R.id.comment);
         }
     }
-    private void initializePlayer(SimpleExoPlayer player) {
 
-    }
-
-    @NonNull
     @Override
-    public ObservableSnapshotArray<Post> getSnapshots() {
-        return getSnapshots();
-    }
-
-    private void updatePriority(int position, int up, int down, int commentnum){
-
-
+    public int getItemCount() {
+        return getSnapshots().size();
     }
 }
