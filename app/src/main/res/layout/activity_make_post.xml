@@ -20,13 +20,13 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
 
-            android:src="@drawable/ic_ram_profile" />
+            android:src="@drawable/ic_user" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
 
             android:layout_toEndOf="@+id/poster_profile"
             android:orientation="vertical">
@@ -39,7 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Karun Shrestha"
+
                     android:textColor="@android:color/black"
                     android:textSize="17sp" />
                 <androidx.appcompat.widget.AppCompatImageView
@@ -54,7 +54,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="11 hrs"
                 android:textColor="@android:color/black"
                 android:textSize="13sp" />
 
@@ -62,97 +61,77 @@
 
     </RelativeLayout>
 
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_below="@+id/rellay1"
-        android:layout_marginTop="0dp"
-        android:orientation="vertical"
-        android:padding="5dp">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/firstCardId"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                     <EditText
-
-                         android:layout_width="match_parent"
-                         android:padding="20dp"
-                         android:layout_height="wrap_content"
-                         android:text="Android is a mobile Android is a mobile operating system based on a modified version of the Linux kernel and other open source software, designed operating system based on a modified version of the Linux kernel and other open source Android is a mobile operating system based on a modified version of the Linux kernel and other open source software, designedsoftware, designed primarily for touchscreen mobile devices such as smartphones and tablets. ... Some well known derivatives include Android TV for televisions and Wear OS for wearables, both developed by Google."
-                         android:background="@drawable/radius_card_first">
-
-                      </EditText>
-
-                </ScrollView>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomlinear"
+        android:orientation="vertical">
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="410dp"
-            app:cardCornerRadius="15dp"
-            android:layout_below="@id/firstCardId"
-            android:layout_marginTop="3dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/Bio"
 
-            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                app:counterEnabled="true"
+                app:counterMaxLength="250"
+                app:hintAnimationEnabled="false"
+                android:layout_margin="10dp"
+                app:hintEnabled="false"
+                android:background="@null"
+                app:counterOverflowTextAppearance="@style/TextLimitError"
+                android:layout_height="wrap_content">
 
-                <ScrollView
+                <EditText
+                    android:id="@+id/para"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/bg"
+                    android:ems="10"
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/dani">
-
-                    </ImageView>
-
-                 </ScrollView>
-
-            </LinearLayout>
+                    android:gravity="top"
+                    android:background="@null"
+                    android:hint="Drop A Post For A Friend..."
+                    android:maxLength="250"
+                    android:inputType="textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.cardview.widget.CardView>
-
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp">
+            <ImageView
+                android:id="@+id/dispimg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/holo_red_dark"/>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
+
+
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_add_msg"
         android:onClick="Done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/bottomlinear"
         android:layout_margin="16dp"
         android:src="@drawable/ic_next" />
     <LinearLayout
         android:id="@+id/bottomlinear"
         android:layout_width="match_parent"
         android:layout_height="45dp"
+       android:layout_alignParentBottom="true"
         android:elevation="10dp"
         android:orientation="horizontal"
-        android:weightSum="5"
-        android:layout_alignParentBottom="true">
+        android:weightSum="5">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/Camera"
@@ -162,6 +141,7 @@
             app:iconSize="40dp"
             app:iconGravity="textEnd"
             app:iconTintMode="add"
+
             app:iconTint="@null"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             app:icon="@drawable/ic_camera" />

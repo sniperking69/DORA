@@ -13,17 +13,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aputech.dora.Model.Post;
+import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,11 +44,11 @@ public class makePost extends AppCompatActivity {
     MaterialButton camera,gallery,audio;
     boolean addaudio=false,addimage,addedvideo;
     private LatLng latLng;
-    private int type;
     private TextView user_name;
     private TextView time;
     private ImageView level;
     private CircleImageView profile;
+    private int AudioUpload=1746;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,19 +57,53 @@ public class makePost extends AppCompatActivity {
         editText=findViewById(R.id.para);
         imageView = findViewById(R.id.dispimg);
         audio = findViewById(R.id.Audio);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
         user_name = findViewById(R.id.user_name);
         time = findViewById(R.id.time);
         level= findViewById(R.id.level);
-        profile=findViewById(R.id.poster_profile);
-        Intent intent= getIntent();
-        type=1;
         gallery=findViewById(R.id.Gallery);
         camera =findViewById(R.id.Camera);
+        profile=findViewById(R.id.poster_profile);
+        DocumentReference documentReference = db.collection("Users").document(auth.getUid());
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User user = documentSnapshot.toObject(User.class);
+                user_name.setText(user.getUserName());
+                String currentDateTimeString = java.text.DateFormat.getDateTimeInstance().format(new Date());
+                time.setText(currentDateTimeString);
+                if (user.getPostnum() < 100) {
+                    Glide
+                            .with(makePost.this)
+                            .load(R.drawable.ic_grade)
+                            .into(level);
+                }
+                if (user.getPostnum() < 100 && user.getPostnum() > 500) {
+                    Glide
+                            .with(makePost.this)
+                            .load(R.drawable.ic_grade1)
+                            .into(level);
+                }
+                if (user.getPostnum() > 500) {
+                    Glide
+                            .with(makePost.this)
+                            .load(R.drawable.ic_grade2)
+                            .into(level);
+                }
+                if (user.getProfileUrl()!=null){
+                    Glide
+                            .with(makePost.this)
+                            .load(user.getProfileUrl())
+                            .into(profile);
+                }
+
+            }
+        });
         audio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent audiointent = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(audiointent, AudioUpload);
             }
         });
         gallery.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +132,11 @@ public class makePost extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AudioUpload && resultCode == RESULT_OK) {
+          Toast.makeText(makePost.this,"ADD AUDIO",Toast.LENGTH_LONG).show();
+        }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Toast.makeText(makePost.this,"ADD Image",Toast.LENGTH_LONG).show();
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap);
@@ -105,7 +147,7 @@ public class makePost extends AppCompatActivity {
             latLng = (LatLng) extras.get("LatLng");
             boolean skipcheck= (boolean) extras.get("skip");
             Toast.makeText(makePost.this,latLng.toString(),Toast.LENGTH_LONG).show();
-            uploadFire(type,skipcheck);
+            //uploadFire(type,skipcheck);
         }
     }
     private void uploadFire(int type,boolean skip){
@@ -120,7 +162,6 @@ public class makePost extends AppCompatActivity {
         post.setType(type);
         post.setDescription(text);
         post.setUserid(auth.getUid());
-       // SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
         if (type==2){
             post.setImageUrl("sdasda");
         }if (type==3) {

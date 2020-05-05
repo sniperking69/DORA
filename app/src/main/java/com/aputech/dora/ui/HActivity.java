@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Adpater.SAdapter;
+import com.aputech.dora.AudioPlayerService;
 import com.aputech.dora.LocationJob;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
@@ -106,6 +107,12 @@ public class HActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.search_rec);
         searchView = findViewById(R.id.searchArea);
         searchView.setSubmitButtonEnabled(true);
+
+
+        Intent intent= new Intent(this, AudioPlayerService.class);
+
+
+
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(HActivity.this));
         searchSubmit = (ImageView) searchView.findViewById(androidx.appcompat.R.id.search_go_btn);

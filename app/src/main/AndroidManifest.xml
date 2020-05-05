@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aputech.dora">
+
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the 'MyLocation' functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -9,7 +16,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
@@ -27,13 +33,10 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.NearBy"></activity>
-        <activity android:name=".ui.MapView" />
-        <activity android:name=".ui.MakePP" />
-        <activity android:name=".ui.SelectPrivateLocation" />
-        <activity android:name=".ui.SelectUser" />
-        <activity android:name=".ui.PrivatePostDisplay" />
-        <activity android:name=".ui.PostDisplay" />
+        <service
+            android:name=".AudioPlayerService"
+            android:enabled="true"
+            android:exported="true"></service>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -46,6 +49,15 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <activity
+            android:name=".ui.NearBy"
+            android:label="@string/title_activity_near_by" />
+        <activity android:name=".ui.MapView" />
+        <activity android:name=".ui.MakePP" />
+        <activity android:name=".ui.SelectPrivateLocation" />
+        <activity android:name=".ui.SelectUser" />
+        <activity android:name=".ui.PrivatePostDisplay" />
+        <activity android:name=".ui.PostDisplay" />
         <activity
             android:name=".ui.SelectLocation"
             android:label="@string/title_activity_select_location" />
