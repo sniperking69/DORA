@@ -9,6 +9,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
@@ -300,6 +301,19 @@ public class HActivity extends AppCompatActivity {
 
             }
         });
+        createNotificationChannels();
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        int set = sharedPref.getInt("JOB", 1);
+        if (set==1){
+            MainOpen();
+        }else{
+            JobScheduler jobScheduler =
+                    (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            jobScheduler.cancel(JOB_ID);
+        }
+
+
+
     }
 
     private void filter(String text) {
@@ -323,8 +337,7 @@ public class HActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        createNotificationChannels();
-        MainOpen();
+
 
     }
 

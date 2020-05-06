@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
@@ -55,9 +56,16 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
         holder.notidoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, PostDisplay.class);
-                intent.putExtra("docid", model.getDocument());
-                mContext.startActivity(intent);
+                db.collection("Posts").document(model.getDocument()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Post post = documentSnapshot.toObject(Post.class);
+                        Intent intent = new Intent(mContext, PostDisplay.class);
+                        intent.putExtra("post",post);
+                        mContext.startActivity(intent);
+                    }
+                });
+
             }
         });
         DocumentReference documentReference = db.collection("Users").document(model.getUserid());

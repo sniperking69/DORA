@@ -179,7 +179,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
         }else{
             editImage.setVisibility(View.INVISIBLE);
             query = userpost.whereEqualTo("userid",user.getUserid()).orderBy("priority", Query.Direction.DESCENDING);
-            final DocumentReference docref = db.collection("Users").document(user.getUserid()).collection("Following").document(user.getUserid());
+            final DocumentReference docref = db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid());
             docref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -199,29 +199,27 @@ public class ProfileDisplayActivity extends AppCompatActivity {
             settings.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final DocumentReference doc1 = db.collection("Users").document(user.getUserid());
-                    final DocumentReference doc2 = db.collection("Users").document(auth.getUid());
-                    doc1.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    db.collection("Users").document(auth.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            final User other=documentSnapshot.toObject(User.class);
-                            doc2.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            final User me= documentSnapshot.toObject(User.class);
+                            db.collection("Users").document(user.getUserid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    User me=documentSnapshot.toObject(User.class);
+                                    User you= documentSnapshot.toObject(User.class);
                                     if (Following){
-                                        docref.delete();
-                                        doc1.update("follower",other.getFollower()-1);
-                                        doc2.update("following",me.getFollowing()-1);
-                                        settings.setText("FOLLOW");
+
+                                        db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid()).delete();
+                                        db.collection("Users").document(auth.getUid()).update("Following",me.getFollowing()-1);
+                                        db.collection("Users").document(user.getUserid()).update("Follower",you.getFollower()-1);
                                         Following=false;
+
                                     }else{
-                                        Fol fol = new Fol();
-                                        fol.setUser(true);
-                                        docref.set(fol);
-                                        doc1.update("follower",other.getFollower()+1);
-                                        doc2.update("following",me.getFollowing()+1);
-                                        settings.setText("UNFOLLOW");
+                                        Fol fol= new Fol();
+                                        fol.setExists("");
+                                        db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid()).set(fol);
+                                        db.collection("Users").document(auth.getUid()).update("Following",me.getFollowing()+1);
+                                        db.collection("Users").document(user.getUserid()).update("Follower",you.getFollower()+1);
                                         Following=true;
                                     }
 
@@ -231,6 +229,8 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                         }
                     });
 
+
+
                 }
             });
         }
@@ -239,7 +239,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                 .build();
         adapter = new FireAdapter(options,ProfileDisplayActivity.this);
         recyclerView.setAdapter(adapter);
-
+        relativeLayout.setVisibility(View.VISIBLE);
         observer =new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeRemoved(int positionStart, int itemCount) {

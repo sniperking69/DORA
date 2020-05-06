@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+    android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/Bio"
+
+            android:layout_width="match_parent"
+            app:counterEnabled="true"
+            app:counterMaxLength="250"
+            app:hintAnimationEnabled="false"
+            android:layout_margin="10dp"
+            app:hintEnabled="false"
+            android:background="@null"
+            app:counterOverflowTextAppearance="@style/TextLimitError"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/para"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/bg"
+                android:ems="10"
+                android:gravity="top"
+                android:background="@null"
+                android:maxLength="250"
+                android:inputType="textMultiLine" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+</androidx.cardview.widget.CardView>

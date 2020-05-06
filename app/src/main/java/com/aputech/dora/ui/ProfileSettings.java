@@ -10,6 +10,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -48,13 +49,20 @@ public class ProfileSettings extends AppCompatActivity {
         notiswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked){
-//                    MainOpen();
-//                }else{
-//                    JobScheduler jobScheduler =
-//                            (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//                    jobScheduler.cancel(JOB_ID);
-//                }
+                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+
+                if (isChecked){
+                    MainOpen();
+                    editor.putInt("JOB", 1);
+                    editor.apply();
+                }else{
+                    editor.putInt("JOB", 0);
+                    editor.apply();
+                    JobScheduler jobScheduler =
+                            (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                    jobScheduler.cancel(JOB_ID);
+                }
             }
         });
         profileedit.setOnClickListener(new View.OnClickListener() {

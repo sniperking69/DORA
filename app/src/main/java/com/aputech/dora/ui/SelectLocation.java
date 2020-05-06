@@ -54,11 +54,14 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionSelect(int position) {
+
                 return false;
             }
 
             @Override
             public boolean onSuggestionClick(int position) {
+
+
                 return false;
             }
         });
@@ -112,6 +115,18 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                String location = searchView.getQuery().toString();
+                List<Address> addressList=null;
+                if (location != null || !location.equals("")) {
+                    Geocoder geocoder = new Geocoder(SelectLocation.this);
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 5);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //Address address = addressList.get(0);
+                   // searchView.setSug
+                }
                 return false;
             }
         });

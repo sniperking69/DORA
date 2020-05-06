@@ -30,12 +30,16 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.ObservableSnapshotArray;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Date;
 
@@ -69,11 +73,12 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("Delete Post");
-                    builder.setMessage("Delete This Post?");
+                    builder.setMessage("Are You Sure You Want to Delete the Post?");
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //deleteItem(position);
+                            DeletePost(model.getRefComments());
+                            Toast.makeText(mContext,  "Post Deleted",Toast.LENGTH_LONG).show();
 
                         }
                     });
@@ -92,15 +97,22 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                    builder.setTitle("Name");
+                    builder.setTitle("Edit Post");
+
                     final View customLayout =  LayoutInflater.from(mContext).inflate(R.layout.custom_alert, null);
                     builder.setView(customLayout);
-
+                    final EditText editText = customLayout.findViewById(R.id.para);
+                    editText.setText(model.getDescription());
                     builder.setPositiveButton("DONE", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            EditText editText = customLayout.findViewById(R.id.editText);
-                            Toast.makeText(mContext,  editText.getText().toString(),Toast.LENGTH_LONG).show();
+                            if (!editText.getText().toString().isEmpty()){
+                                db.collection("Posts").document(model.getRefComments()).update("description",editText.getText().toString());
+                                Toast.makeText(mContext,"Post Updated",Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(mContext,"Unable to Make Changes Field Empty",Toast.LENGTH_LONG).show();
+                            }
+
                         }
                     });
                     builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -137,10 +149,13 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     final User user = task.getResult().toObject(User.class);
                     holder.user_name.setText(user.getUserName());
-                    Glide
-                            .with(mContext)
-                            .load(user.getProfileUrl())
-                            .into(holder.profile);
+                    if (user.getProfileUrl()!=null){
+                        Glide
+                                .with(mContext)
+                                .load(user.getProfileUrl())
+                                .into(holder.profile);
+
+                    }
 
                     if (user.getPostnum() < 100) {
                         Glide
@@ -358,5 +373,47 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
     @Override
     public int getItemCount() {
         return getSnapshots().size();
+    }
+    private void DeletePost(final String Postid) {
+        final WriteBatch writeBatch = db.batch();
+        db.collection("Posts").document(Postid).collection("vote").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    writeBatch.delete(documentSnapshot.getReference());
+                }
+                db.collection("Posts").document(Postid).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            writeBatch.delete(documentSnapshot.getReference());
+                            deleteComment(documentSnapshot.getReference().getId(),Postid);
+                        }
+                        writeBatch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                db.collection("Posts").document(Postid).delete();
+                            }
+                        });
+                    }
+                });
+
+            }
+
+        });
+    }
+    private void deleteComment(String ref, String post) {
+        final WriteBatch writeBatch = db.batch();
+        db.collection("Posts").document(post).collection("comments").document(ref).collection("vote").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    writeBatch.delete(documentSnapshot.getReference());
+                }
+                writeBatch.commit();
+            }
+
+        });
+
     }
 }

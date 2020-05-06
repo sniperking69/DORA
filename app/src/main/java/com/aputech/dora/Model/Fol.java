@@ -1,20 +1,20 @@
 package com.aputech.dora.Model;
 
 public class Fol {
-    Boolean user;
+    String exists;
     public Fol() {
         //empty constructor needed
     }
 
-    public Fol(Boolean user) {
-        this.user = user;
+    public Fol(String exists) {
+        this.exists = exists;
     }
 
-    public Boolean getUser() {
-        return user;
+    public String getExists() {
+        return exists;
     }
 
-    public void setUser(Boolean user) {
-        this.user = user;
+    public void setExists(String exists) {
+        this.exists = exists;
     }
 }

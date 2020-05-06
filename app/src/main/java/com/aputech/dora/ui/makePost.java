@@ -147,7 +147,7 @@ public class makePost extends AppCompatActivity {
             latLng = (LatLng) extras.get("LatLng");
             boolean skipcheck= (boolean) extras.get("skip");
             Toast.makeText(makePost.this,latLng.toString(),Toast.LENGTH_LONG).show();
-            //uploadFire(type,skipcheck);
+            uploadFire(1,skipcheck);
         }
     }
     private void uploadFire(int type,boolean skip){

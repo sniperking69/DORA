@@ -20,6 +20,7 @@ import com.aputech.dora.Model.Comment;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.Vote;
 import com.aputech.dora.R;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -107,24 +108,24 @@ public class CommentAdapter extends FirestoreRecyclerAdapter<Comment, CommentAda
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     User user = task.getResult().toObject(User.class);
                     holder.NameUser.setText(user.getUserName());
-//                        if (user.getUserlevel()==0){
-//                            Glide
-//                                    .with(mContext)
-//                                    .load(R.drawable.ic_grade)
-//                                    .into(holder.level);
-//                        }
-//                        if (user.getUserlevel()==1){
-//                            Glide
-//                                    .with(mContext)
-//                                    .load(R.drawable.ic_grade1)
-//                                    .into(holder.level);
-//                        }
-//                        if (user.getUserlevel()==2){
-//                            Glide
-//                                    .with(mContext)
-//                                    .load(R.drawable.ic_grade2)
-//                                    .into(holder.level);
-//                        }
+                    if (user.getPostnum() < 100) {
+                        Glide
+                                .with(mContext)
+                                .load(R.drawable.ic_grade)
+                                .into(holder.level);
+                    }
+                    if (user.getPostnum() < 100 && user.getPostnum() > 500) {
+                        Glide
+                                .with(mContext)
+                                .load(R.drawable.ic_grade1)
+                                .into(holder.level);
+                    }
+                    if (user.getPostnum() > 500) {
+                        Glide
+                                .with(mContext)
+                                .load(R.drawable.ic_grade2)
+                                .into(holder.level);
+                    }
                 }
             });
         }

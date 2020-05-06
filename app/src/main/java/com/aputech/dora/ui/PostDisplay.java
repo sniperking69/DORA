@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ import com.aputech.dora.Model.Comment;
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.Vote;
+import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -39,6 +41,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 public class PostDisplay extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -80,9 +85,25 @@ public class PostDisplay extends AppCompatActivity {
         docrefuser.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-              User user = documentSnapshot.toObject(User.class);
+              final User user = documentSnapshot.toObject(User.class);
         userName.setText(user.getUserName());
-        //post_time.setText(note.getUptime());
+        userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PostDisplay.this, ProfileDisplayActivity.class);
+                intent.putExtra("user",user);
+                startActivity(intent);
+            }
+        });
+        ProfileImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PostDisplay.this, ProfileDisplayActivity.class);
+                intent.putExtra("user",user);
+                startActivity(intent);
+            }
+        });
+
         Glide
                 .with(PostDisplay.this)
                 .load(user.getProfileUrl())
@@ -105,22 +126,13 @@ public class PostDisplay extends AppCompatActivity {
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Build an AlertDialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(PostDisplay.this);
-
-                    // Set a title for alert dialog
                     builder.setTitle("Delete Post");
-
-                    // Ask the final question
                     builder.setMessage("Are you sure to Delete This Post?");
-
-                    // Set the alert dialog yes button click listener
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            // Do something when user clicked the Yes button
-                            // Set the TextView visibility GONE
-                            //     deleteItem();
+                            DeletePost(post.getRefComments());
                             finish();
                             Toast.makeText(getApplicationContext(),
                                     "PostDeleted",Toast.LENGTH_SHORT).show();
@@ -128,7 +140,6 @@ public class PostDisplay extends AppCompatActivity {
                         }
                     });
 
-                    // Set the alert dialog no button click listener
                     builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -137,7 +148,6 @@ public class PostDisplay extends AppCompatActivity {
                     });
 
                     AlertDialog dialog = builder.create();
-                    // Display the alert dialog on interface
                     dialog.show();
                 }
             });
@@ -145,7 +155,33 @@ public class PostDisplay extends AppCompatActivity {
             edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("bigpp", "onClick: EditPost");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PostDisplay.this);
+                    builder.setTitle("Edit Post");
+
+                    final View customLayout =  LayoutInflater.from(PostDisplay.this).inflate(R.layout.custom_alert, null);
+                    builder.setView(customLayout);
+                    final EditText editText = customLayout.findViewById(R.id.para);
+                    editText.setText(post.getDescription());
+                    builder.setPositiveButton("DONE", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (!editText.getText().toString().isEmpty()){
+                                db.collection("Posts").document(post.getRefComments()).update("description",editText.getText().toString());
+                                Toast.makeText(PostDisplay.this,"Post Updated",Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(PostDisplay.this,"Unable to Make Changes Field Empty",Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    });
+                    builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Pass
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             });
         }
@@ -305,7 +341,53 @@ public class PostDisplay extends AppCompatActivity {
 
 
     }
+
+    private void DeletePost(final String Postid) {
+        final WriteBatch writeBatch = db.batch();
+        //Posts->vote->
+        //      comment->vote->
+        db.collection("Posts").document(Postid).collection("vote").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    writeBatch.delete(documentSnapshot.getReference());
+                }
+                db.collection("Posts").document(Postid).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            writeBatch.delete(documentSnapshot.getReference());
+                            deleteComment(documentSnapshot.getReference().getId(),Postid);
+                        }
+                        writeBatch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                db.collection("Posts").document(Postid).delete();
+                            }
+                        });
+                    }
+                });
+
+            }
+
+        });
+    }
+    private void deleteComment(String ref, String post) {
+       final WriteBatch writeBatch = db.batch();
+          db.collection("Posts").document(post).collection("comments").document(ref).collection("vote").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    writeBatch.delete(documentSnapshot.getReference());
+                }
+                writeBatch.commit();
+            }
+
+        });
+
+    }
     public void sendcomment(View view) {
+
         String comenttext= editText.getText().toString();
         if (!comenttext.isEmpty()){
             DocumentReference documentReference = db.collection("Posts").document(post.getRefComments());
@@ -321,19 +403,27 @@ public class PostDisplay extends AppCompatActivity {
                     col.document(documentReference.getId()).update("commentid",documentReference.getId());
                 }
             });
+            editText.setText("");
+            DocumentReference userinfo = db.collection("Users").document(auth.getUid());
+            if (!auth.getUid().equals(post.getUserid())){
+                userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        User u = documentSnapshot.toObject(User.class);
+                        notification noti = new notification();
+                        noti.setDocument(post.getRefComments());
+                        noti.setUserid(post.getUserid());
+                        noti.setText(u.getUserName() + "  Comment On Your Post");
+                        CollectionReference  notiref= db.collection("Users").document(post.getUserid()).collection("notify");
+                        notiref.add(noti);
+                    }
+                });
+            }
         }else{
             Toast.makeText(PostDisplay.this, "Nothing to comment", Toast.LENGTH_LONG).show();
         }
 
-////
-//        notebookRef.add(comment);
-//        notification noti = new notification();
-//        noti.setDocument(Document);
-//        noti.setUserid(Userid);
-//        noti.setTime(date);
-//        noti.setText(user_name + " Comment On Your Post");
-//        CollectionReference  notiref= db.collection("Users").document(Userid).collection("notify");
-//        notiref.add(noti);
+
 
 
 
@@ -353,5 +443,10 @@ public class PostDisplay extends AppCompatActivity {
             adapter.stopListening();
         }
 
+    }
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
     }
 }
