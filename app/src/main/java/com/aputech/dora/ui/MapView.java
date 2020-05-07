@@ -1,36 +1,20 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.DrawableRes;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.location.Location;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentSender;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.net.wifi.WifiManager;
-import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CursorAdapter;
-import android.widget.RelativeLayout;
-import android.widget.SearchView;
-import android.widget.Toast;
-
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.R;
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -41,7 +25,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -54,41 +37,56 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
-import java.io.IOException;
 import java.util.ArrayList;
-
-import java.util.List;
-
-import javax.xml.datatype.Duration;
-
-import de.hdodenhof.circleimageview.CircleImageView;
+import java.util.Arrays;
 
 public class MapView extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Posts");
-    private ArrayList<Post> posts=new ArrayList<>();
-    FirebaseAuth auth= FirebaseAuth.getInstance();
+    private ArrayList<Post> posts = new ArrayList<>();
+    FirebaseAuth auth = FirebaseAuth.getInstance();
     private Location mLastKnownLocation;
     private LocationCallback locationCallback;
-    MaterialSearchView seard;
     private View mapView;
-    private Button btnFind;
-    //private RippleBackground rippleBg;
-
     private final float DEFAULT_ZOOM = 15;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
+
+        Places.initialize(getApplicationContext(), getResources().getString(R.string.google_api_key));
+        PlacesClient placesClient = Places.createClient(this);
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteFragment.setHint("Search Location");
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                moveMap(place.getLatLng());
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.i("Bigpp", "An error occurred: " + status);
+            }
+        });
+
         notebookRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -96,63 +94,24 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
                     Post p = documentSnapshot.toObject(Post.class);
                     posts.add(p);
                 }
-                for (int x=0;x<posts.size();x++){
+                for (int x = 0; x < posts.size(); x++) {
                     Post msg = posts.get(x);
-                    if (msg.getLocation()!=null){
-                        final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(),msg.getLocation().getLongitude());
-                        if (auth.getUid().equals(msg.getUserid())){
+                    if (msg.getLocation() != null) {
+                        final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
+                        if (auth.getUid().equals(msg.getUserid())) {
                             mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                        }else{
-                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                        } else {
+                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                         }
 
                     }
                 }
             }
         });
-        seard = findViewById(R.id.search);
-
-        seard.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //Do some magic
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                String location = newText;
-                List<Address> addressList=null;
-                if (location != null || !location.equals("")) {
-                    Geocoder geocoder = new Geocoder(MapView.this);
-                    try {
-                        addressList = geocoder.getFromLocationName(location, 5);
-                        String[] suggest=new String[10];
-                        for (int x=0;x<addressList.size();x++){
-                            String locality = addressList.get(x).getAddressLine(0);
-                            suggest[x]=locality;
-                        }
-                     seard.setSuggestions(suggest);
-                        seard.showSuggestions();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-//                    Address address= addressList.get(0).
-                    //Address address = addressList.get(0);
-                    // searchView.setSug
-                }
-                return false;
-            }
-        });
-
-      //  btnFind = findViewById(R.id.btn_find);
-       // rippleBg = findViewById(R.id.ripple_bg);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mapView = mapFragment.getView();
-
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapView.this);
 
     }
@@ -163,19 +122,13 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-            @Override
-            public void onMapLoaded() {
-
-            }
-        });
         mMap.setOnMarkerClickListener(this);
         if (mapView != null && mapView.findViewById(Integer.parseInt("1")) != null) {
             View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-            layoutParams.setMargins(10, 10, 10, 10);
+            layoutParams.setMargins(10, 10, 10, 150);
         }
 
         //check if gps is enabled or not and then request user to enable it
@@ -261,40 +214,45 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-            Location postlocation= new Location("");
-            postlocation.setLatitude(marker.getPosition().latitude);
-            postlocation.setLongitude(marker.getPosition().longitude);
-            float distance =mLastKnownLocation.distanceTo(postlocation)/1000;
-            if (distance<1){
-                for (Post post:posts){
-                    if (post.getLocation().getLongitude()==marker.getPosition().longitude && post.getLocation().getLatitude()==marker.getPosition().latitude){
-                        Intent intent = new Intent(MapView.this,PostDisplay.class);
-                        intent.putExtra("post",post);
-                        startActivity(intent);
-                        overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
-                    }
+        Location postlocation = new Location("");
+        postlocation.setLatitude(marker.getPosition().latitude);
+        postlocation.setLongitude(marker.getPosition().longitude);
+        float distance = mLastKnownLocation.distanceTo(postlocation) / 1000;
+        if (distance < 1) {
+            for (Post post : posts) {
+                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
+                    Intent intent = new Intent(MapView.this, PostDisplay.class);
+                    intent.putExtra("post", post);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                 }
-            }else {
-                boolean creator=false;
-                for (Post post:posts){
-                    if (post.getLocation().getLongitude()==marker.getPosition().longitude && post.getLocation().getLatitude()==marker.getPosition().latitude){
-                        if (auth.getUid().equals(post.getUserid())){
-                            Intent intent = new Intent(MapView.this,PostDisplay.class);
-                            intent.putExtra("post",post);
-                            startActivity(intent);
-                            overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
-                            creator=true;
-                        }
-                    }
-                }
-                if (!creator){
-                    Toast.makeText(MapView.this,"Note At The Location",Toast.LENGTH_LONG).show();
-                }
-
             }
+        } else {
+            boolean creator = false;
+            for (Post post : posts) {
+                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
+                    if (auth.getUid().equals(post.getUserid())) {
+                        Intent intent = new Intent(MapView.this, PostDisplay.class);
+                        intent.putExtra("post", post);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+                        creator = true;
+                    }
+                }
+            }
+            if (!creator) {
+                View contextView = findViewById(R.id.main);
+                Snackbar.make(contextView, R.string.not_at_location, Snackbar.LENGTH_SHORT).show();
+            }
+
+        }
 
         return false;
     }
 
+    private void moveMap(LatLng latLng) {
+        float zoom = 15;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }
 
 }

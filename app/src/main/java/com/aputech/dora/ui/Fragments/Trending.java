@@ -94,23 +94,19 @@ public class Trending extends Fragment {
                 }
             }
         };
+        adapter.startListening();
+        adapter.registerAdapterDataObserver(adapterDataObserver);
 
         return root;
     }
     @Override
     public void onStart() {
         super.onStart();
-        adapter.startListening();
-        adapter.registerAdapterDataObserver(adapterDataObserver);
 
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (adapter != null) {
-            adapter.stopListening();
-            adapter.unregisterAdapterDataObserver(adapterDataObserver);
-        }
     }
 }

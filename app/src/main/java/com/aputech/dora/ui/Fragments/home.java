@@ -155,15 +155,10 @@ public class home extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (adapter != null) {
-            adapter.stopListening();
-            adapter.unregisterAdapterDataObserver(adapterDataObserver);
-        }
     }
 }

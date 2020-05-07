@@ -39,7 +39,6 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
     LatLng latLngfinal;
     MaterialButton SKIP,Forward;
     private TextView resutText;
-    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,92 +49,77 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         resutText = (TextView) findViewById(R.id.dragg_result);
         SKIP= findViewById(R.id.SKIP);
         Forward = findViewById(R.id.forward);
-        searchView = findViewById(R.id.searchlocation);
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int position) {
 
-                return false;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int position) {
-
-
-                return false;
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                mMap.clear();
-                String location = searchView.getQuery().toString();
-                List<Address> addressList=null;
-                if (location !=null || !location.equals("")){
-                    Geocoder geocoder = new Geocoder(SelectLocation.this);
-
-                    try {
-                        addressList=geocoder.getFromLocationName(location,1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Address address = addressList.get(0);
-                    final LatLng latLng= new LatLng(address.getLatitude(),address.getLongitude());
-                    latLngfinal=latLng;
-                    mMap.addMarker(new MarkerOptions().position(latLng)).setDraggable(true);
-                    moveMap(latLng);
-                    mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-                        @Override
-                        public void onMarkerDragStart(Marker arg0) {
-                            // TODO Auto-generated method stub
-                            Log.d("System out", "onMarkerDragStart..."+arg0.getPosition().latitude+"..."+arg0.getPosition().longitude);
-                        }
-
-                        @SuppressWarnings("unchecked")
-                        @Override
-                        public void onMarkerDragEnd(Marker arg0) {
-                            // TODO Auto-generated method stub
-                            Log.d("System out", "onMarkerDragEnd..."+arg0.getPosition().latitude+"..."+arg0.getPosition().longitude);
-                            Geocodeget(arg0.getPosition());
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(arg0.getPosition()));
-                            latLngfinal=arg0.getPosition();
-                        }
-
-                        @Override
-                        public void onMarkerDrag(Marker arg0) {
-                            // TODO Auto-generated method stub
-                            Log.i("System out", "onMarkerDrag...");
-                        }
-                    });
-
-
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                String location = searchView.getQuery().toString();
-                List<Address> addressList=null;
-                if (location != null || !location.equals("")) {
-                    Geocoder geocoder = new Geocoder(SelectLocation.this);
-                    try {
-                        addressList = geocoder.getFromLocationName(location, 5);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //Address address = addressList.get(0);
-                   // searchView.setSug
-                }
-                return false;
-            }
-        });
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                mMap.clear();
+//                String location = searchView.getQuery().toString();
+//                List<Address> addressList=null;
+//                if (location !=null || !location.equals("")){
+//                    Geocoder geocoder = new Geocoder(SelectLocation.this);
+//
+//                    try {
+//                        addressList=geocoder.getFromLocationName(location,1);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Address address = addressList.get(0);
+//                    final LatLng latLng= new LatLng(address.getLatitude(),address.getLongitude());
+//                    latLngfinal=latLng;
+//                    mMap.addMarker(new MarkerOptions().position(latLng)).setDraggable(true);
+//                    moveMap(latLng);
+//                    mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+//                        @Override
+//                        public void onMarkerDragStart(Marker arg0) {
+//                            // TODO Auto-generated method stub
+//                            Log.d("System out", "onMarkerDragStart..."+arg0.getPosition().latitude+"..."+arg0.getPosition().longitude);
+//                        }
+//
+//                        @SuppressWarnings("unchecked")
+//                        @Override
+//                        public void onMarkerDragEnd(Marker arg0) {
+//                            // TODO Auto-generated method stub
+//                            Log.d("System out", "onMarkerDragEnd..."+arg0.getPosition().latitude+"..."+arg0.getPosition().longitude);
+//                            Geocodeget(arg0.getPosition());
+//                            mMap.animateCamera(CameraUpdateFactory.newLatLng(arg0.getPosition()));
+//                            latLngfinal=arg0.getPosition();
+//                        }
+//
+//                        @Override
+//                        public void onMarkerDrag(Marker arg0) {
+//                            // TODO Auto-generated method stub
+//                            Log.i("System out", "onMarkerDrag...");
+//                        }
+//                    });
+//
+//
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                String location = searchView.getQuery().toString();
+//                List<Address> addressList=null;
+//                if (location != null || !location.equals("")) {
+//                    Geocoder geocoder = new Geocoder(SelectLocation.this);
+//                    try {
+//                        addressList = geocoder.getFromLocationName(location, 5);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                    //Address address = addressList.get(0);
+//                   // searchView.setSug
+//                }
+//                return false;
+//            }
+//        });
         SKIP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.putExtra("LatLng", latLngfinal);
-
                 intent.putExtra("skip", true);
                 setResult(RESULT_OK, intent);
                 finish();

@@ -29,7 +29,7 @@
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 app:icon="@drawable/ic_alert"
                 android:textAllCaps="false"
-                android:text="Check Out Whats Happening Neary You " />
+                android:text="Check Out Whats Happening Near You " />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>

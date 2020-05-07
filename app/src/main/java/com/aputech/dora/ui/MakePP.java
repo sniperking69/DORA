@@ -99,7 +99,7 @@ public class MakePP extends AppCompatActivity {
     }
 
     public void Done(View view) {
-        Intent intent = new Intent(MakePP.this, SelectLocation.class);
+        Intent intent = new Intent(MakePP.this, SelectPrivateLocation.class);
         startActivityForResult(intent, REQUEST_LOCATION);
     }
 
@@ -113,11 +113,14 @@ public class MakePP extends AppCompatActivity {
             imageView.setVisibility(View.VISIBLE);
         }
         if (requestCode == REQUEST_LOCATION) {
-            Bundle extras = data.getExtras();
-            latLng = (LatLng) extras.get("LatLng");
-            boolean skipcheck = (boolean) extras.get("skip");
-            Toast.makeText(MakePP.this, latLng.toString(), Toast.LENGTH_LONG).show();
-            uploadFire(type, skipcheck);
+            if (data !=null){
+                Bundle extras = data.getExtras();
+                latLng = (LatLng) extras.get("LatLng");
+                boolean skipcheck = (boolean) extras.get("skip");
+                Toast.makeText(MakePP.this, latLng.toString(), Toast.LENGTH_LONG).show();
+                uploadFire(type, skipcheck);
+            }
+
         }
     }
 

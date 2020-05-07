@@ -120,23 +120,20 @@ public class Notify extends Fragment {
                 adapter.deleteItem(viewHolder.getAdapterPosition());
             }
         }).attachToRecyclerView(recyclerView);
-
+        adapter.startListening();
+        adapter.registerAdapterDataObserver(observer);
         return root;
     }
     @Override
     public void onStart() {
         super.onStart();
-        adapter.startListening();
-        adapter.registerAdapterDataObserver(observer);
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (adapter != null) {
-            adapter.stopListening();
-            adapter.unregisterAdapterDataObserver(observer);
-        }
+
     }
 
 

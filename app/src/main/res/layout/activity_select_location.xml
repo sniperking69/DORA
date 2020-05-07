@@ -35,16 +35,23 @@
     <TextView
 
         android:layout_width="match_parent"
-        android:layout_above="@+id/forward"
+        android:layout_below="@+id/lol"
+        android:background="@android:color/background_light"
         android:layout_height="wrap_content"
         android:id="@+id/dragg_result"/>
 
-    <androidx.appcompat.widget.SearchView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/searchlocation"
-        android:layout_alignParentTop="true"
-        app:queryHint="Search For Location"
-        app:iconifiedByDefault="false"
-        />
+        android:background="@android:color/white"
+        android:layout_margin="5dp"
+        android:id="@+id/lol"
+        android:layout_height="?attr/actionBarSize">
+
+        <fragment android:id="@+id/autocomplete_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            />
+
+    </androidx.cardview.widget.CardView>
 </RelativeLayout>

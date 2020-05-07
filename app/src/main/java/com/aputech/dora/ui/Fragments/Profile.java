@@ -216,7 +216,8 @@ public class Profile extends Fragment {
                 showPictureDialog();
             }
         });
-
+        adapter.startListening();
+        adapter.registerAdapterDataObserver(observer);
         return root;
     }
 
@@ -340,17 +341,12 @@ public class Profile extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        adapter.startListening();
-        adapter.registerAdapterDataObserver(observer);
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (adapter != null) {
-            adapter.stopListening();
-            adapter.unregisterAdapterDataObserver(observer);
-        }
     }
 
 
