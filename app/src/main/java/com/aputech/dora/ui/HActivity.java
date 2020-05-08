@@ -256,7 +256,7 @@ public class HActivity extends AppCompatActivity {
                     if (user.getProfileUrl()!=null){
                         Glide
                                 .with(HActivity.this)
-                                .load(auth.getCurrentUser().getPhotoUrl())
+                                .load(user.getProfileUrl())
                                 .into(profileImage);
                     }
 

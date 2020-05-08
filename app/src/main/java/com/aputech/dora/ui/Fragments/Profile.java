@@ -172,6 +172,7 @@ public class Profile extends Fragment {
             }
         };
 
+
         userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -181,7 +182,9 @@ public class Profile extends Fragment {
                 email.setText(user.getEmailAdress());
                 followers.setText(String.valueOf(user.getFollower()));
                 following.setText(String.valueOf(user.getFollowing()));
-                if (user.getPostnum() < 100) {
+                if (getActivity()!=null){
+
+                    if (user.getPostnum() < 100) {
                     Glide
                             .with(getActivity())
                             .load(R.drawable.ic_grade)
@@ -206,7 +209,7 @@ public class Profile extends Fragment {
                             .load(user.getProfileUrl())
                             .into(profileimg);
                 }
-
+                }
 
             }
         });
@@ -218,6 +221,7 @@ public class Profile extends Fragment {
         });
         adapter.startListening();
         adapter.registerAdapterDataObserver(observer);
+
         return root;
     }
 
@@ -347,6 +351,9 @@ public class Profile extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (adapter!=null){
+            adapter.stopListening();
+        }
     }
 
 

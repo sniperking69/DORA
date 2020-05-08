@@ -97,10 +97,11 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
                 for (int x = 0; x < posts.size(); x++) {
                     Post msg = posts.get(x);
                     if (msg.getLocation() != null) {
-                        final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
                         if (auth.getUid().equals(msg.getUserid())) {
+                            LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
                             mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
                         } else {
+                            final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
                             mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                         }
 

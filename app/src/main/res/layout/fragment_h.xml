@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/s"
-            android:text="You Are Not Following Anyone" />
+            android:text="No Post Was Made By Your Friends" />
     </RelativeLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"

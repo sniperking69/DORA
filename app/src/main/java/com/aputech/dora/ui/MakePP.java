@@ -30,8 +30,8 @@ import java.util.Calendar;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MakePP extends AppCompatActivity {
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_LOCATION = 345;
+    private static final int REQUEST_IMAGE_CAPTURE = 235;
+    private static final int REQUEST_LOCATION = 3975;
 
     private EditText editText;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();

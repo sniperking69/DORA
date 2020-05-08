@@ -133,7 +133,9 @@ public class Notify extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-
+        if (adapter!=null){
+            adapter.stopListening();
+        }
     }
 
 

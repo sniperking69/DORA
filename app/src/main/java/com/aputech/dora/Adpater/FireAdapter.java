@@ -4,14 +4,17 @@ package com.aputech.dora.Adpater;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -25,10 +28,17 @@ import com.aputech.dora.ui.DispPostLocation;
 import com.aputech.dora.ui.PostDisplay;
 import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.firebase.ui.firestore.ObservableSnapshotArray;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -86,6 +96,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                     builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+
                         }
                     });
                     AlertDialog dialog = builder.create();
@@ -137,9 +148,6 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                     mContext.startActivity(intent);
                 }
             });
-        }else{
-            holder.LocationIcon.setImageResource(R.drawable.ic_locationsad);
-
         }
 
         if ( model.getUserid() != null) {
@@ -219,12 +227,18 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                     .into(holder.img);
         }
         if(model.getType()==3){
-
+            holder.videoView.setVisibility(View.VISIBLE);
             holder.img.setVisibility(View.VISIBLE);
-            Glide
-                    .with(mContext)
-                    .load(model.getImageUrl())
-                    .into(holder.img);
+            String link = model.getVideoUrl();
+            long thumb = position*1000;
+            RequestOptions options = new RequestOptions().frame(thumb);
+            Glide.with(mContext).load(link).apply(options).into(holder.img);
+
+            MediaController mediaController = new MediaController(mContext);
+            mediaController.setAnchorView(holder.videoView);
+            Uri video = Uri.parse(link);
+            holder.videoView.setMediaController(mediaController);
+            holder.videoView.setVideoURI(video);
         }
         final DocumentReference postrefrence = db.collection("Posts").document(model.getRefComments());
         final DocumentReference Reference = db.collection("Posts").document(model.getRefComments()).collection("vote").document(auth.getUid());
@@ -350,14 +364,14 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
         ImageView level;
         ImageView LocationIcon,delete,edit;
         CircleImageView profile;
-     //   SimpleExoPlayerView playerView;
+        VideoView videoView;
         MaterialButton Commentbutton;
         public NoteHolder(View itemView) {
             super(itemView);
             up= itemView.findViewById(R.id.upbutton);
             down= itemView.findViewById(R.id.downbutton);
             edit =itemView.findViewById(R.id.edit);
-           // playerView = itemView.findViewById(R.id.video_view);
+            videoView= itemView.findViewById(R.id.video_view);
             delete = itemView.findViewById(R.id.delete);
             user_name = itemView.findViewById(R.id.user_name);
             textViewDescription = itemView.findViewById(R.id.text_view_description);

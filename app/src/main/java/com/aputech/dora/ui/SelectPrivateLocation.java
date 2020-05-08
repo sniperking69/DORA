@@ -62,9 +62,6 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection("Posts");
-    private ArrayList<Post> posts = new ArrayList<>();
-    FirebaseAuth auth = FirebaseAuth.getInstance();
     private Location mLastKnownLocation;
     private LocationCallback locationCallback;
     private View mapView;
@@ -124,13 +121,6 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
             @Override
             public void onCameraIdle() {
                 Geocodeget();
-              //  Log.d("bigpp", "onCameraIdle:it keeps running bitch");
-            }
-        });
-        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-            @Override
-            public void onMapLoaded() {
-
             }
         });
         if (mapView != null && mapView.findViewById(Integer.parseInt("1")) != null) {
@@ -248,5 +238,6 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
         float zoom = 15;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
+
 
 }

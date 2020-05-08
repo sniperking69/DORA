@@ -79,8 +79,27 @@ public class PostDisplay extends AppCompatActivity {
         ProfileImg = findViewById(R.id.poster_profile);
         Intent intent= getIntent();
         post = intent.getParcelableExtra("post");
+        if (post ==null){
+            Toast.makeText(PostDisplay.this, "Post Has Been Removed Refresh Page", Toast.LENGTH_SHORT).show();
+            finish();
+        }
         int Type = post.getType();
         postText.setText(post.getDescription());
+        Log.d(TAG, "onCreate: "+post.getLocation());
+        if (post.getLocation()!=null){
+            locate.setImageResource(R.drawable.ic_locationhappy);
+            locate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent1= new Intent(PostDisplay.this,DispPostLocation.class);
+                    intent1.putExtra("lat",post.getLocation().getLatitude());
+                    intent1.putExtra("lng",post.getLocation().getLongitude());
+                    startActivity(intent1);
+                }
+            });
+        }else{
+            locate.setImageResource(R.drawable.ic_locationsad);
+        }
         DocumentReference docrefuser= db.collection("Users").document(post.getUserid());
         docrefuser.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -103,24 +122,14 @@ public class PostDisplay extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        Glide
-                .with(PostDisplay.this)
-                .load(user.getProfileUrl())
-                .into(ProfileImg);
-        if (post.getLocation()!=null){
-            locate.setImageResource(R.drawable.ic_locationhappy);
-            locate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent1= new Intent(PostDisplay.this,DispPostLocation.class);
-                    startActivity(intent1);
-                }
-            });
-
-        }else{
-            locate.setImageResource(R.drawable.ic_locationsad);
+        if (user.getProfileUrl()!=null){
+            Glide
+                    .with(PostDisplay.this)
+                    .load(user.getProfileUrl())
+                    .into(ProfileImg);
         }
+
+
         if (user.getUserid().equals(auth.getUid())){
             delete.setVisibility(View.VISIBLE);
             delete.setOnClickListener(new View.OnClickListener() {
@@ -157,7 +166,6 @@ public class PostDisplay extends AppCompatActivity {
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(PostDisplay.this);
                     builder.setTitle("Edit Post");
-
                     final View customLayout =  LayoutInflater.from(PostDisplay.this).inflate(R.layout.custom_alert, null);
                     builder.setView(customLayout);
                     final EditText editText = customLayout.findViewById(R.id.para);
@@ -167,11 +175,11 @@ public class PostDisplay extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             if (!editText.getText().toString().isEmpty()){
                                 db.collection("Posts").document(post.getRefComments()).update("description",editText.getText().toString());
+                                postText.setText(editText.getText().toString());
                                 Toast.makeText(PostDisplay.this,"Post Updated",Toast.LENGTH_LONG).show();
                             }else{
                                 Toast.makeText(PostDisplay.this,"Unable to Make Changes Field Empty",Toast.LENGTH_LONG).show();
                             }
-
                         }
                     });
                     builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

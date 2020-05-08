@@ -48,9 +48,8 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Post, HomeAdapter.Note
     private Context mContext;
     private FirebaseAuth auth=FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private DocumentReference notebookRef;
-    ArrayList<String> FollowingID;
-    int actualSize=0;
+    private ArrayList<String> FollowingID;
+
     public HomeAdapter(@NonNull FirestoreRecyclerOptions<Post> options, Context mContext, ArrayList<String> FollowingID) {
         super(options);
         this.FollowingID=FollowingID;
@@ -142,13 +141,10 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Post, HomeAdapter.Note
                         mContext.startActivity(intent);
                     }
                 });
-            }else{
-                holder.LocationIcon.setImageResource(R.drawable.ic_locationsad);
-
             }
 
             if ( model.getUserid() != null) {
-                notebookRef = db.collection("Users").document(model.getUserid());
+                DocumentReference notebookRef = db.collection("Users").document(model.getUserid());
                 notebookRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -383,10 +379,10 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Post, HomeAdapter.Note
         }
     }
     public int ActualSize(){
-        actualSize=0;
+        int actualSize = 0;
         for (int x=0;x < getSnapshots().size();x++){
             if (FollowingID.contains(getSnapshots().get(x).getUserid())){
-                actualSize+=1;
+                actualSize +=1;
             }
         }
         return actualSize;

@@ -49,8 +49,8 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class regUser extends AppCompatActivity {
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int GALLERY = 2;
+    private static final int REQUEST_IMAGE_CAPTURE = 4561;
+    private static final int GALLERY = 274;
     TextInputLayout Email, Uname, Bio;
 
     FloatingActionButton upimg;
