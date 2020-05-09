@@ -76,9 +76,11 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
     FirebaseStorage firebaseStorage=FirebaseStorage.getInstance();
     StorageReference storageReference= firebaseStorage.getReference("videos");
     LatLng latLngfinal;
+     Uri uri;
     private final float DEFAULT_ZOOM = 15;
     private TextView resutText;
     int type;
+    String ext;
     String txt;
 
     @Override
@@ -91,8 +93,10 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         Intent intent= getIntent();
         txt=intent.getStringExtra("Desc");
         type=intent.getIntExtra("type",1);
-        final Uri uri=Uri.parse(intent.getStringExtra("Uri"));
-        final String ext=intent.getStringExtra("ext");
+        if (intent.getStringExtra("Uri")!=null){
+            uri=Uri.parse(intent.getStringExtra("Uri"));
+             ext=intent.getStringExtra("ext");
+        }
         SKIP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -208,10 +208,11 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     User you= documentSnapshot.toObject(User.class);
                                     if (Following){
-
                                         db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid()).delete();
                                         db.collection("Users").document(auth.getUid()).update("Following",me.getFollowing()-1);
                                         db.collection("Users").document(user.getUserid()).update("Follower",you.getFollower()-1);
+                                        followers.setText(String.valueOf(you.getFollower()-1));
+                                        settings.setText("FOLLOW");
                                         Following=false;
 
                                     }else{
@@ -220,6 +221,8 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                                         db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid()).set(fol);
                                         db.collection("Users").document(auth.getUid()).update("Following",me.getFollowing()+1);
                                         db.collection("Users").document(user.getUserid()).update("Follower",you.getFollower()+1);
+                                        followers.setText(String.valueOf(you.getFollower()+1));
+                                        settings.setText("UNFOLLOW");
                                         Following=true;
                                     }
 

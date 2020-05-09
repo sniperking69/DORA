@@ -9,15 +9,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.aputech.dora.Adpater.CommentAdapter;
 import com.aputech.dora.Model.Comment;
@@ -27,6 +31,7 @@ import com.aputech.dora.Model.Vote;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,9 +50,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.util.Date;
+
 public class PostDisplay extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef ;
     private FirebaseAuth auth= FirebaseAuth.getInstance();
     private CommentAdapter adapter;
     MaterialButton up,down;
@@ -58,8 +64,11 @@ public class PostDisplay extends AppCompatActivity {
     ImageView delete,edit;
     String TAG="bigp";
     Post post;
+    VideoView playerView;
+    ImageView image;
     ListenerRegistration listenerRegistration;
-    private TextView postText,userName,post_time;
+    private TextView postText;
+    private TextView userName,post_time;
     ImageView locate,ProfileImg;
     DocumentReference documentReference;
     @Override
@@ -69,7 +78,9 @@ public class PostDisplay extends AppCompatActivity {
         editText = findViewById(R.id.commenttext);
         noresult= findViewById(R.id.noresult);
         userName = findViewById(R.id.user_name);
-        post_time= findViewById(R.id.time);
+        post_time = findViewById(R.id.time);
+        image=findViewById(R.id.img);
+         playerView = findViewById(R.id.video_view);
         locate =findViewById(R.id.locate);
         up = findViewById(R.id.upbutton);
         delete = findViewById(R.id.delete);
@@ -84,6 +95,11 @@ public class PostDisplay extends AppCompatActivity {
             finish();
         }
         int Type = post.getType();
+        if (post.getTimestamp() != null) {
+            Date date = post.getTimestamp();
+            String df = DateFormat.getDateFormat(PostDisplay.this).format(date).concat("  ").concat(DateFormat.getTimeFormat(PostDisplay.this).format(date));
+            post_time.setText(df);
+        }
         postText.setText(post.getDescription());
         Log.d(TAG, "onCreate: "+post.getLocation());
         if (post.getLocation()!=null){
@@ -100,8 +116,7 @@ public class PostDisplay extends AppCompatActivity {
         }else{
             locate.setImageResource(R.drawable.ic_locationsad);
         }
-        DocumentReference docrefuser= db.collection("Users").document(post.getUserid());
-        docrefuser.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("Users").document(post.getUserid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
               final User user = documentSnapshot.toObject(User.class);
@@ -200,6 +215,33 @@ public class PostDisplay extends AppCompatActivity {
             }
         });
         if (Type==2){
+            image.setVisibility(View.VISIBLE);
+            Glide
+                    .with(PostDisplay.this)
+                    .load(post.getImageUrl())
+                    .into(image);
+        }
+        if (Type==3){
+//            videoView.setVisibility(View.VISIBLE);
+//           // image.setVisibility(View.VISIBLE);
+            playerView.setVisibility(View.VISIBLE);
+            String link = post.getVideoUrl();
+////            long thumb = position*1000;
+////            RequestOptions options = new RequestOptions().frame(thumb);
+//          //  Glide.with(PostDisplay.this).load(link).into(image);
+            MediaController mediaController = new MediaController(PostDisplay.this);
+            mediaController.setAnchorView(playerView);
+            Uri video = Uri.parse(link);
+            playerView.setMediaController(mediaController);
+            playerView.setVideoURI(video);
+            playerView.start();
+//            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+//            TrackSelector trackSelector= new DefaultTrackSelector(new AdaptiveTrackSelection.Factory(bandwidthMeter));
+//            exoPlayer= ExoPlayerFactory.newSimpleInstance(PostDisplay.this,trackSelector);
+//            extractorsFactory = new DefaultExtractorsFactory();
+//            PlayVideo();
+            
+
 
         }
         documentReference = db.collection("Posts").document(post.getRefComments());
@@ -319,7 +361,7 @@ public class PostDisplay extends AppCompatActivity {
 
             }
         });
-        notebookRef =db.collection("Posts").document(post.getRefComments()).collection("comments");
+        CollectionReference notebookRef = db.collection("Posts").document(post.getRefComments()).collection("comments");
         Query query = notebookRef.orderBy("priority", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Comment> options = new FirestoreRecyclerOptions.Builder<Comment>()
                 .setQuery(query, Comment.class)
@@ -349,6 +391,8 @@ public class PostDisplay extends AppCompatActivity {
 
 
     }
+
+
 
     private void DeletePost(final String Postid) {
         final WriteBatch writeBatch = db.batch();

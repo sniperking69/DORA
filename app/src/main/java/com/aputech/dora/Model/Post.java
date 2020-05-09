@@ -13,6 +13,7 @@ import java.util.Date;
 public class Post implements Parcelable {
     @ServerTimestamp
     private Date timestamp;
+
     private String description;
     private String imageUrl;
     private int type;

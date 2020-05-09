@@ -2,11 +2,14 @@ package com.aputech.dora.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,7 +58,6 @@ public class MakePP extends AppCompatActivity {
         editText = findViewById(R.id.para);
         imageView = findViewById(R.id.dispimg);
         audio = findViewById(R.id.Audio);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
         user_name = findViewById(R.id.user_name);
         time = findViewById(R.id.time);
         level = findViewById(R.id.level);
@@ -96,82 +98,52 @@ public class MakePP extends AppCompatActivity {
         });
 
 
-    }
 
+    }
     public void Done(View view) {
-        Intent intent = new Intent(MakePP.this, SelectPrivateLocation.class);
-        startActivityForResult(intent, REQUEST_LOCATION);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(imageBitmap);
-            imageView.setVisibility(View.VISIBLE);
-        }
-        if (requestCode == REQUEST_LOCATION) {
-            if (data !=null){
-                Bundle extras = data.getExtras();
-                latLng = (LatLng) extras.get("LatLng");
-                boolean skipcheck = (boolean) extras.get("skip");
-                Toast.makeText(MakePP.this, latLng.toString(), Toast.LENGTH_LONG).show();
-                uploadFire(type, skipcheck);
-            }
-
-        }
-    }
-
-    private void uploadFire(int type, boolean skip) {
-        String text = editText.getText().toString();
-        final Post post = new Post();
-        if (!skip) {
-            GeoPoint geoPoint = new GeoPoint(latLng.latitude, latLng.longitude);
-            post.setLocation(geoPoint);
-        } else {
-            post.setLocation(null);
-        }
-        post.setType(type);
-        post.setDescription(text);
-        post.setUserid(auth.getUid());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm aa");
-        if (type == 2) {
-            post.setImageUrl("sdasda");
-        }
-        if (type == 3) {
-            post.setVideoUrl("sdadadasd");
-
-        }
-        if (type == 4) {
-            post.setAudioUrl("dnaoidaoid");
-        }
-        final String date = dateFormat.format(Calendar.getInstance().getTime());
-        notebookRef.add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                String commentref = documentReference.getId();
-                post.setRefComments(commentref);
-               // post.setUptime(date);
-                documentReference.set(post);
-                Toast.makeText(MakePP.this, "Note Added Successfully", Toast.LENGTH_LONG).show();
-                finish();
-
-            }
-        });
-//        if (activity==2){
-//            finish();
-//                CollectionReference collectionReference = db.collection("inbox");
-//                message mms= new message();
-//                mms.setType(1);
-//                mms.setUptime("hehoa");
-//                mms.setSentBy(auth.getUid());
-//                GeoPoint geoPoint = new GeoPoint(latLng.latitude,latLng.longitude);
-//                mms.setLocation(geoPoint);
-//                collectionReference.add(mms);
-//
+        Intent intent= new Intent(MakePP.this,SelectPrivateLocation.class);
+        intent.putExtra("type",type);
+        intent.putExtra("Desc",editText.getText().toString());
+        intent.putExtra("user_id",auth.getUid());
+//        if (type == 3) {
+//            intent.putExtra("Uri", videoUri.toString());
+//            intent.putExtra("ext",getfileExt(videoUri));
 //        }
-
+        startActivityForResult(intent,REQUEST_LOCATION);
     }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode==REQUEST_VIDEO && resultCode ==RESULT_OK && data !=null && data.getData()!=null){
+//            videoUri=data.getData();
+//            videoView.setVideoURI(videoUri);
+//            imageView.setVisibility(View.GONE);
+//            videoView.setVisibility(View.VISIBLE);
+//            type=3;
+//        }
+//        if (requestCode == AudioUpload && resultCode ==RESULT_OK && data !=null && data.getData()!=null) {
+//            Toast.makeText(makePost.this,"ADD AUDIO",Toast.LENGTH_LONG).show();
+//        }
+//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//            Bundle extras = data.getExtras();
+//            Bitmap imageBitmap = (Bitmap) extras.get("data");
+//            imageView.setImageBitmap(imageBitmap);
+//            imageView.setVisibility(View.VISIBLE);
+//            videoView.setVisibility(View.GONE);
+//            videoUri=null;
+//            if (videoView.isPlaying()){
+//                videoView.stopPlayback();
+//                videoView.setVideoURI(null);
+//            }
+//            type=2;
+//        }
+//        if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK){
+//            finish();
+//        }
+//    }
+//    private String getfileExt(Uri videoUri){
+//        ContentResolver contentResolver= getContentResolver();
+//        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+//        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(videoUri));
+//    }
 }

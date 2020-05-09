@@ -65,6 +65,7 @@
         android:weightSum="10"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
+
         <EditText
             android:id="@+id/commenttext"
             android:layout_width="0dp"

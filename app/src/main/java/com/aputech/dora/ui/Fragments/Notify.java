@@ -137,6 +137,12 @@ public class Notify extends Fragment {
             adapter.stopListening();
         }
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adapter!=null){
+            adapter.startListening();
+        }
+    }
 
 }

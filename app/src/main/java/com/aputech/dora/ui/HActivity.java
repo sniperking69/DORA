@@ -37,7 +37,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Adpater.SAdapter;
-import com.aputech.dora.AudioPlayerService;
 import com.aputech.dora.LocationJob;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
@@ -110,7 +109,7 @@ public class HActivity extends AppCompatActivity {
         searchView.setSubmitButtonEnabled(true);
 
 
-        Intent intent= new Intent(this, AudioPlayerService.class);
+
 
 
 

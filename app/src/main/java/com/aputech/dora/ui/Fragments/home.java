@@ -165,4 +165,12 @@ public class home extends Fragment {
         }
 
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adapter!=null){
+            adapter.startListening();
+        }
+
+    }
 }

@@ -31,14 +31,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -233,12 +225,17 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
             long thumb = position*1000;
             RequestOptions options = new RequestOptions().frame(thumb);
             Glide.with(mContext).load(link).apply(options).into(holder.img);
-
             MediaController mediaController = new MediaController(mContext);
             mediaController.setAnchorView(holder.videoView);
             Uri video = Uri.parse(link);
             holder.videoView.setMediaController(mediaController);
             holder.videoView.setVideoURI(video);
+//            holder.img.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                }
+//            });
         }
         final DocumentReference postrefrence = db.collection("Posts").document(model.getRefComments());
         final DocumentReference Reference = db.collection("Posts").document(model.getRefComments()).collection("vote").document(auth.getUid());

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -25,9 +26,6 @@ import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -42,6 +40,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -49,27 +48,27 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class makePost extends AppCompatActivity {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 7087;
-    private static final int REQUEST_LOCATION = 798;
-    private static final int REQUEST_VIDEO = 3213;
+    private static final int REQUEST_IMAGE_CAPTURE =1;
+    private static final int REQUEST_LOCATION = 2;
+    private static final int REQUEST_VIDEO = 3;
+    private static final int REQUEST_AUDIO=4;
     private EditText editText;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection("Posts");
     private ImageView imageView;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     MaterialButton camera,gallery,audio;
     private int type;
-    private LatLng latLng;
     FirebaseStorage firebaseStorage=FirebaseStorage.getInstance();
-    StorageReference storageReference= firebaseStorage.getReference("videos");
     private TextView user_name;
     private TextView time;
+    private ImageView remover;
     private ImageView level;
     private Uri videoUri;
     VideoView videoView;
-    boolean skipcheck;
     private CircleImageView profile;
-    private int AudioUpload=32143;
+    private View audioView;
+    private Uri imgUri;
+    private Uri audioUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,15 +80,26 @@ public class makePost extends AppCompatActivity {
         firebaseStorage=FirebaseStorage.getInstance();
         user_name = findViewById(R.id.user_name);
         time = findViewById(R.id.time);
+        remover= findViewById(R.id.remover);
         level= findViewById(R.id.level);
         videoView=findViewById(R.id.videoDisplay);
-        MediaController mediaController= new MediaController(this);
-        videoView.setMediaController(mediaController);
-        mediaController.setAnchorView(videoView);
-        videoView.start();
         gallery=findViewById(R.id.Gallery);
         camera =findViewById(R.id.Camera);
         profile=findViewById(R.id.poster_profile);
+        remover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                videoUri=null;
+                imgUri=null;
+                audioUri=null;
+                videoView.setVisibility(View.GONE);
+                if (videoView.isPlaying()){
+                    videoView.stopPlayback();
+                }
+                imageView.setVisibility(View.GONE);
+                audioView.setVisibility(View.GONE);
+            }
+        });
         DocumentReference documentReference = db.collection("Users").document(auth.getUid());
         documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -130,7 +140,7 @@ public class makePost extends AppCompatActivity {
             public void onClick(View v) {
                 Intent audiointent = new Intent(Intent.ACTION_PICK,
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(audiointent, AudioUpload);
+                startActivityForResult(audiointent, REQUEST_AUDIO);
             }
         });
         gallery.setOnClickListener(new View.OnClickListener() {
@@ -151,7 +161,10 @@ public class makePost extends AppCompatActivity {
                 }
             }
         });
-
+        MediaController mediaController= new MediaController(makePost.this);
+        videoView.setMediaController(mediaController);
+        mediaController.setAnchorView(videoView);
+        videoView.start();
 
     }
 
@@ -166,6 +179,12 @@ public class makePost extends AppCompatActivity {
         }
         startActivityForResult(intent,REQUEST_LOCATION);
     }
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "ProfileImage", null);
+        return Uri.parse(path);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -176,8 +195,22 @@ public class makePost extends AppCompatActivity {
             videoView.setVisibility(View.VISIBLE);
             type=3;
         }
-        if (requestCode == AudioUpload && resultCode ==RESULT_OK && data !=null && data.getData()!=null) {
-          Toast.makeText(makePost.this,"ADD AUDIO",Toast.LENGTH_LONG).show();
+        if (requestCode == REQUEST_AUDIO && resultCode ==RESULT_OK && data !=null && data.getData()!=null) {
+//            Mediafileinfo item = audioList.get(i);
+//            Uri myUri = Uri.parse(item.getData());
+//            mediaPlayer = new MediaPlayer();
+//            try {
+//                // mediaPlayer.setDataSource(String.valueOf(myUri));
+//                mediaPlayer.setDataSource(MainActivity.this,myUri);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            try {
+//                mediaPlayer.prepare();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            mediaPlayer.start();
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
@@ -191,6 +224,7 @@ public class makePost extends AppCompatActivity {
                 videoView.setVideoURI(null);
             }
             type=2;
+
         }
         if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK){
             finish();
@@ -203,9 +237,12 @@ public class makePost extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (videoUri!=null){
+            videoView.start();
+        }
 
-
-
-
-
+    }
 }
