@@ -220,22 +220,12 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
         }
         if(model.getType()==3){
             holder.videoView.setVisibility(View.VISIBLE);
-            holder.img.setVisibility(View.VISIBLE);
             String link = model.getVideoUrl();
-            long thumb = position*1000;
-            RequestOptions options = new RequestOptions().frame(thumb);
-            Glide.with(mContext).load(link).apply(options).into(holder.img);
             MediaController mediaController = new MediaController(mContext);
             mediaController.setAnchorView(holder.videoView);
             Uri video = Uri.parse(link);
             holder.videoView.setMediaController(mediaController);
             holder.videoView.setVideoURI(video);
-//            holder.img.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                }
-//            });
         }
         final DocumentReference postrefrence = db.collection("Posts").document(model.getRefComments());
         final DocumentReference Reference = db.collection("Posts").document(model.getRefComments()).collection("vote").document(auth.getUid());

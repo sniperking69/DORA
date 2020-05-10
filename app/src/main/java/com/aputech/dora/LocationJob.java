@@ -55,7 +55,6 @@ public class LocationJob extends JobService {
                             Log.w(TAG, "listen:error", e);
                             return;
                         }
-
                         for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                             if (dc.getType() == DocumentChange.Type.ADDED) {
                                 Log.d(TAG, "New city: " + dc.getDocument().getData());

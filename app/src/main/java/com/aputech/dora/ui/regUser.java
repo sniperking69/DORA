@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -95,6 +96,21 @@ public class regUser extends AppCompatActivity {
                     Uname.getEditText().setText(user.getUserName());
                     Bio.getEditText().setText(user.getBio());
                     Email.getEditText().setText(user.getEmailAdress());
+                    if (user.getProfileUrl()!=null){
+                        Glide
+                                .with(regUser.this)
+                                .load(user.getProfileUrl())
+                                .into(dispimg);
+                        remove.setVisibility(View.VISIBLE);
+                        remove.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                filePath=null;
+                                dispimg.setImageResource(R.drawable.ic_user);
+                                remove.setVisibility(View.INVISIBLE);
+                            }
+                        });
+                    }
                 }
             });
             Continue.setOnClickListener(new View.OnClickListener() {

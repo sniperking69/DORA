@@ -1,22 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-<com.google.android.material.floatingactionbutton.FloatingActionButton
-    android:layout_width="wrap_content"
-    android:id="@+id/playPause"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:src="@drawable/ic_cancel"
-    android:layout_margin="10dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-</com.google.android.material.floatingactionbutton.FloatingActionButton>
-    <com.github.ybq.android.spinkit.SpinKitView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/spin_kit"
-        style="@style/SpinKitView.Large.Wave"
+
+
+    <com.narayanacharya.waveview.WaveView
+        android:id="@+id/waveView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/playPause"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        app:SpinKit_Color="@color/colorAccent" />
+        app:waveAmplitude="10.25"
+        app:waveBackgroundColor="@color/white"
+        app:waveColor="@color/colorAccent"
+        app:waveDensity="5.0"
+        app:waveFrequency="2.0"
+        app:waveNumberOfWaves="5"
+        app:wavePhaseShift="-0.05"
+        app:wavePrimaryLineWidth="3.0"
+        app:waveSecondaryLineWidth="1.0"
+        app:waveXAxisPositionMultiplier="0.5" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5">
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/mSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+            <TextView
+                android:id="@+id/curTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textSize="28sp"
+                android:layout_above="@+id/mSeekBar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="30dp" />
+            <TextView
+                android:id="@+id/totalTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="28sp"
+                android:text="05:00"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:layout_below="@+id/mSeekBar"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_weight="5">
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:id="@+id/playPause"
+                app:fabSize="normal"
+                app:backgroundTint="@color/level3"
+                android:layout_height="wrap_content"
+                app:fabCustomSize="80dp"
+                app:maxImageSize="70dp"
+                android:tint="@color/white"
+                android:src="@drawable/ic_pause"
+                android:layout_marginBottom="30dp"
+                />
+
+
+
+        </RelativeLayout>
+    </LinearLayout>
 </RelativeLayout>
