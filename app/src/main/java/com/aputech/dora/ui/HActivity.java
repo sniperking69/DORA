@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -39,6 +40,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aputech.dora.Adpater.SAdapter;
 import com.aputech.dora.LocationJob;
 import com.aputech.dora.Model.User;
+import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.Fragments.Notify;
 import com.aputech.dora.ui.Fragments.Profile;
@@ -80,6 +82,7 @@ public class HActivity extends AppCompatActivity {
     boolean adapterlisten = false;
     RelativeLayout noresult;
     RecyclerView recyclerView;
+    ListenerRegistration listenerReg;
     private CollectionReference collectionReference = db.collection("Users");
     int page = 2;
     ListenerRegistration listenerRegistration;
@@ -248,9 +251,9 @@ public class HActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.toolbar_profile_image);
         if (auth.getCurrentUser() != null) {
             final DocumentReference documentReference = db.collection("Users").document(auth.getUid());
-            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            listenerReg =documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                     User user= documentSnapshot.toObject(User.class);
                     if (user.getProfileUrl()!=null){
                         Glide
@@ -258,7 +261,6 @@ public class HActivity extends AppCompatActivity {
                                 .load(user.getProfileUrl())
                                 .into(profileImage);
                     }
-
                 }
             });
 
@@ -485,6 +487,16 @@ public class HActivity extends AppCompatActivity {
             }
         }
         return hasBeenScheduled;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (listenerRegistration!=null && listenerReg!=null){
+            listenerReg.remove();
+            listenerRegistration.remove();
+        }
+
     }
 
 }

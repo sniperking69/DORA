@@ -10,7 +10,7 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 //ups and downs are actually a list
-public class Post implements Parcelable {
+public class Post  {
     @ServerTimestamp
     private Date timestamp;
 
@@ -25,14 +25,13 @@ public class Post implements Parcelable {
     private int commentnum;
     private int upnum;
     private int downnum;
-    private double latitude, longitude;
     private GeoPoint location;
 
     public Post() {
         //empty constructor needed
     }
 
-    public Post(Date timestamp, String description, String imageUrl, int type, String userid, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum, double latitude, double longitude, GeoPoint location) {
+    public Post(Date timestamp, String description, String imageUrl, int type, String userid, String refComments, float priority, String videoUrl, String audioUrl, int commentnum, int upnum, int downnum, GeoPoint location) {
         this.timestamp = timestamp;
         this.description = description;
         this.imageUrl = imageUrl;
@@ -45,8 +44,6 @@ public class Post implements Parcelable {
         this.commentnum = commentnum;
         this.upnum = upnum;
         this.downnum = downnum;
-        this.latitude = latitude;
-        this.longitude = longitude;
         this.location = location;
     }
 
@@ -146,85 +143,11 @@ public class Post implements Parcelable {
         this.downnum = downnum;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
     public GeoPoint getLocation() {
         return location;
     }
 
     public void setLocation(GeoPoint location) {
         this.location = location;
-    }
-
-    protected Post(Parcel in) {
-        description = in.readString();
-        imageUrl = in.readString();
-        type = in.readInt();
-        userid = in.readString();
-        refComments = in.readString();
-        priority = in.readFloat();
-        videoUrl = in.readString();
-        audioUrl = in.readString();
-        commentnum = in.readInt();
-        upnum = in.readInt();
-        downnum = in.readInt();
-        latitude = in.readDouble();
-        longitude = in.readDouble();
-        if (getLocation()!=null){
-            location = new GeoPoint(latitude, longitude);
-        }
-
-    }
-
-    public static final Creator<Post> CREATOR = new Creator<Post>() {
-        @Override
-        public Post createFromParcel(Parcel in) {
-            return new Post(in);
-        }
-
-        @Override
-        public Post[] newArray(int size) {
-            return new Post[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        if (getLocation()!=null){
-            latitude = getLocation().getLatitude();
-            longitude = getLocation().getLongitude();
-        }
-        dest.writeString(description);
-        dest.writeString(imageUrl);
-        dest.writeInt(type);
-        dest.writeString(userid);
-        dest.writeString(refComments);
-        dest.writeFloat(priority);
-        dest.writeString(videoUrl);
-        dest.writeString(audioUrl);
-        dest.writeInt(commentnum);
-        dest.writeInt(upnum);
-        dest.writeInt(downnum);
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
     }
 }

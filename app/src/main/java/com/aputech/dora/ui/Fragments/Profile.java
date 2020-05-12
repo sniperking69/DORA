@@ -191,7 +191,7 @@ public class Profile extends Fragment {
                             .load(R.drawable.ic_grade)
                             .into(level);
                 }
-                if (user.getPostnum() < 100 && user.getPostnum() > 500 ) {
+                if (user.getPostnum() > 100 && user.getPostnum() < 500 ) {
                     Glide
                             .with(getActivity())
                             .load(R.drawable.ic_grade1)

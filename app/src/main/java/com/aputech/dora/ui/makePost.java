@@ -85,7 +85,7 @@ public class makePost extends AppCompatActivity {
     private ImageView imageView;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     MaterialButton camera,gallery,audio;
-    private int type;
+    private int type=1;
     FirebaseStorage firebaseStorage=FirebaseStorage.getInstance();
     private TextView user_name;
     private TextView time;
@@ -223,19 +223,28 @@ public class makePost extends AppCompatActivity {
     }
 
     public void Done(View view) {
-        Intent intent= new Intent(makePost.this,SelectLocation.class);
-        intent.putExtra("type",type);
-        intent.putExtra("Desc",editText.getText().toString());
-        intent.putExtra("user_id",auth.getUid());
-        if (type == 3) {
-            intent.putExtra("Uri", videoUri.toString());
-            intent.putExtra("ext",getfileExt(videoUri));
+        if (!editText.getText().toString().isEmpty()){
+            Intent intent= new Intent(makePost.this,SelectLocation.class);
+            intent.putExtra("type",type);
+            intent.putExtra("Desc",editText.getText().toString());
+            intent.putExtra("user_id",auth.getUid());
+            if (type==2){
+                intent.putExtra("Uri", imgUri.toString());
+                intent.putExtra("ext",getfileExt(imgUri));
+            }
+            if (type == 3) {
+                intent.putExtra("Uri", videoUri.toString());
+                intent.putExtra("ext",getfileExt(videoUri));
+            }
+            if (type == 4) {
+                intent.putExtra("Uri", audioUri.toString());
+                intent.putExtra("ext",getfileExt(audioUri));
+            }
+            startActivityForResult(intent,REQUEST_LOCATION);
+        }else{
+            Toast.makeText(makePost.this, "Write Something To Post" , Toast.LENGTH_SHORT).show();
         }
-        if (type == 4) {
-            intent.putExtra("Uri", audioUri.toString());
-            intent.putExtra("ext",getfileExt(audioUri));
-        }
-        startActivityForResult(intent,REQUEST_LOCATION);
+
     }
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -261,8 +270,6 @@ public class makePost extends AppCompatActivity {
             audioView.setVisibility(View.GONE);
             audioUri=null;
             imgUri=null;
-            type=4;
-            playerView.setVisibility(View.VISIBLE);
             type=3;
         }
         if (requestCode == REQUEST_AUDIO && resultCode ==RESULT_OK && data !=null && data.getData()!=null) {
@@ -352,7 +359,7 @@ public class makePost extends AppCompatActivity {
                 totTime.setText(totalTime);
                 mSeekBar.setMax(mMediaPlayer.getDuration());
                 mMediaPlayer.start();
-                playPause.setImageResource(R.drawable.ic_cancel);
+                playPause.setImageResource(R.drawable.ic_pause);
 
             }
         });
@@ -427,9 +434,8 @@ public class makePost extends AppCompatActivity {
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             sine.play();
-            playPause.setImageResource(R.drawable.ic_add);
+            playPause.setImageResource(R.drawable.ic_pause);
         } else {
-
             pause();
         }
 
@@ -440,7 +446,7 @@ public class makePost extends AppCompatActivity {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
                 sine.pause();
-                playPause.setImageResource(R.drawable.ic_cancel);
+                playPause.setImageResource(R.drawable.ic_play);
 
             }
         }
@@ -505,7 +511,6 @@ public class makePost extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        hideSystemUi();
         if (player == null && videoUri !=null) {
             initializePlayer(videoUri);
         }
@@ -524,15 +529,7 @@ public class makePost extends AppCompatActivity {
         return new ProgressiveMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(uri);
     }
-    @SuppressLint("InlinedApi")
-    private void hideSystemUi() {
-        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-    }
+
     private void releasePlayer() {
         if (player != null) {
             playWhenReady = player.getPlayWhenReady();
@@ -547,6 +544,7 @@ public class makePost extends AppCompatActivity {
         super.onStop();
         if (Util.SDK_INT >= 24) {
             releasePlayer();
+            pause();
         }
     }
 }

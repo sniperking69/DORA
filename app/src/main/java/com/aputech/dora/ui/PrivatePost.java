@@ -114,7 +114,6 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PrivatePost.this,MakePP.class);
-                //intent.putExtra("activity",2);
                 startActivity(intent);
             }
         });
@@ -247,23 +246,23 @@ private void loadData(){
 }
     @Override
     public boolean onMarkerClick(Marker marker) {
-//        Location postlocation = new Location("");
-//        postlocation.setLatitude(marker.getPosition().latitude);
-//        postlocation.setLongitude(marker.getPosition().longitude);
-//        float distance = mLastKnownLocation.distanceTo(postlocation) / 1000;
+        Location postlocation = new Location("");
+        postlocation.setLatitude(marker.getPosition().latitude);
+        postlocation.setLongitude(marker.getPosition().longitude);
+        float distance = mLastKnownLocation.distanceTo(postlocation) / 1000;
 //        if (distance < 1) {
-//            for (Post post : posts) {
-//                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
-//                    Intent intent = new Intent(MapView.this, PostDisplay.class);
-//                    intent.putExtra("post", post);
+//            for (message sent : listsent) {
+//                if (sent.getLocation().getLongitude() == marker.getPosition().longitude && sent.getLocation().getLatitude() == marker.getPosition().latitude) {
+//                    Intent intent = new Intent(PrivatePost.this, PrivatePostDisplay.class);
+//                    intent.putExtra("msg", sent);
 //                    startActivity(intent);
 //                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
 //                }
 //            }
 //        } else {
 //            boolean creator = false;
-//            for (Post post : posts) {
-//                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
+//            for (message received : listreceived) {
+//                if (received.getLocation().getLongitude() == marker.getPosition().longitude && received.getLocation().getLatitude() == marker.getPosition().latitude) {
 //                    if (auth.getUid().equals(post.getUserid())) {
 //                        Intent intent = new Intent(MapView.this, PostDisplay.class);
 //                        intent.putExtra("post", post);

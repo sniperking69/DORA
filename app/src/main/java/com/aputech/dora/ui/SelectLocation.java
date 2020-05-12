@@ -74,7 +74,7 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private String geocode;
     FirebaseStorage firebaseStorage=FirebaseStorage.getInstance();
-    StorageReference storageReference= firebaseStorage.getReference("videos");
+
     LatLng latLngfinal;
      Uri uri;
     private final float DEFAULT_ZOOM = 15;
@@ -285,7 +285,7 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            final StorageReference ref = storageReference.child(rf+"."+ ext);
+            final StorageReference ref = firebaseStorage.getReference("videos").child(rf+"."+ ext);
             ref.putFile(videoUri)
                     .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -297,6 +297,9 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
                                         if (task.isSuccessful()){
                                             progressDialog.dismiss();
                                             db.collection("Posts").document(rf).update("videoUrl",task.getResult().toString());
+                                                            Intent intent = new Intent();
+                                                            setResult(Activity.RESULT_OK, intent);
+                                                            finish();
                                         }
 
                                     }
@@ -343,16 +346,117 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
                 db.collection("Posts").document(commentref).update("refComments",commentref).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        if (type==1){
+                            Intent intent = new Intent();
+                            setResult(Activity.RESULT_OK, intent);
+                            finish();
+                        }
                         if (type==2){
-                            // post.setImageUrl("sdasda");
+                            UploadPicture(commentref,uri);
                         }if (type==3) {
                             UploadVideo(commentref,ext,uri);
                         }if (type==4){
-                            // post.setAudioUrl("dnaoidaoid");
+                            UploadAudio(commentref,ext,uri);
                         }
+
                     }
                 });
             }
         });
+    }
+
+    private void UploadAudio(final String commentref, String ext, Uri audiouri) {
+        final ProgressDialog progressDialog = new ProgressDialog(SelectLocation.this);
+        progressDialog.setTitle("Uploading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        final StorageReference ref = firebaseStorage.getReference("audio").child(commentref +"."+ ext);
+        ref.putFile(audiouri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()){
+                                        progressDialog.dismiss();
+                                        db.collection("Posts").document(commentref).update("audioUrl",task.getResult().toString());
+                                        Intent intent = new Intent();
+                                        setResult(Activity.RESULT_OK, intent);
+                                        finish();
+                                    }
+                                }
+                            });
+                        } else {
+                            progressDialog.dismiss();
+                            Toast.makeText(SelectLocation.this, "Upload Failed Network Error", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(SelectLocation.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                .getTotalByteCount());
+                        progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                    }
+                });
+    }
+
+    private void UploadPicture(final String commentref, Uri imguri) {
+            final ProgressDialog progressDialog = new ProgressDialog(SelectLocation.this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            final StorageReference ref = firebaseStorage.getReference("images").child(commentref +"."+ ext);
+            ref.putFile(imguri)
+                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.isSuccessful()){
+                                            progressDialog.dismiss();
+                                            db.collection("Posts").document(commentref).update("imageUrl",task.getResult().toString());
+                                            Intent intent = new Intent();
+                                            setResult(Activity.RESULT_OK, intent);
+                                            finish();
+                                        }
+                                    }
+                                });
+                            } else {
+                                progressDialog.dismiss();
+                                Toast.makeText(SelectLocation.this, "Upload Failed Network Error", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(SelectLocation.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+
     }
 }

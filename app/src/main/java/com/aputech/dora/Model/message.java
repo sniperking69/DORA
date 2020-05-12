@@ -12,6 +12,8 @@ import java.util.Date;
 public class message implements Parcelable {
     @ServerTimestamp
     private Date timestamp;
+
+
     private String description;
     private String imageUrl;
     private int type;

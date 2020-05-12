@@ -18,6 +18,7 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Model.User;
@@ -163,7 +164,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                                 .load(R.drawable.ic_grade)
                                 .into(holder.level);
                     }
-                    if (user.getPostnum() < 100 && user.getPostnum() > 500) {
+                    if (user.getPostnum() > 100 && user.getPostnum() < 500) {
                         Glide
                                 .with(mContext)
                                 .load(R.drawable.ic_grade1)
@@ -195,7 +196,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                         @Override
                         public void onClick(View v) {
                             Intent intent =new Intent(mContext, PostDisplay.class);
-                            intent.putExtra("post",model);
+                            intent.putExtra("post",model.getRefComments());
                             mContext.startActivity(intent);
                         }
                     });
@@ -203,7 +204,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                         @Override
                         public void onClick(View v) {
                             Intent intent =new Intent(mContext, PostDisplay.class);
-                            intent.putExtra("post",model);
+                            intent.putExtra("post",model.getRefComments());
                             mContext.startActivity(intent);
                         }
                     });
@@ -211,67 +212,78 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
             });
 
         }
+        holder.img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(mContext, PostDisplay.class);
+                intent.putExtra("post",model.getRefComments());
+                mContext.startActivity(intent);
+            }
+        });
+        if (model.getType()==1){
+            holder.thumbnail.setVisibility(View.GONE);
+        }
         if(model.getType()==2){
-            holder.img.setVisibility(View.VISIBLE);
+            holder.thumbnail.setVisibility(View.VISIBLE);
+            holder.playButton.setVisibility(View.GONE);
             Glide
                     .with(mContext)
                     .load(model.getImageUrl())
                     .into(holder.img);
         }
         if(model.getType()==3){
-            holder.videoView.setVisibility(View.VISIBLE);
-            String link = model.getVideoUrl();
-            MediaController mediaController = new MediaController(mContext);
-            mediaController.setAnchorView(holder.videoView);
-            Uri video = Uri.parse(link);
-            holder.videoView.setMediaController(mediaController);
-            holder.videoView.setVideoURI(video);
+            holder.thumbnail.setVisibility(View.VISIBLE);
+            Glide.with(mContext).load(model.getVideoUrl()).into(holder.img);
+        }
+        if(model.getType()==4){
+            holder.thumbnail.setVisibility(View.VISIBLE);
+            Glide.with(mContext).load(R.drawable.ic_sound).into(holder.img);
         }
         final DocumentReference postrefrence = db.collection("Posts").document(model.getRefComments());
         final DocumentReference Reference = db.collection("Posts").document(model.getRefComments()).collection("vote").document(auth.getUid());
         holder.up.setOnClickListener(new View.OnClickListener() {
-                                         @Override
-                                         public void onClick(View v) {
-                                             holder.down.setIconTintResource(R.color.colorPrimary);
-                                             holder.up.setIconTintResource(R.color.colorPrimary);
-                                             Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                 @Override
-                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                     if (task.isSuccessful()) {
-                                                         DocumentSnapshot document = task.getResult();
-                                                         if (document.exists()) {
-                                                             Vote vote = document.toObject(Vote.class);
-                                                             if (vote.isVotecheck()) {
-                                                                 holder.down.setIconTintResource(R.color.colorPrimary);
-                                                                 holder.up.setIconTintResource(R.color.colorPrimary);
-                                                                 Reference.delete();
-                                                                 postrefrence.update("upnum", model.getUpnum() - 1);
-                                                                 postrefrence.update("priority", (model.getUpnum() - 1) * 0.4 + (model.getDownnum()) * 0.2 + model.getCommentnum() * 0.4);
-                                                             }else{
-                                                                 holder.up.setIconTintResource(R.color.level2);
-                                                                 holder.down.setIconTintResource(R.color.colorPrimary);
-                                                                 Reference.update("votecheck",true);
-                                                                 postrefrence.update("upnum", model.getUpnum() + 1);
-                                                                 postrefrence.update("downnum", model.getDownnum() - 1);
-                                                                 postrefrence.update("priority", (model.getUpnum() + 1) * 0.4 + (model.getDownnum()-1) * 0.2 + model.getCommentnum() * 0.4);
-                                                             }
-                                                         } else {
-                                                             holder.up.setIconTintResource(R.color.level2);
-                                                             holder.down.setIconTintResource(R.color.colorPrimary);
-                                                             Vote v= new Vote();
-                                                             v.setVotecheck(true);
-                                                             Reference.set(v);
-                                                             postrefrence.update("upnum", model.getUpnum() + 1);
-                                                             postrefrence.update("priority", (model.getUpnum() + 1) * 0.4 + (model.getDownnum()) * 0.2 + model.getCommentnum() * 0.4);
-                                                         }
+            @Override
+            public void onClick(View v) {
+                holder.down.setIconTintResource(R.color.colorPrimary);
+                holder.up.setIconTintResource(R.color.colorPrimary);
+                Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Vote vote = document.toObject(Vote.class);
+                                if (vote.isVotecheck()) {
+                                    holder.down.setIconTintResource(R.color.colorPrimary);
+                                    holder.up.setIconTintResource(R.color.colorPrimary);
+                                    Reference.delete();
+                                    postrefrence.update("upnum", model.getUpnum() - 1);
+                                    postrefrence.update("priority", (model.getUpnum() - 1) * 0.4 + (model.getDownnum()) * 0.2 + model.getCommentnum() * 0.4);
+                                }else{
+                                    holder.up.setIconTintResource(R.color.level2);
+                                    holder.down.setIconTintResource(R.color.colorPrimary);
+                                    Reference.update("votecheck",true);
+                                    postrefrence.update("upnum", model.getUpnum() + 1);
+                                    postrefrence.update("downnum", model.getDownnum() - 1);
+                                    postrefrence.update("priority", (model.getUpnum() + 1) * 0.4 + (model.getDownnum()-1) * 0.2 + model.getCommentnum() * 0.4);
+                                }
+                            } else {
+                                holder.up.setIconTintResource(R.color.level2);
+                                holder.down.setIconTintResource(R.color.colorPrimary);
+                                Vote v= new Vote();
+                                v.setVotecheck(true);
+                                Reference.set(v);
+                                postrefrence.update("upnum", model.getUpnum() + 1);
+                                postrefrence.update("priority", (model.getUpnum() + 1) * 0.4 + (model.getDownnum()) * 0.2 + model.getCommentnum() * 0.4);
+                            }
 
-                                                     }
-                                                 }
+                        }
+                    }
 
-                                             });
-                                         }
-                                     });
-       Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                });
+            }
+        });
+        Reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -351,14 +363,18 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
         ImageView level;
         ImageView LocationIcon,delete,edit;
         CircleImageView profile;
-        VideoView videoView;
+        View audioview;
+        ImageView playButton;
+        CardView thumbnail;
         MaterialButton Commentbutton;
         public NoteHolder(View itemView) {
             super(itemView);
             up= itemView.findViewById(R.id.upbutton);
             down= itemView.findViewById(R.id.downbutton);
             edit =itemView.findViewById(R.id.edit);
-            videoView= itemView.findViewById(R.id.video_view);
+            playButton=itemView.findViewById(R.id.playbutton);
+            thumbnail=itemView.findViewById(R.id.thumbnail);
+            audioview =itemView.findViewById(R.id.audiocard);
             delete = itemView.findViewById(R.id.delete);
             user_name = itemView.findViewById(R.id.user_name);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
@@ -417,4 +433,5 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
         });
 
     }
+
 }

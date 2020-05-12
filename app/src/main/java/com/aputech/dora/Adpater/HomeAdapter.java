@@ -196,7 +196,7 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Post, HomeAdapter.Note
                             @Override
                             public void onClick(View v) {
                                 Intent intent =new Intent(mContext, PostDisplay.class);
-                                intent.putExtra("post",model);
+                                intent.putExtra("post",model.getRefComments());
                                 mContext.startActivity(intent);
                             }
                         });
@@ -204,7 +204,7 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Post, HomeAdapter.Note
                             @Override
                             public void onClick(View v) {
                                 Intent intent =new Intent(mContext, PostDisplay.class);
-                                intent.putExtra("post",model);
+                                intent.putExtra("post",model.getRefComments());
                                 mContext.startActivity(intent);
                             }
                         });

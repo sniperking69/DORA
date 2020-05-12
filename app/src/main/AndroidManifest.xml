@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aputech.dora">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -33,6 +32,7 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".NearByPosts"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -50,7 +50,9 @@
         <activity android:name=".ui.SelectPrivateLocation" />
         <activity android:name=".ui.SelectUser" />
         <activity android:name=".ui.PrivatePostDisplay" />
-        <activity android:name=".ui.PostDisplay" />
+        <activity
+            android:name=".ui.PostDisplay"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.SelectLocation"
             android:label="@string/title_activity_select_location" />

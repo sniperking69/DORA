@@ -46,28 +46,7 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
             holder.notitime.setText(df);
         }
 
-        holder.Delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteItem(position);
-            }
-        });
         holder.notidesc.setText(model.getText());
-        holder.notidoc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                db.collection("Posts").document(model.getDocument()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Post post = documentSnapshot.toObject(Post.class);
-                        Intent intent = new Intent(mContext, PostDisplay.class);
-                        intent.putExtra("post",post);
-                        mContext.startActivity(intent);
-                    }
-                });
-
-            }
-        });
         DocumentReference documentReference = db.collection("Users").document(model.getUserid());
         documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -105,6 +84,20 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
             notitime = itemView.findViewById(R.id.notitime);
             img = itemView.findViewById(R.id.profiledisplay);
             notidoc = itemView.findViewById(R.id.notidoc);
+            Delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteItem(getAdapterPosition());
+                }
+            });
+            notidoc.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, PostDisplay.class);
+                    intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                    mContext.startActivity(intent);
+                }
+            });
         }
     }
 

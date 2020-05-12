@@ -1,8 +1,12 @@
 package com.aputech.dora.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.R;
@@ -29,6 +34,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -223,7 +229,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
             for (Post post : posts) {
                 if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
                     Intent intent = new Intent(MapView.this, PostDisplay.class);
-                    intent.putExtra("post", post);
+                    intent.putExtra("post", post.getRefComments());
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                 }
@@ -234,7 +240,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
                 if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
                     if (auth.getUid().equals(post.getUserid())) {
                         Intent intent = new Intent(MapView.this, PostDisplay.class);
-                        intent.putExtra("post", post);
+                        intent.putExtra("post", post.getRefComments());
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                         creator = true;
@@ -250,7 +256,14 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
 
         return false;
     }
-
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
     private void moveMap(LatLng latLng) {
         float zoom = 15;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
