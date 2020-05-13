@@ -221,40 +221,79 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        ArrayList<String> PostNearby=new ArrayList<>();
         Location postlocation = new Location("");
         postlocation.setLatitude(marker.getPosition().latitude);
         postlocation.setLongitude(marker.getPosition().longitude);
-        float distance = mLastKnownLocation.distanceTo(postlocation) / 1000;
-        if (distance < 1) {
-            for (Post post : posts) {
-                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
-                    Intent intent = new Intent(MapView.this, PostDisplay.class);
-                    intent.putExtra("post", post.getRefComments());
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        if (closekm(postlocation,mLastKnownLocation)) {
+            int x=0;
+            while (x<posts.size()){
+                Post post= posts.get(x);
+                if (post.getLocation()!=null){
+                 if (post.getLocation().getLongitude()==marker.getPosition().longitude &&
+                         post.getLocation().getLatitude() ==marker.getPosition().latitude){
+                     PostNearby.add(post.getRefComments());
+                     x+=1;
+                     while(x<posts.size()){
+                         Post pst= posts.get(x);
+                         if (pst.getLocation()!=null){
+                             Location postA = new Location("");
+                             postA.setLatitude(pst.getLocation().getLatitude());
+                             postA.setLongitude(pst.getLocation().getLongitude());
+                             Location postB = new Location("");
+                             postB.setLatitude(post.getLocation().getLatitude());
+                             postB.setLongitude(post.getLocation().getLongitude());
+                             if (closekm(postA,postB)){
+                                 PostNearby.add(pst.getRefComments());
+                                 Log.d("bigpp", "onMarkerClick: "+PostNearby);
+                             }
+                         }
+                         x+=1;
+                     }
+                     break;
+                 }
                 }
+                x+=1;
+            }
+            if (PostNearby.size()>1){
+                Intent intent = new Intent(MapView.this, NearByPosts.class);
+                intent.putExtra("post", PostNearby);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+
+            }if (PostNearby.size()==1){
+                Intent intent = new Intent(MapView.this, PostDisplay.class);
+                intent.putExtra("post", PostNearby.get(0));
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+                PostNearby.add(PostNearby.get(0));
             }
         } else {
-            boolean creator = false;
-            for (Post post : posts) {
-                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
-                    if (auth.getUid().equals(post.getUserid())) {
-                        Intent intent = new Intent(MapView.this, PostDisplay.class);
-                        intent.putExtra("post", post.getRefComments());
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-                        creator = true;
-                    }
-                }
-            }
-            if (!creator) {
-                View contextView = findViewById(R.id.main);
-                Snackbar.make(contextView, R.string.not_at_location, Snackbar.LENGTH_SHORT).show();
-            }
+//            boolean creator = false;
+//            for (Post post : posts) {
+//                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
+//                    if (auth.getUid().equals(post.getUserid())) {
+//                        Intent intent = new Intent(MapView.this, PostDisplay.class);
+//                        intent.putExtra("post", post.getRefComments());
+//                        startActivity(intent);
+//                        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+//                        creator = true;
+//                    }
+//                }
+//            }
+//            if (!creator) {
+//                View contextView = findViewById(R.id.main);
+//                Snackbar.make(contextView, R.string.not_at_location, Snackbar.LENGTH_SHORT).show();
+//            }
 
         }
 
         return false;
+    }
+    private boolean closekm(Location A, Location B){
+        float dis = A.distanceTo(B) / 1000;
+        return dis < 1;
+
     }
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);

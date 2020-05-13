@@ -100,22 +100,12 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         SKIP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent();
-//                intent.putExtra("LatLng", latLngfinal);
-//                intent.putExtra("skip", true);
-//                setResult(Activity.RESULT_OK, intent);
-//                finish();
                 uploadFire(type,false,txt,ext,uri);
             }
         });
         Forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent();
-//                intent.putExtra("LatLng", latLngfinal);
-//                intent.putExtra("skip", true);
-//                setResult(Activity.RESULT_OK, intent);
-//                finish();
                 uploadFire(type,true,txt,ext,uri);
             }
         });

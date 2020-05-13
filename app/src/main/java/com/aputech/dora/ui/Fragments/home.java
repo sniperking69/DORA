@@ -71,12 +71,6 @@ public class home extends Fragment {
     private  RelativeLayout relativeLayout;
     private RecyclerView.AdapterDataObserver adapterDataObserver;
     private MaterialButton map_View;
-    //HomeAdapter adapter;
-    ObservableSnapshotArray followposts;
-    private RecyclerView mRecyclerView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private CollectionReference mPostsCollection = db.collection("Posts");
-    private EventListener<QuerySnapshot> eventListener;
 
     public static home newInstance(int index) {
         home fragment = new home();

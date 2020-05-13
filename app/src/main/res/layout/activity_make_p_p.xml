@@ -6,9 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.MakePP">
-
-
-
     <RelativeLayout
         android:id="@+id/rellay1"
         android:layout_width="match_parent"
@@ -22,15 +19,13 @@
             android:id="@+id/poster_profile"
             android:layout_width="45dp"
             android:layout_height="45dp"
-
-            android:src="@drawable/ic_ram_profile" />
+            android:src="@drawable/ic_user" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-
+            android:layout_marginStart="10dp"
             android:layout_toEndOf="@+id/poster_profile"
             android:orientation="vertical">
             <LinearLayout
@@ -42,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Karun Shrestha"
+
                     android:textColor="@android:color/black"
                     android:textSize="17sp" />
                 <androidx.appcompat.widget.AppCompatImageView
@@ -57,7 +52,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="11 hrs"
                 android:textColor="@android:color/black"
                 android:textSize="13sp" />
 
@@ -72,61 +66,98 @@
         android:layout_height="match_parent"
         android:layout_above="@id/bottomlinear"
         android:orientation="vertical">
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="5dp">
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/Bio"
-
-        android:layout_width="match_parent"
-        app:counterEnabled="true"
-        app:counterMaxLength="250"
-        app:hintAnimationEnabled="false"
-        android:layout_margin="10dp"
-        app:hintEnabled="false"
-        android:background="@null"
-        app:counterOverflowTextAppearance="@style/TextLimitError"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/para"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:backgroundTint="@color/bg"
-            android:ems="10"
-
-            android:gravity="top"
-            android:background="@null"
-            android:hint="Drop A Post For A Friend..."
-            android:maxLength="250"
-            android:inputType="textMultiLine" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-</androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="5dp">
-        <ImageView
-            android:id="@+id/dispimg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/holo_red_dark"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/Bio"
+
+                android:layout_width="match_parent"
+                app:counterEnabled="true"
+                app:counterMaxLength="250"
+                app:hintAnimationEnabled="false"
+                android:layout_margin="10dp"
+                app:hintEnabled="false"
+                android:background="@null"
+                app:counterOverflowTextAppearance="@style/TextLimitError"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/para"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/bg"
+                    android:ems="10"
+
+                    android:gravity="top"
+                    android:background="@null"
+                    android:hint="Drop A Post For A Friend..."
+                    android:maxLength="250"
+                    android:inputType="textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
+
         </androidx.cardview.widget.CardView>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+            <include layout="@layout/audio_layout"
+                android:visibility="gone"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_below="@+id/remover"
+                android:id="@+id/audiolayout"/>
+            <ImageView
+                android:id="@+id/dispimg"
+                android:visibility="invisible"
+                android:layout_below="@+id/remover"
+                android:layout_width="match_parent"
+                android:layout_height="380dp" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:id="@+id/PPVideo"
+                app:fabSize="normal"
+                android:visibility="invisible"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                app:backgroundTint="@color/level3"
+                android:layout_height="wrap_content"
+                app:fabCustomSize="80dp"
+                app:maxImageSize="70dp"
+                android:tint="@color/white"
+                android:src="@drawable/ic_pause"
+                android:layout_marginBottom="30dp"
+                />
+            <com.google.android.exoplayer2.ui.PlayerView
+                android:id="@+id/videoDisplay"
+                android:layout_width="match_parent"
+                android:layout_below="@+id/remover"
+                android:visibility="gone"
+                android:layout_height="match_parent" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/remover"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:iconSize="20dp"
+                android:textSize="12sp"
+                app:iconGravity="textStart"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                app:icon="@drawable/ic_delete"
+                android:text="Remove">
+            </com.google.android.material.button.MaterialButton>
+        </RelativeLayout>
+
+
     </LinearLayout>
-
-
-
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_add_msg"
         android:onClick="Done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/bottomlinear"
         android:layout_above="@+id/collecting"
-
+        android:layout_alignEnd="@+id/bottomlinear"
         android:layout_margin="16dp"
         android:src="@drawable/ic_next" />
     <LinearLayout
@@ -143,7 +174,7 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            app:iconSize="40dp"
+            app:iconSize="30dp"
             app:iconGravity="textEnd"
             app:iconTintMode="add"
 
@@ -156,7 +187,7 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:iconSize="40dp"
+            app:iconSize="30dp"
             app:iconTintMode="add"
             app:iconTint="@null"
             app:iconGravity="textEnd"
@@ -170,7 +201,7 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:iconSize="40dp"
+            app:iconSize="30dp"
             app:iconTintMode="add"
             app:iconTint="@null"
             app:iconGravity="textEnd"
@@ -198,7 +229,6 @@
             android:layout_height="45dp"
             android:layout_weight="9"
             android:orientation="horizontal"/>
-
     </LinearLayout>
 
 </RelativeLayout>

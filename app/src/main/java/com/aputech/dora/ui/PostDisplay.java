@@ -133,7 +133,6 @@ public class PostDisplay extends AppCompatActivity {
         sine = findViewById(R.id.waveView);
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(PostDisplay.this));
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -158,7 +157,29 @@ public class PostDisplay extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
               final Post post = documentSnapshot.toObject(Post.class);
-
+                if (post.getType()==2){
+                    if (postText.getText().toString().isEmpty()){
+                        postText.setVisibility(View.GONE);
+                    }
+                    image.setVisibility(View.VISIBLE);
+                    Glide
+                            .with(PostDisplay.this)
+                            .load(post.getImageUrl())
+                            .into(image);
+                }if (post.getType()==3){
+                    if (postText.getText().toString().isEmpty()){
+                        postText.setVisibility(View.GONE);
+                    }
+                    playerView.setVisibility(View.VISIBLE);
+                    initializePlayer(Uri.parse(post.getVideoUrl()));
+                }if (post.getType()==4){
+                    if (postText.getText().toString().isEmpty()){
+                        postText.setVisibility(View.GONE);
+                    }
+                    audioView.setVisibility(View.VISIBLE);
+                    audioUri=Uri.parse(post.getAudioUrl());
+                    initPlayer(audioUri);
+                }
                 sendcom.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -166,7 +187,6 @@ public class PostDisplay extends AppCompatActivity {
                     }
                 });
 
-                int Type = post.getType();
                 if (post.getTimestamp() != null) {
                     Date date = post.getTimestamp();
                     String df = DateFormat.getDateFormat(PostDisplay.this).format(date).concat("  ").concat(DateFormat.getTimeFormat(PostDisplay.this).format(date));
@@ -286,29 +306,7 @@ public class PostDisplay extends AppCompatActivity {
 
                     }
                 });
-                if (post.getType()==2){
-                    if (postText.getText().toString().isEmpty()){
-                        postText.setVisibility(View.GONE);
-                    }
-                    image.setVisibility(View.VISIBLE);
-                    Glide
-                            .with(PostDisplay.this)
-                            .load(post.getImageUrl())
-                            .into(image);
-                }if (post.getType()==3){
-                    if (postText.getText().toString().isEmpty()){
-                        postText.setVisibility(View.GONE);
-                    }
-                    playerView.setVisibility(View.VISIBLE);
-                    initializePlayer(Uri.parse(post.getVideoUrl()));
-                }if (post.getType()==4){
-                    if (postText.getText().toString().isEmpty()){
-                        postText.setVisibility(View.GONE);
-                    }
-                    audioView.setVisibility(View.VISIBLE);
-                    audioUri=Uri.parse(post.getAudioUrl());
-                    initPlayer(audioUri);
-                }
+
                 documentReference = db.collection("Posts").document(post.getRefComments());
                 eventListener =new EventListener<DocumentSnapshot>() {
                     @Override
@@ -723,8 +721,8 @@ public class PostDisplay extends AppCompatActivity {
     }
 
     @Override
-    public void finish() {
-        super.finish();
+    public void onBackPressed() {
+        super.onBackPressed();
         overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
     }
 }

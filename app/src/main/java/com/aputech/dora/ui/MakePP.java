@@ -103,14 +103,7 @@ public class MakePP extends AppCompatActivity {
         time = findViewById(R.id.time);
         level = findViewById(R.id.level);
         MaterialButton button= findViewById(R.id.AddUser);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MakePP.this,SelectUser.class);
-                startActivity(intent);
-                overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
-            }
-        });
+
         profile = findViewById(R.id.poster_profile);
         gallery = findViewById(R.id.Gallery);
         camera = findViewById(R.id.Camera);
@@ -158,6 +151,14 @@ public class MakePP extends AppCompatActivity {
                 imageView.setVisibility(View.GONE);
                 audioView.setVisibility(View.GONE);
                 remover.setVisibility(View.INVISIBLE);
+            }
+        });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MakePP.this,SelectUser.class);
+                startActivity(intent);
+                overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
             }
         });
         DocumentReference documentReference = db.collection("Users").document(auth.getUid());
@@ -223,23 +224,28 @@ public class MakePP extends AppCompatActivity {
 
     }
     public void Done(View view) {
-        Intent intent= new Intent(MakePP.this,SelectLocation.class);
-        intent.putExtra("type",type);
-        intent.putExtra("Desc",editText.getText().toString());
-        intent.putExtra("user_id",auth.getUid());
-        if (type==2){
-            intent.putExtra("Uri", imgUri.toString());
-            intent.putExtra("ext",getfileExt(imgUri));
+        if (!editText.getText().toString().isEmpty()){
+            Intent intent= new Intent(MakePP.this,SelectLocation.class);
+            intent.putExtra("type",type);
+            intent.putExtra("Desc",editText.getText().toString());
+            intent.putExtra("user_id",auth.getUid());
+            if (type==2){
+                intent.putExtra("Uri", imgUri.toString());
+                intent.putExtra("ext",getfileExt(imgUri));
+            }
+            if (type == 3) {
+                intent.putExtra("Uri", videoUri.toString());
+                intent.putExtra("ext",getfileExt(videoUri));
+            }
+            if (type == 4) {
+                intent.putExtra("Uri", audioUri.toString());
+                intent.putExtra("ext",getfileExt(audioUri));
+            }
+            startActivityForResult(intent,REQUEST_LOCATION);
+        }else{
+            Toast.makeText(MakePP.this, "Write Something To Post" , Toast.LENGTH_SHORT).show();
         }
-        if (type == 3) {
-            intent.putExtra("Uri", videoUri.toString());
-            intent.putExtra("ext",getfileExt(videoUri));
-        }
-        if (type == 4) {
-            intent.putExtra("Uri", audioUri.toString());
-            intent.putExtra("ext",getfileExt(audioUri));
-        }
-        startActivityForResult(intent,REQUEST_LOCATION);
+
     }
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -354,7 +360,7 @@ public class MakePP extends AppCompatActivity {
                 totTime.setText(totalTime);
                 mSeekBar.setMax(mMediaPlayer.getDuration());
                 mMediaPlayer.start();
-                playPause.setImageResource(R.drawable.ic_cancel);
+                playPause.setImageResource(R.drawable.ic_pause);
 
             }
         });
@@ -429,9 +435,8 @@ public class MakePP extends AppCompatActivity {
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             sine.play();
-            playPause.setImageResource(R.drawable.ic_add);
+            playPause.setImageResource(R.drawable.ic_pause);
         } else {
-
             pause();
         }
 
@@ -442,7 +447,7 @@ public class MakePP extends AppCompatActivity {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
                 sine.pause();
-                playPause.setImageResource(R.drawable.ic_cancel);
+                playPause.setImageResource(R.drawable.ic_play);
 
             }
         }
@@ -507,7 +512,6 @@ public class MakePP extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        hideSystemUi();
         if (player == null && videoUri !=null) {
             initializePlayer(videoUri);
         }
@@ -526,15 +530,7 @@ public class MakePP extends AppCompatActivity {
         return new ProgressiveMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(uri);
     }
-    @SuppressLint("InlinedApi")
-    private void hideSystemUi() {
-        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-    }
+
     private void releasePlayer() {
         if (player != null) {
             playWhenReady = player.getPlayWhenReady();
@@ -549,6 +545,7 @@ public class MakePP extends AppCompatActivity {
         super.onStop();
         if (Util.SDK_INT >= 24) {
             releasePlayer();
+            pause();
         }
     }
 }

@@ -1,12 +1,21 @@
 package com.aputech.dora.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.MediaRouteButton;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+import android.widget.TextView;
 
 import com.aputech.dora.Adpater.ContactInterface;
 import com.aputech.dora.Adpater.PillAdapter;
@@ -37,22 +46,29 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
     CollectionReference All=db.collection("Users");
     contactAdapter adapter;
     PillAdapter pillAdapter;
-
+    SearchView searchView;
     CollectionReference collectionFollowing= db.collection("Users").document(auth.getUid()).collection("Following");
     private ArrayList<User> Final= new ArrayList<>();
+    private RelativeLayout relativeLayout;
+    private ImageView searchSubmit;
+    private TextView searchtext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_user);
+        searchView=findViewById(R.id.searchArea);
+        searchSubmit = (ImageView) searchView.findViewById(androidx.appcompat.R.id.search_go_btn);
+        searchtext = (TextView) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        searchtext.setTextColor(Color.parseColor("#ffffff"));
+        searchSubmit.setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_ATOP);
         recycler_basket = findViewById(R.id.recycler_basket);
         recycler_basket.setHasFixedSize(true);
         recycler_basket.setLayoutManager(new LinearLayoutManager(SelectUser.this));
+        relativeLayout = findViewById(R.id.noresult);
        recycler_collected = findViewById(R.id.recycler_collected);
         recycler_collected.setHasFixedSize(true);
         recycler_collected.setLayoutManager(new LinearLayoutManager(SelectUser.this,LinearLayoutManager.HORIZONTAL, false));
-
-
       collectionFollowing.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
           @Override
           public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -69,6 +85,19 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
                           }
                       }
                       adapter.notifyDataSetChanged();
+                      searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                          @Override
+                          public boolean onQueryTextSubmit(String query) {
+                              filter(query);
+                              return true;
+                          }
+
+                          @Override
+                          public boolean onQueryTextChange(String newText) {
+                              filter(newText);
+                              return true;
+                          }
+                      });
                   }
               });
           }
@@ -79,10 +108,25 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
         recycler_basket.setAdapter(adapter);
     }
 
+
+
     @Override
     public void finish() {
-        super.finish();
+        Intent intent = new Intent();
+        intent.putExtra("mylist",Final);
+        setResult(RESULT_OK,intent);
         overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
+        super.finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("mylist",Final);
+        setResult(RESULT_OK,intent);
+        overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
+        super.onBackPressed();
+
     }
 
     @Override
@@ -103,21 +147,21 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
         }
 
     }
-//    private void filter(String text) {
-//        ArrayList<User> filteredList = new ArrayList<>();
-//
-//        for (User item : users) {
-//            if (item.getUserName().toLowerCase().contains(text.toLowerCase())) {
-//                filteredList.add(item);
-//            }
-//        }
-//        adapter.filterList(filteredList);
-//        if (adapter.getItemCount()==0){
-//            noresult.setVisibility(View.VISIBLE);
-//            recyclerView.setVisibility(View.INVISIBLE);
-//        }else {
-//            recyclerView.setVisibility(View.VISIBLE);
-//            noresult.setVisibility(View.INVISIBLE);
-//        }
-//    }
+    private void filter(String text) {
+        ArrayList<User> filteredList = new ArrayList<>();
+
+        for (User item : FollowingUsers) {
+            if (item.getUserName().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        adapter.filterList(filteredList);
+        if (adapter.getItemCount()==0){
+            relativeLayout.setVisibility(View.VISIBLE);
+            recycler_basket.setVisibility(View.INVISIBLE);
+        }else {
+            recycler_basket.setVisibility(View.VISIBLE);
+            relativeLayout.setVisibility(View.INVISIBLE);
+        }
+    }
 }

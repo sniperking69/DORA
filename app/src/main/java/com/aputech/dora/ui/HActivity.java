@@ -139,14 +139,14 @@ public class HActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d("bigpp", "onQueryTextSubmit: "+query);
                 filter(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                filter(newText);
+                return true;
             }
         });
 
@@ -318,21 +318,24 @@ public class HActivity extends AppCompatActivity {
     }
 
     private void filter(String text) {
-        ArrayList<User> filteredList = new ArrayList<>();
+        if (adapter!=null){
+            ArrayList<User> filteredList = new ArrayList<>();
 
-        for (User item : users) {
-            if (item.getUserName().toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(item);
+            for (User item : users) {
+                if (item.getUserName().toLowerCase().contains(text.toLowerCase())) {
+                    filteredList.add(item);
+                }
+            }
+            adapter.filterList(filteredList);
+            if (adapter.getItemCount()==0){
+                noresult.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
+            }else {
+                recyclerView.setVisibility(View.VISIBLE);
+                noresult.setVisibility(View.INVISIBLE);
             }
         }
-        adapter.filterList(filteredList);
-        if (adapter.getItemCount()==0){
-            noresult.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.INVISIBLE);
-        }else {
-            recyclerView.setVisibility(View.VISIBLE);
-            noresult.setVisibility(View.INVISIBLE);
-        }
+
     }
 
     @Override

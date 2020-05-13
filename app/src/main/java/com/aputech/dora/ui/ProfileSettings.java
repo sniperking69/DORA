@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +41,10 @@ public class ProfileSettings extends AppCompatActivity {
         myToolbar = findViewById(R.id.my_toolbar);
         notiswitch=findViewById(R.id.notiswitch);
         myToolbar.setTitle("Settings");
+        myToolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         if (isJobServiceOn(ProfileSettings.this)){
             notiswitch.setChecked(true);
         }else{
@@ -122,5 +126,10 @@ public class ProfileSettings extends AppCompatActivity {
             }
         }
         return hasBeenScheduled;
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }
