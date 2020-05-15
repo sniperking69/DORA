@@ -2,6 +2,7 @@ package com.aputech.dora.ui;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -23,6 +24,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aputech.dora.Adpater.ContactInterface;
+import com.aputech.dora.Adpater.PillAdapter;
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
@@ -53,6 +56,7 @@ import com.narayanacharya.waveview.WaveView;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -76,7 +80,6 @@ public class MakePP extends AppCompatActivity {
     private MaterialButton remover;
     private ImageView level;
     private Uri videoUri;
-    //  VideoView videoView;
     private CircleImageView profile;
     private View audioView;
     private Uri imgUri;
@@ -88,12 +91,14 @@ public class MakePP extends AppCompatActivity {
     private SimpleExoPlayer player;
     static MediaPlayer mMediaPlayer;
     FloatingActionButton playPause;
-    Uri songResourceUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/dora-275f8.appspot.com/o/videos%2FsB0bujdAyTlu3GwM9tW2.mp4?alt=media&token=f376e368-4032-4d3e-a4b5-9169b037ee71");
     SeekBar mSeekBar;
+    ArrayList<User> sendto;
+    PillAdapter pillAdapter;
     private boolean playWhenReady = true;
     private int currentWindow = 0;
     private long playbackPosition = 0;
-    ImageView curListIcon;
+    RecyclerView contact_view;
+    private int GET_USERS=15;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +108,9 @@ public class MakePP extends AppCompatActivity {
         time = findViewById(R.id.time);
         level = findViewById(R.id.level);
         MaterialButton button= findViewById(R.id.AddUser);
-
+        contact_view= findViewById(R.id.contact_view);
+        pillAdapter= new PillAdapter(sendto);
+        contact_view.setAdapter(pillAdapter);
         profile = findViewById(R.id.poster_profile);
         gallery = findViewById(R.id.Gallery);
         camera = findViewById(R.id.Camera);
@@ -157,7 +164,8 @@ public class MakePP extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MakePP.this,SelectUser.class);
-                startActivity(intent);
+                intent.putExtra("sendto",pillAdapter.getUserList());
+                startActivityForResult(intent,GET_USERS);
                 overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
             }
         });
@@ -225,23 +233,29 @@ public class MakePP extends AppCompatActivity {
     }
     public void Done(View view) {
         if (!editText.getText().toString().isEmpty()){
-            Intent intent= new Intent(MakePP.this,SelectLocation.class);
-            intent.putExtra("type",type);
-            intent.putExtra("Desc",editText.getText().toString());
-            intent.putExtra("user_id",auth.getUid());
-            if (type==2){
-                intent.putExtra("Uri", imgUri.toString());
-                intent.putExtra("ext",getfileExt(imgUri));
+            if (!pillAdapter.getUserList().isEmpty()){
+                Intent intent= new Intent(MakePP.this,SelectPrivateLocation.class);
+                intent.putExtra("type",type);
+                intent.putExtra("sendto",sendto);
+                intent.putExtra("Desc",editText.getText().toString());
+                intent.putExtra("user_id",auth.getUid());
+                if (type==2){
+                    intent.putExtra("Uri", imgUri.toString());
+                    intent.putExtra("ext",getfileExt(imgUri));
+                }
+                if (type == 3) {
+                    intent.putExtra("Uri", videoUri.toString());
+                    intent.putExtra("ext",getfileExt(videoUri));
+                }
+                if (type == 4) {
+                    intent.putExtra("Uri", audioUri.toString());
+                    intent.putExtra("ext",getfileExt(audioUri));
+                }
+                startActivityForResult(intent,REQUEST_LOCATION);
+            }else{
+                Toast.makeText(MakePP.this, "Pick A User to Send The Message" , Toast.LENGTH_SHORT).show();
             }
-            if (type == 3) {
-                intent.putExtra("Uri", videoUri.toString());
-                intent.putExtra("ext",getfileExt(videoUri));
-            }
-            if (type == 4) {
-                intent.putExtra("Uri", audioUri.toString());
-                intent.putExtra("ext",getfileExt(audioUri));
-            }
-            startActivityForResult(intent,REQUEST_LOCATION);
+
         }else{
             Toast.makeText(MakePP.this, "Write Something To Post" , Toast.LENGTH_SHORT).show();
         }
@@ -338,6 +352,11 @@ public class MakePP extends AppCompatActivity {
         }
         if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK){
             finish();
+        }
+        if (requestCode ==GET_USERS && resultCode == RESULT_OK && data !=null && data.getData()!=null ){
+            sendto=data.getParcelableArrayListExtra("sendto");
+            pillAdapter= new PillAdapter(sendto);
+            contact_view.setAdapter(pillAdapter);
         }
     }
     private String getfileExt(Uri videoUri){
@@ -548,4 +567,5 @@ public class MakePP extends AppCompatActivity {
             pause();
         }
     }
+
 }

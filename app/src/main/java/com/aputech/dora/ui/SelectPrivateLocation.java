@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aputech.dora.Model.Post;
+import com.aputech.dora.Model.User;
+import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
@@ -49,9 +54,15 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,32 +71,48 @@ import java.util.List;
 
 public class SelectPrivateLocation extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
+    MaterialButton Forward;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Location mLastKnownLocation;
     private LocationCallback locationCallback;
     private View mapView;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private String geocode;
+    FirebaseStorage firebaseStorage=FirebaseStorage.getInstance();
     LatLng latLngfinal;
+    Uri uri;
     private final float DEFAULT_ZOOM = 15;
-    MaterialButton SendButton;
     private TextView resutText;
+    int type;
+    String ext;
+    ArrayList<User> sendto;
+    String txt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_private_location);
-        SendButton= findViewById(R.id.forward);
-        resutText= findViewById(R.id.dragg_result);
-        SendButton.setOnClickListener(new View.OnClickListener() {
+        resutText = (TextView) findViewById(R.id.dragg_result);
+        Forward = findViewById(R.id.forward);
+        Intent intent= getIntent();
+        sendto=intent.getParcelableArrayListExtra("sendto");
+        txt=intent.getStringExtra("Desc");
+        type=intent.getIntExtra("type",1);
+        if (intent.getStringExtra("Uri")!=null){
+            uri=Uri.parse(intent.getStringExtra("Uri"));
+            ext=intent.getStringExtra("ext");
+        }
+        Forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra("LatLng", latLngfinal);
-                setResult(RESULT_OK, intent);
-                finish();
+                for (int x=0;x<sendto.size();x++){
+                    uploadFire(type,txt,ext,uri,sendto.get(x).getUserid());
+                }
+
             }
         });
+
         Places.initialize(getApplicationContext(), getResources().getString(R.string.google_api_key));
         final PlacesClient placesClient = Places.createClient(this);
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -120,6 +147,12 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
+                Geocodeget();
+            }
+        });
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
                 Geocodeget();
             }
         });
@@ -238,6 +271,182 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
         float zoom = 15;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
+    public void UploadVideo(final String rf ,String ext,Uri videoUri) {
+        if (videoUri != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(SelectPrivateLocation.this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
 
+            final StorageReference ref = firebaseStorage.getReference("videos").child(rf+"."+ ext);
+            ref.putFile(videoUri)
+                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.isSuccessful()){
+                                            progressDialog.dismiss();
+                                            db.collection("Inbox").document(rf).update("videoUrl",task.getResult().toString());
+                                            Intent intent = new Intent();
+                                            setResult(Activity.RESULT_OK, intent);
+                                            finish();
+                                        }
 
+                                    }
+                                });
+                            } else {
+                                progressDialog.dismiss();
+                                Toast.makeText(SelectPrivateLocation.this, "Upload Failed Network Error", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(SelectPrivateLocation.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        }
+    }
+    private void uploadFire(final int type, String text, final String ext, final Uri uri ,String userid){
+        final message post = new message();
+        GeoPoint geoPoint = new GeoPoint(latLngfinal.latitude,latLngfinal.longitude);
+        post.setLocation(geoPoint);
+        post.setType(type);
+        post.setDescription(text);
+        post.setSender(auth.getUid());
+        post.setReceiver(userid);
+        db.collection("Inbox").add(post).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                final String commentref = documentReference.getId();
+                db.collection("Inbox").document(commentref).update("refmsg",commentref).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (type==1){
+                            Intent intent = new Intent();
+                            setResult(Activity.RESULT_OK, intent);
+                            finish();
+                        }
+                        if (type==2){
+                            UploadPicture(commentref,uri);
+                        }if (type==3) {
+                            UploadVideo(commentref,ext,uri);
+                        }if (type==4){
+                            UploadAudio(commentref,ext,uri);
+                        }
+
+                    }
+                });
+            }
+        });
+    }
+
+    private void UploadAudio(final String commentref, String ext, Uri audiouri) {
+        final ProgressDialog progressDialog = new ProgressDialog(SelectPrivateLocation.this);
+        progressDialog.setTitle("Uploading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        final StorageReference ref = firebaseStorage.getReference("audio").child(commentref +"."+ ext);
+        ref.putFile(audiouri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()){
+                                        progressDialog.dismiss();
+                                        db.collection("Inbox").document(commentref).update("audioUrl",task.getResult().toString());
+                                        Intent intent = new Intent();
+                                        setResult(Activity.RESULT_OK, intent);
+                                        finish();
+                                    }
+                                }
+                            });
+                        } else {
+                            progressDialog.dismiss();
+                            Toast.makeText(SelectPrivateLocation.this, "Upload Failed Network Error", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(SelectPrivateLocation.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                .getTotalByteCount());
+                        progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                    }
+                });
+    }
+
+    private void UploadPicture(final String commentref, Uri imguri) {
+        final ProgressDialog progressDialog = new ProgressDialog(SelectPrivateLocation.this);
+        progressDialog.setTitle("Uploading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        final StorageReference ref = firebaseStorage.getReference("images").child(commentref +"."+ ext);
+        ref.putFile(imguri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()){
+                                        progressDialog.dismiss();
+                                        db.collection("Inbox").document(commentref).update("imageUrl",task.getResult().toString());
+                                        Intent intent = new Intent();
+                                        setResult(Activity.RESULT_OK, intent);
+                                        finish();
+                                    }
+                                }
+                            });
+                        } else {
+                            progressDialog.dismiss();
+                            Toast.makeText(SelectPrivateLocation.this, "Upload Failed Network Error", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(SelectPrivateLocation.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                .getTotalByteCount());
+                        progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                    }
+                });
+
+    }
 }

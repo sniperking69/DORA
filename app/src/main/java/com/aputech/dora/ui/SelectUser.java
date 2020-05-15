@@ -48,7 +48,7 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
     PillAdapter pillAdapter;
     SearchView searchView;
     CollectionReference collectionFollowing= db.collection("Users").document(auth.getUid()).collection("Following");
-    private ArrayList<User> Final= new ArrayList<>();
+    private ArrayList<User> sendto= new ArrayList<>();
     private RelativeLayout relativeLayout;
     private ImageView searchSubmit;
     private TextView searchtext;
@@ -57,6 +57,8 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_user);
+        Intent intent= getIntent();
+        sendto=intent.getParcelableArrayListExtra("sendto");
         searchView=findViewById(R.id.searchArea);
         searchSubmit = (ImageView) searchView.findViewById(androidx.appcompat.R.id.search_go_btn);
         searchtext = (TextView) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
@@ -102,7 +104,7 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
               });
           }
       });
-      pillAdapter = new PillAdapter(Final);
+      pillAdapter = new PillAdapter(sendto);
       recycler_collected.setAdapter(pillAdapter);
         adapter = new contactAdapter(FollowingUsers,SelectUser.this,SelectUser.this);
         recycler_basket.setAdapter(adapter);
@@ -113,7 +115,7 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
     @Override
     public void finish() {
         Intent intent = new Intent();
-        intent.putExtra("mylist",Final);
+        intent.putExtra("sendto",pillAdapter.getUserList());
         setResult(RESULT_OK,intent);
         overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
         super.finish();
@@ -122,7 +124,7 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra("mylist",Final);
+        intent.putExtra("sendto",pillAdapter.getUserList());
         setResult(RESULT_OK,intent);
         overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
         super.onBackPressed();
@@ -142,7 +144,7 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
             }
         }
         if (!alreadyadded){
-            Final.add(value);
+            sendto.add(value);
             pillAdapter.notifyDataSetChanged();
         }
 

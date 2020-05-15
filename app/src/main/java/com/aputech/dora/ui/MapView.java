@@ -245,7 +245,6 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
                              postB.setLongitude(post.getLocation().getLongitude());
                              if (closekm(postA,postB)){
                                  PostNearby.add(pst.getRefComments());
-                                 Log.d("bigpp", "onMarkerClick: "+PostNearby);
                              }
                          }
                          x+=1;
@@ -255,36 +254,44 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
                 }
                 x+=1;
             }
-            if (PostNearby.size()>1){
-                Intent intent = new Intent(MapView.this, NearByPosts.class);
-                intent.putExtra("post", PostNearby);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-
-            }if (PostNearby.size()==1){
+            if (PostNearby.size()==1){
                 Intent intent = new Intent(MapView.this, PostDisplay.class);
                 intent.putExtra("post", PostNearby.get(0));
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                 PostNearby.add(PostNearby.get(0));
+            }else {
+                Intent intent = new Intent(MapView.this, NearByPosts.class);
+                intent.putExtra("post", PostNearby);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+
             }
         } else {
-//            boolean creator = false;
-//            for (Post post : posts) {
-//                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
-//                    if (auth.getUid().equals(post.getUserid())) {
-//                        Intent intent = new Intent(MapView.this, PostDisplay.class);
-//                        intent.putExtra("post", post.getRefComments());
-//                        startActivity(intent);
-//                        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-//                        creator = true;
-//                    }
-//                }
-//            }
-//            if (!creator) {
-//                View contextView = findViewById(R.id.main);
-//                Snackbar.make(contextView, R.string.not_at_location, Snackbar.LENGTH_SHORT).show();
-//            }
+            for (Post post : posts) {
+                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
+                    if (auth.getUid().equals(post.getUserid())) {
+                        PostNearby.add(post.getRefComments());
+                    }
+                }
+            }
+            if (PostNearby.size()==0) {
+                View contextView = findViewById(R.id.main);
+                Snackbar.make(contextView, R.string.not_at_location, Snackbar.LENGTH_SHORT).show();
+            }else{
+                if (PostNearby.size()==1){
+                    Intent intent = new Intent(MapView.this, PostDisplay.class);
+                    intent.putExtra("post", PostNearby.get(0));
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+                    PostNearby.add(PostNearby.get(0));
+                }else{
+                    Intent intent = new Intent(MapView.this, NearByPosts.class);
+                    intent.putExtra("post", PostNearby);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+                }
+            }
 
         }
 
@@ -295,14 +302,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
         return dis < 1;
 
     }
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
-        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
+
     private void moveMap(LatLng latLng) {
         float zoom = 15;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));

@@ -178,7 +178,12 @@ public class PostDisplay extends AppCompatActivity {
                     }
                     audioView.setVisibility(View.VISIBLE);
                     audioUri=Uri.parse(post.getAudioUrl());
-                    initPlayer(audioUri);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            initPlayer(audioUri);
+                        }
+                    },500);
                 }
                 sendcom.setOnClickListener(new View.OnClickListener() {
                     @Override

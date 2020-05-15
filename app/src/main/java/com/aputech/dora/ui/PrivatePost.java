@@ -78,12 +78,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PrivatePost extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private ArrayList<message> listsent=new ArrayList<>();
-    private ArrayList<message> listreceived=new ArrayList<message>();
-    private FusedLocationProviderClient fusedLocationProviderClient;
+    private ArrayList<message> listInbox=new ArrayList<>();
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private CollectionReference notebookRef = db.collection("Posts");
     private Location mLastKnownLocation;
     private LocationCallback locationCallback;
     private View mapView;
@@ -210,76 +207,122 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
     }
 
 private void loadData(){
-    CollectionReference collectionReference =db.collection("Users").document(auth.getUid()).collection("Received");
-    collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    db.collection("Inbox").whereEqualTo("receiver",auth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
         @Override
         public void onComplete(@NonNull Task<QuerySnapshot> task) {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     message msg=document.toObject(message.class);
-                    listsent.add(msg);
-                    listreceived.add(document.toObject(message.class));
+                    listInbox.add(msg);
                     final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
                     mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 }
             } else {
                 Toast.makeText(PrivatePost.this,"Error",Toast.LENGTH_SHORT).show();
             }
-        }
-    });
-    db.collection("Users").document(auth.getUid()).collection("Received").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    message msg=document.toObject(message.class);
-                    listsent.add(msg);
-                    LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+            db.collection("Inbox").whereEqualTo("sender",auth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            message msg=document.toObject(message.class);
+                            listInbox.add(msg);
+                            LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
+                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                        }
+                    } else {
+                        Toast.makeText(PrivatePost.this,"Error",Toast.LENGTH_SHORT).show();
+                    }
                 }
-            } else {
-               Toast.makeText(PrivatePost.this,"Error",Toast.LENGTH_SHORT).show();
-            }
+            });
         }
     });
 
+
 }
+
     @Override
     public boolean onMarkerClick(Marker marker) {
+        ArrayList<String> PostNearby=new ArrayList<>();
         Location postlocation = new Location("");
         postlocation.setLatitude(marker.getPosition().latitude);
         postlocation.setLongitude(marker.getPosition().longitude);
-        float distance = mLastKnownLocation.distanceTo(postlocation) / 1000;
-//        if (distance < 1) {
-//            for (message sent : listsent) {
-//                if (sent.getLocation().getLongitude() == marker.getPosition().longitude && sent.getLocation().getLatitude() == marker.getPosition().latitude) {
-//                    Intent intent = new Intent(PrivatePost.this, PrivatePostDisplay.class);
-//                    intent.putExtra("msg", sent);
-//                    startActivity(intent);
-//                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-//                }
-//            }
-//        } else {
-//            boolean creator = false;
-//            for (message received : listreceived) {
-//                if (received.getLocation().getLongitude() == marker.getPosition().longitude && received.getLocation().getLatitude() == marker.getPosition().latitude) {
-//                    if (auth.getUid().equals(post.getUserid())) {
-//                        Intent intent = new Intent(MapView.this, PostDisplay.class);
-//                        intent.putExtra("post", post);
-//                        startActivity(intent);
-//                        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-//                        creator = true;
-//                    }
-//                }
-//            }
-//            if (!creator) {
-//                View contextView = findViewById(R.id.main);
-//                Snackbar.make(contextView, R.string.not_at_location, Snackbar.LENGTH_SHORT).show();
-//            }
-//
-//        }
+        if (closekm(postlocation,mLastKnownLocation)) {
+            int x=0;
+            while (x<listInbox.size()){
+                message msg = listInbox.get(x);
+                if (msg.getLocation()!=null){
+                    if (msg.getLocation().getLongitude()==marker.getPosition().longitude &&
+                            msg.getLocation().getLatitude() ==marker.getPosition().latitude){
+                        PostNearby.add(msg.getRefmsg());
+                        x+=1;
+                        while(x<listInbox.size()){
+                            message pst= listInbox.get(x);
+                            if (pst.getLocation()!=null){
+                                Location postA = new Location("");
+                                postA.setLatitude(pst.getLocation().getLatitude());
+                                postA.setLongitude(pst.getLocation().getLongitude());
+                                Location postB = new Location("");
+                                postB.setLatitude(msg.getLocation().getLatitude());
+                                postB.setLongitude(msg.getLocation().getLongitude());
+                                if (closekm(postA,postB)){
+                                    PostNearby.add(pst.getRefmsg());
+                                }
+                            }
+                            x+=1;
+                        }
+                        break;
+                    }
+                }
+                x+=1;
+            }
+            if (PostNearby.size()==1){
+                Intent intent = new Intent(PrivatePost.this, PrivatePostDisplay.class);
+                intent.putExtra("post", PostNearby.get(0));
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+                PostNearby.add(PostNearby.get(0));
+            }else {
+                Intent intent = new Intent(PrivatePost.this, NearByPrivatePosts.class);
+                intent.putExtra("post", PostNearby);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+
+            }
+        } else {
+            for (message post : listInbox) {
+                if (post.getLocation().getLongitude() == marker.getPosition().longitude && post.getLocation().getLatitude() == marker.getPosition().latitude) {
+                    if (auth.getUid().equals(post.getSender())) {
+                        PostNearby.add(post.getRefmsg());
+                    }
+                }
+            }
+            if (PostNearby.size()==0) {
+                View contextView = findViewById(R.id.main);
+                Snackbar.make(contextView, R.string.not_at_location, Snackbar.LENGTH_SHORT).show();
+            }else{
+                if (PostNearby.size()==1){
+                    Intent intent = new Intent(PrivatePost.this, PostDisplay.class);
+                    intent.putExtra("post", PostNearby.get(0));
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+                    PostNearby.add(PostNearby.get(0));
+                }else{
+                    Intent intent = new Intent(PrivatePost.this, NearByPrivatePosts.class);
+                    intent.putExtra("post", PostNearby);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+                }
+            }
+
+        }
 
         return false;
+    }
+    private boolean closekm(Location A, Location B){
+        float dis = A.distanceTo(B) / 1000;
+        return dis < 1;
+
     }
 
     private void moveMap(LatLng latLng) {

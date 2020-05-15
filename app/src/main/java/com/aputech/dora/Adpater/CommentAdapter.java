@@ -67,7 +67,6 @@ public class CommentAdapter extends FirestoreRecyclerAdapter<Comment, CommentAda
             holder.edit.setVisibility(View.VISIBLE);
             holder.delete.setVisibility(View.VISIBLE);
 
-
         }
 
         if ( model.getUid() != null) {

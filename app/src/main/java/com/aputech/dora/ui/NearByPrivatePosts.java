@@ -4,26 +4,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.aputech.dora.Adpater.HomeAdapter;
 import com.aputech.dora.Adpater.NearByAdapter;
+import com.aputech.dora.Adpater.NearByPrivateAdapter;
 import com.aputech.dora.Model.Post;
+import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.firebase.ui.firestore.ObservableSnapshotArray;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -31,15 +27,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class NearByPosts extends AppCompatActivity {
+public class NearByPrivatePosts extends AppCompatActivity {
     private Toolbar myToolbar;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth auth= FirebaseAuth.getInstance();
-    private NearByAdapter adapter;
+    private NearByPrivateAdapter adapter;
     private RelativeLayout relativeLayout;
     private RecyclerView.AdapterDataObserver adapterDataObserver;
     ArrayList<String> nearbyposts= new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,14 +50,14 @@ public class NearByPosts extends AppCompatActivity {
         relativeLayout = findViewById(R.id.noresult);
         final RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(NearByPosts.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(NearByPrivatePosts.this));
         relativeLayout.setVisibility(View.VISIBLE);
-                Query query = db.collection("Posts").orderBy("priority", Query.Direction.DESCENDING);
-                FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
-                        .setQuery(query, Post.class)
+                Query query = db.collection("Inbox").orderBy("priority", Query.Direction.DESCENDING);
+                FirestoreRecyclerOptions<message> options = new FirestoreRecyclerOptions.Builder<message>()
+                        .setQuery(query, message.class)
                         .build();
 
-                adapter = new NearByAdapter(options,NearByPosts.this,nearbyposts);
+                adapter = new NearByPrivateAdapter(options,NearByPrivatePosts.this,nearbyposts);
                 adapterDataObserver = new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onItemRangeRemoved(int positionStart, int itemCount) {
@@ -85,12 +80,10 @@ public class NearByPosts extends AppCompatActivity {
 
 
 
-
     }
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
-        overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
         return true;
     }
 

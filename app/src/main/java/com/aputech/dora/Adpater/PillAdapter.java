@@ -63,8 +63,13 @@ public class PillAdapter extends RecyclerView.Adapter<PillAdapter.UserViewHolder
     public int getItemCount() {
         return UserList.size();
     }
+
     public User getItem(int position) {
         return UserList.get(position);
+    }
+
+    public ArrayList<User> getUserList(){
+        return UserList;
     }
 
 

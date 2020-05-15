@@ -9,53 +9,34 @@ import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 
-public class message implements Parcelable {
+public class message {
     @ServerTimestamp
     private Date timestamp;
-
-
     private String description;
     private String imageUrl;
     private int type;
-    private String userid;
+    private String refmsg;
     private GeoPoint location;
     private String videoUrl;
     private String audioUrl;
+    private String sender;
+    private String receiver;
     public message() {
         //empty constructor needed
     }
 
-    public message(Date timestamp, String description, String imageUrl, int type, String userid, GeoPoint location, String videoUrl, String audioUrl) {
+    public message(Date timestamp, String description, String imageUrl, int type, String refmsg, GeoPoint location, String videoUrl, String audioUrl, String sender, String receiver) {
         this.timestamp = timestamp;
         this.description = description;
         this.imageUrl = imageUrl;
         this.type = type;
-        this.userid = userid;
+        this.refmsg = refmsg;
         this.location = location;
         this.videoUrl = videoUrl;
         this.audioUrl = audioUrl;
+        this.sender = sender;
+        this.receiver = receiver;
     }
-
-    protected message(Parcel in) {
-        description = in.readString();
-        imageUrl = in.readString();
-        type = in.readInt();
-        userid = in.readString();
-        videoUrl = in.readString();
-        audioUrl = in.readString();
-    }
-
-    public static final Creator<message> CREATOR = new Creator<message>() {
-        @Override
-        public message createFromParcel(Parcel in) {
-            return new message(in);
-        }
-
-        @Override
-        public message[] newArray(int size) {
-            return new message[size];
-        }
-    };
 
     public Date getTimestamp() {
         return timestamp;
@@ -89,12 +70,12 @@ public class message implements Parcelable {
         this.type = type;
     }
 
-    public String getUserid() {
-        return userid;
+    public String getRefmsg() {
+        return refmsg;
     }
 
-    public void setUserid(String userid) {
-        this.userid = userid;
+    public void setRefmsg(String refmsg) {
+        this.refmsg = refmsg;
     }
 
     public GeoPoint getLocation() {
@@ -121,18 +102,19 @@ public class message implements Parcelable {
         this.audioUrl = audioUrl;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getSender() {
+        return sender;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(description);
-        dest.writeString(imageUrl);
-        dest.writeInt(type);
-        dest.writeString(userid);
-        dest.writeString(videoUrl);
-        dest.writeString(audioUrl);
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 }
