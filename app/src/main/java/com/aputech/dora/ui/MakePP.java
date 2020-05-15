@@ -2,6 +2,7 @@ package com.aputech.dora.ui;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -92,7 +94,7 @@ public class MakePP extends AppCompatActivity {
     static MediaPlayer mMediaPlayer;
     FloatingActionButton playPause;
     SeekBar mSeekBar;
-    ArrayList<User> sendto;
+    ArrayList<User> sendto=new ArrayList<>();
     PillAdapter pillAdapter;
     private boolean playWhenReady = true;
     private int currentWindow = 0;
@@ -109,6 +111,8 @@ public class MakePP extends AppCompatActivity {
         level = findViewById(R.id.level);
         MaterialButton button= findViewById(R.id.AddUser);
         contact_view= findViewById(R.id.contact_view);
+        contact_view.setHasFixedSize(true);
+        contact_view.setLayoutManager(new LinearLayoutManager(MakePP.this,LinearLayoutManager.HORIZONTAL, false));
         pillAdapter= new PillAdapter(sendto);
         contact_view.setAdapter(pillAdapter);
         profile = findViewById(R.id.poster_profile);
@@ -134,6 +138,7 @@ public class MakePP extends AppCompatActivity {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
         }
+
         playPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -350,13 +355,14 @@ public class MakePP extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK){
+        if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK && data !=null && data.getData()!=null){
             finish();
         }
-        if (requestCode ==GET_USERS && resultCode == RESULT_OK && data !=null && data.getData()!=null ){
+        if (requestCode ==GET_USERS && resultCode == RESULT_OK ){
             sendto=data.getParcelableArrayListExtra("sendto");
             pillAdapter= new PillAdapter(sendto);
             contact_view.setAdapter(pillAdapter);
+            Log.d("bigpp", "onActivityResult: "+sendto);
         }
     }
     private String getfileExt(Uri videoUri){

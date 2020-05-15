@@ -28,8 +28,6 @@ public class PillAdapter extends RecyclerView.Adapter<PillAdapter.UserViewHolder
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.contactname);
             remove =itemView.findViewById(R.id.remove);
-
-
         }
     }
 
@@ -69,7 +67,7 @@ public class PillAdapter extends RecyclerView.Adapter<PillAdapter.UserViewHolder
     }
 
     public ArrayList<User> getUserList(){
-        return UserList;
+        return this.UserList;
     }
 
 

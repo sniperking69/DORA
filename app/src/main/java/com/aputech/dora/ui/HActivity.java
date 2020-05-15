@@ -110,12 +110,6 @@ public class HActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.search_rec);
         searchView = findViewById(R.id.searchArea);
         searchView.setSubmitButtonEnabled(true);
-
-
-
-
-
-
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(HActivity.this));
         searchSubmit = (ImageView) searchView.findViewById(androidx.appcompat.R.id.search_go_btn);

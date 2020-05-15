@@ -25,6 +25,7 @@ import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.data.DataBufferObserver;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -290,9 +291,13 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                                         if (task.isSuccessful()){
                                             progressDialog.dismiss();
                                             db.collection("Inbox").document(rf).update("videoUrl",task.getResult().toString());
-                                            Intent intent = new Intent();
-                                            setResult(Activity.RESULT_OK, intent);
-                                            finish();
+                                            sendto.remove(sendto.size() -1);
+                                            if (sendto.size()==0){
+                                                Intent intent = new Intent();
+                                                setResult(Activity.RESULT_OK, intent);
+                                                finish();
+                                            }
+
                                         }
 
                                     }
@@ -337,9 +342,13 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (type==1){
-                            Intent intent = new Intent();
+
+                            sendto.remove(sendto.size() -1);
+                            if (sendto.size()==0){
+                             Intent intent = new Intent();
                             setResult(Activity.RESULT_OK, intent);
                             finish();
+                            }
                         }
                         if (type==2){
                             UploadPicture(commentref,uri);
@@ -372,9 +381,12 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                                     if (task.isSuccessful()){
                                         progressDialog.dismiss();
                                         db.collection("Inbox").document(commentref).update("audioUrl",task.getResult().toString());
-                                        Intent intent = new Intent();
-                                        setResult(Activity.RESULT_OK, intent);
-                                        finish();
+                                        sendto.remove(sendto.size() -1);
+                                        if (sendto.size()==0){
+                                            Intent intent = new Intent();
+                                            setResult(Activity.RESULT_OK, intent);
+                                            finish();
+                                        }
                                     }
                                 }
                             });
@@ -419,9 +431,12 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                                     if (task.isSuccessful()){
                                         progressDialog.dismiss();
                                         db.collection("Inbox").document(commentref).update("imageUrl",task.getResult().toString());
-                                        Intent intent = new Intent();
-                                        setResult(Activity.RESULT_OK, intent);
-                                        finish();
+                                        sendto.remove(sendto.size() -1);
+                                        if (sendto.size()==0){
+                                            Intent intent = new Intent();
+                                            setResult(Activity.RESULT_OK, intent);
+                                            finish();
+                                        }
                                     }
                                 }
                             });

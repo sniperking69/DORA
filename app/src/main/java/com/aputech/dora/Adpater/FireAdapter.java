@@ -43,6 +43,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Date;
 
@@ -253,7 +255,7 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            DeletePost(getSnapshots().get(getAdapterPosition()).getRefComments());
+                            DeletePost(getSnapshots().get(getAdapterPosition()).getRefComments(),getSnapshots().get(getAdapterPosition()).getType(),getSnapshots().get(getAdapterPosition()).getAudioUrl(),getSnapshots().get(getAdapterPosition()).getVideoUrl(),getSnapshots().get(getAdapterPosition()).getImageUrl());
                             Toast.makeText(mContext,  "Post Deleted",Toast.LENGTH_LONG).show();
 
                         }
@@ -382,7 +384,19 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
     public int getItemCount() {
         return getSnapshots().size();
     }
-    private void DeletePost(final String Postid) {
+
+    private void DeletePost(final String Postid,int type,String Audio,String Video,String Image) {
+        FirebaseStorage firebaseStorage= FirebaseStorage.getInstance();
+        if (type==2){
+             StorageReference ref = firebaseStorage.getReferenceFromUrl(Image);
+            ref.delete();
+        }if (type==3){
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Video);
+            ref.delete();
+        }if (type==4){
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Audio);
+            ref.delete();
+        }
         final WriteBatch writeBatch = db.batch();
         db.collection("Posts").document(Postid).collection("vote").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override

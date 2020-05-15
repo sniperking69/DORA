@@ -59,7 +59,8 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
         setContentView(R.layout.activity_select_user);
         Intent intent= getIntent();
         sendto=intent.getParcelableArrayListExtra("sendto");
-        searchView=findViewById(R.id.searchArea);
+        searchView = findViewById(R.id.searchArea);
+        searchView.setSubmitButtonEnabled(true);
         searchSubmit = (ImageView) searchView.findViewById(androidx.appcompat.R.id.search_go_btn);
         searchtext = (TextView) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchtext.setTextColor(Color.parseColor("#ffffff"));
@@ -114,8 +115,9 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
 
     @Override
     public void finish() {
+        ArrayList<User> sendData=pillAdapter.getUserList();
         Intent intent = new Intent();
-        intent.putExtra("sendto",pillAdapter.getUserList());
+        intent.putParcelableArrayListExtra("sendto",sendData);
         setResult(RESULT_OK,intent);
         overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
         super.finish();
@@ -123,8 +125,9 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
 
     @Override
     public void onBackPressed() {
+        ArrayList<User> sendData=pillAdapter.getUserList();
         Intent intent = new Intent();
-        intent.putExtra("sendto",pillAdapter.getUserList());
+        intent.putParcelableArrayListExtra("sendto",sendData);
         setResult(RESULT_OK,intent);
         overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
         super.onBackPressed();
