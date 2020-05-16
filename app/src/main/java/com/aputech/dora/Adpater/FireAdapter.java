@@ -312,7 +312,6 @@ public class FireAdapter extends FirestoreRecyclerAdapter<Post, FireAdapter.Note
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("Edit Post");
-
                     final View customLayout =  LayoutInflater.from(mContext).inflate(R.layout.custom_alert, null);
                     builder.setView(customLayout);
                     final EditText editText = customLayout.findViewById(R.id.para);

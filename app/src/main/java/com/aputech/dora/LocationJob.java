@@ -5,7 +5,9 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,12 +21,14 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.aputech.dora.Model.Post;
+import com.aputech.dora.Model.message;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.ui.HActivity;
 import com.aputech.dora.ui.MapView;
 import com.aputech.dora.ui.NearByPosts;
 import com.aputech.dora.ui.NearByPrivatePosts;
 import com.aputech.dora.ui.PostDisplay;
+import com.aputech.dora.ui.PrivatePost;
 import com.aputech.dora.ui.PrivatePostDisplay;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -48,6 +52,9 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 import static com.aputech.dora.ui.HActivity.CHANNEL_ID;
@@ -58,15 +65,18 @@ public class LocationJob extends JobService {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Query query = db.collection("Users").document(auth.getUid()).collection("notify");
     private Query querylocation = db.collection("Posts");
+    private Query queryprivatelocation = db.collection("Inbox").whereEqualTo("receiver",auth.getUid());
     private static final String TAG = "joblocationservice";
     ListenerRegistration registration;
     ListenerRegistration reg;
+    ListenerRegistration reg2;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
     Handler jam;
     private LocationCallback locationCallback;
     private ArrayList<Post> posts=new ArrayList<>();
     private boolean jobCancelled = false;
+    ArrayList<message> listInbox=new ArrayList<>();
     private FusedLocationProviderClient fusedLocationClient;
 
     @Override
@@ -84,12 +94,21 @@ public class LocationJob extends JobService {
             @Override
             public void run() {
                 getDeviceLocation();
+                reg2 = queryprivatelocation.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                            message msg = dc.getDocument().toObject(message.class);
+                            listInbox.add(msg);
+                        }
+                    }
+                });
                 reg = querylocation.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                                Post noti = dc.getDocument().toObject(Post.class);
-                                posts.add(noti);
+                                Post st = dc.getDocument().toObject(Post.class);
+                                posts.add(st);
                         }
                     }
                 });
@@ -124,7 +143,7 @@ public class LocationJob extends JobService {
     public void sendOnChannel1(notification noti) {
         Intent intent;
         if (noti.getTyp()==1){
-            intent = new Intent(this, PrivatePostDisplay.class);
+            intent = new Intent(this, PrivatePost.class);
             intent.putExtra("post",noti.getDocument());
             intent.putExtra("typ",1);
         }if (noti.getTyp()==0){
@@ -164,16 +183,20 @@ public class LocationJob extends JobService {
                             mLastKnownLocation = task.getResult();
                             if (mLastKnownLocation != null) {
                                 Log.d(TAG, "in if: "+mLastKnownLocation);
-                                for (Post post:posts){
-                                    PostCalculate(post.getLocation().getLatitude() ,post.getLocation().getLongitude());
+                                for (int i=0;i<posts.size();i++){
+                                    PostCalculate(posts.get(i).getLocation().getLatitude() ,posts.get(i).getLocation().getLongitude());
                                 }
+                                for (int q=0;q<listInbox.size();q++){
+                                    MessageCalculated(listInbox.get(q).getLocation().getLatitude() ,listInbox.get(q).getLocation().getLongitude());
+                                }
+
                                  jam = new Handler();
                                         jam.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         getDeviceLocation();
                                     }
-                                },420000);
+                                },300000);
 
                             } else {
                                 final LocationRequest locationRequest = LocationRequest.create();
@@ -204,6 +227,7 @@ public class LocationJob extends JobService {
     }
     private void PostCalculate(double latitude ,double longitude){
         ArrayList<String> PostNearby=new ArrayList<>();
+        boolean foundnew=false;
         Location postlocation = new Location("");
         postlocation.setLatitude(latitude);
         postlocation.setLongitude(longitude);
@@ -224,30 +248,114 @@ public class LocationJob extends JobService {
                 }
                 x+=1;
             }
-            if (PostNearby.size()>=1){
-                String commentref=PostNearby.get(0);
-                for (Post post:posts){
-
-                    for (String pst:PostNearby){
-                        if (post.getRefComments().equals(pst)){
-                            posts.remove(post);
+            SharedPreferences sharedPref = getSharedPreferences("userseen", Context.MODE_PRIVATE);
+            ArrayList<String> listdata = new ArrayList<String>();
+            String jArray = sharedPref.getString("nearme",null);
+            Log.d(TAG, "MessageCalculated: "+jArray);
+            try {
+                if (jArray!=null){
+                    JSONArray jsonArray = new JSONArray(jArray);
+                        for (int i=0;i<jsonArray.length();i++){
+                            listdata.add(jsonArray.getString(i));
                         }
-                    }
                 }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            for (int y=0;y<PostNearby.size();y++){
+                if (!listdata.contains(PostNearby.get(y))){
+                    ArrayList<String> newlistdata = new ArrayList<String>();
+                    newlistdata=listdata;
+                    newlistdata.add(PostNearby.get(y));
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    JSONArray mJSONArray = new JSONArray(newlistdata);
+                    mJSONArray.toString();
+                    editor.putString("nearme",mJSONArray.toString());
+                    editor.apply();
+                    foundnew = true;
+                }else{
+                    foundnew=false;
+                }
+            }
+            if (foundnew){
                 notification noti = new notification();
-                noti.setDocument(commentref);
-                noti.setTyp(1);
+                noti.setDocument(PostNearby.get(0));
+                noti.setTyp(2);
                 noti.setUserid("nearby");
                 noti.setText("You Have Post Near By");
                 CollectionReference  notiref= db.collection("Users").document(auth.getUid()).collection("notify");
                 notiref.add(noti);
+            }
+
 
             }
         }
+
+    private void MessageCalculated(double latitude ,double longitude){
+        ArrayList<String> PostNearby=new ArrayList<>();
+        Location postlocation = new Location("");
+        boolean foundnew=false;
+        postlocation.setLatitude(latitude);
+        postlocation.setLongitude(longitude);
+        if (closekm(postlocation,mLastKnownLocation)) {
+            int x=0;
+            while (x<listInbox.size()){
+                message pst= listInbox.get(x);
+                if (pst.getLocation()!=null){
+                    Location postA = new Location("");
+                    postA.setLatitude(pst.getLocation().getLatitude());
+                    postA.setLongitude(pst.getLocation().getLongitude());
+                    Location postB = new Location("");
+                    postB.setLatitude(pst.getLocation().getLatitude());
+                    postB.setLongitude(pst.getLocation().getLongitude());
+                    if (closekm(postA,postB)){
+                        PostNearby.add(pst.getRefmsg());
+                    }
+                }
+                x+=1;
+            }
+            SharedPreferences sharedPref = getSharedPreferences("userseen", Context.MODE_PRIVATE);
+            ArrayList<String> listdata = new ArrayList<String>();
+            String jArray = sharedPref.getString("nearme",null);
+            Log.d(TAG, "MessageCalculated: "+jArray);
+            try {
+                JSONArray jsonArray = new JSONArray(jArray);
+                if (jArray != null) {
+                    for (int i=0;i<jsonArray.length();i++){
+                        listdata.add(jsonArray.getString(i));
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            for (int y=0;y<PostNearby.size();y++){
+                if (!listdata.contains(PostNearby.get(y))){
+                    ArrayList<String> newlistdata = new ArrayList<String>();
+                    newlistdata=listdata;
+                    newlistdata.add(PostNearby.get(y));
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    JSONArray mJSONArray = new JSONArray(newlistdata);
+                    mJSONArray.toString();
+                    editor.putString("nearme",mJSONArray.toString());
+                    editor.apply();
+                    foundnew = true;
+                }else{
+                    foundnew=false;
+                }
+            }
+            if (foundnew){
+                notification noti = new notification();
+                noti.setDocument(PostNearby.get(0));
+                noti.setTyp(1);
+                noti.setUserid("nearby");
+                noti.setText("You Have A Private Post NearBy");
+                CollectionReference  notiref= db.collection("Users").document(auth.getUid()).collection("notify");
+                notiref.add(noti);
+            }
+            }
+        }
+
     }
-    private void MessageCalculated(){
 
 
-    }
-
-}

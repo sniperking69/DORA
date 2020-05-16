@@ -99,28 +99,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
             }
         });
 
-        notebookRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    Post p = documentSnapshot.toObject(Post.class);
-                    posts.add(p);
-                }
-                for (int x = 0; x < posts.size(); x++) {
-                    Post msg = posts.get(x);
-                    if (msg.getLocation() != null) {
-                        if (auth.getUid().equals(msg.getUserid())) {
-                            LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
-                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                        } else {
-                            final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
-                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne));
-                        }
 
-                    }
-                }
-            }
-        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -140,15 +119,36 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
             @Override
             public void onMapLoaded() {
                 if (typ==2){
-                    db.collection("Inbox").document(notipost).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    db.collection("Posts").document(notipost).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            message m=documentSnapshot.toObject(message.class);
-                            LatLng LL= new LatLng(m.getLocation().getLatitude(),m.getLocation().getLatitude());
+                            Post m=documentSnapshot.toObject(Post.class);
+                            LatLng LL= new LatLng(m.getLocation().getLatitude(),m.getLocation().getLongitude());
                             moveMap(LL);
                         }
                     });
+                    notebookRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                                Post p = documentSnapshot.toObject(Post.class);
+                                posts.add(p);
+                            }
+                            for (int x = 0; x < posts.size(); x++) {
+                                Post msg = posts.get(x);
+                                if (msg.getLocation() != null) {
+                                    if (auth.getUid().equals(msg.getUserid())) {
+                                        LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
+                                        mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                                    } else {
+                                        final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
+                                        mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne));
+                                    }
 
+                                }
+                            }
+                        }
+                    });
                 }
             }
         });

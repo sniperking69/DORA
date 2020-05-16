@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -24,7 +25,9 @@ import com.aputech.dora.ui.PrivatePost;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -105,20 +108,64 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
                 @Override
                 public void onClick(View v) {
                     if (getSnapshots().get(getAdapterPosition()).getTyp()==1){
-                        Intent intent = new Intent(mContext, PrivatePost.class);
-                        intent.putExtra("typ",1);
-                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
-                        mContext.startActivity(intent);
+                        db.collection("Inbox").document(getSnapshots().get(getAdapterPosition()).getDocument()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()){
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()){
+                                        Intent intent = new Intent(mContext, PrivatePost.class);
+                                        intent.putExtra("typ",1);
+                                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                                        mContext.startActivity(intent);
+                                    }else{
+                                        deleteItem(getAdapterPosition());
+                                        Toast.makeText(mContext,"Post Was Removed",Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            }
+                        });
+
                     }if (getSnapshots().get(getAdapterPosition()).getTyp()==2){
-                        Intent intent = new Intent(mContext, MapView.class);
-                        intent.putExtra("typ",2);
-                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
-                        mContext.startActivity(intent);
+                        db.collection("Posts").document(getSnapshots().get(getAdapterPosition()).getDocument()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()){
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()){
+                                        Intent intent = new Intent(mContext, MapView.class);
+                                        intent.putExtra("typ",2);
+                                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                                        mContext.startActivity(intent);
+
+                                    }else{
+                                        deleteItem(getAdapterPosition());
+                                        Toast.makeText(mContext,"Post Was Removed",Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            }
+                        });
+
                     }else{
-                        Intent intent = new Intent(mContext, PostDisplay.class);
-                        intent.putExtra("typ",0);
-                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
-                        mContext.startActivity(intent);
+                        db.collection("Posts").document(getSnapshots().get(getAdapterPosition()).getDocument()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()){
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()){
+                                        Intent intent = new Intent(mContext, PostDisplay.class);
+                                        intent.putExtra("typ",0);
+                                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                                        mContext.startActivity(intent);
+                                    }else{
+                                        deleteItem(getAdapterPosition());
+                                        Toast.makeText(mContext,"Post Was Removed",Toast.LENGTH_LONG).show();
+                                    }
+
+                                }
+                            }
+                        });
+
                     }
 
                 }

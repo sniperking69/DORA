@@ -225,6 +225,7 @@ public class HomeAdapter extends FirestoreRecyclerAdapter<Post, HomeAdapter.Note
             thumbnail=itemView.findViewById(R.id.thumbnail);
             audioview =itemView.findViewById(R.id.audiocard);
             delete = itemView.findViewById(R.id.delete);
+            card=itemView.findViewById(R.id.card);
             user_name = itemView.findViewById(R.id.user_name);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
             time = itemView.findViewById(R.id.time);

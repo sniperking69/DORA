@@ -143,7 +143,7 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             message m=documentSnapshot.toObject(message.class);
-                            LatLng LL= new LatLng(m.getLocation().getLatitude(),m.getLocation().getLatitude());
+                            LatLng LL= new LatLng(m.getLocation().getLatitude(),m.getLocation().getLongitude());
                             moveMap(LL);
                         }
                     });
