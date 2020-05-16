@@ -325,7 +325,7 @@ private void loadData(){
                 Snackbar.make(contextView, R.string.not_at_location, Snackbar.LENGTH_SHORT).show();
             }else{
                 if (PostNearby.size()==1){
-                    Intent intent = new Intent(PrivatePost.this, PostDisplay.class);
+                    Intent intent = new Intent(PrivatePost.this, PrivatePostDisplay.class);
                     intent.putExtra("post", PostNearby.get(0));
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
