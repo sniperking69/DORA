@@ -30,6 +30,7 @@ import com.aputech.dora.Adpater.ContactInterface;
 import com.aputech.dora.Adpater.PillAdapter;
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
+import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -101,7 +102,7 @@ public class MakePP extends AppCompatActivity {
     private long playbackPosition = 0;
     RecyclerView contact_view;
     private int GET_USERS=15;
-
+    User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,7 +179,7 @@ public class MakePP extends AppCompatActivity {
         documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User user = documentSnapshot.toObject(User.class);
+                user = documentSnapshot.toObject(User.class);
                 user_name.setText(user.getUserName());
                 String currentDateTimeString = java.text.DateFormat.getDateTimeInstance().format(new Date());
                 time.setText(currentDateTimeString);
@@ -241,6 +242,7 @@ public class MakePP extends AppCompatActivity {
             if (!pillAdapter.getUserList().isEmpty()){
                 Intent intent= new Intent(MakePP.this,SelectPrivateLocation.class);
                 intent.putExtra("type",type);
+                intent.putExtra("currentuser",user);
                 intent.putExtra("sendto",sendto);
                 intent.putExtra("Desc",editText.getText().toString());
                 intent.putExtra("user_id",auth.getUid());
@@ -357,12 +359,13 @@ public class MakePP extends AppCompatActivity {
         }
         if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK && data !=null && data.getData()!=null){
             finish();
+
+
         }
         if (requestCode ==GET_USERS && resultCode == RESULT_OK ){
             sendto=data.getParcelableArrayListExtra("sendto");
             pillAdapter= new PillAdapter(sendto);
             contact_view.setAdapter(pillAdapter);
-            Log.d("bigpp", "onActivityResult: "+sendto);
         }
     }
     private String getfileExt(Uri videoUri){

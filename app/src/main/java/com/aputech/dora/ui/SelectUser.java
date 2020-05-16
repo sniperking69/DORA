@@ -105,6 +105,13 @@ public class SelectUser extends AppCompatActivity implements ContactInterface {
               });
           }
       });
+        ImageView backsearch = findViewById(R.id.backsearch);
+        backsearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
       pillAdapter = new PillAdapter(sendto);
       recycler_collected.setAdapter(pillAdapter);
         adapter = new contactAdapter(FollowingUsers,SelectUser.this,SelectUser.this);

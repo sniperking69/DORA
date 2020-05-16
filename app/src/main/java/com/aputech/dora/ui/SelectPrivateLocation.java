@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.message;
+import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
@@ -89,6 +90,7 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
     String ext;
     ArrayList<User> sendto;
     String txt;
+    User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +99,7 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
         resutText = (TextView) findViewById(R.id.dragg_result);
         Forward = findViewById(R.id.forward);
         Intent intent= getIntent();
+        currentUser=intent.getParcelableExtra("currentuser");
         sendto=intent.getParcelableArrayListExtra("sendto");
         txt=intent.getStringExtra("Desc");
         type=intent.getIntExtra("type",1);
@@ -272,7 +275,7 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
         float zoom = 15;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
-    public void UploadVideo(final String rf ,String ext,Uri videoUri) {
+    public void UploadVideo(final String rf , String ext, Uri videoUri, final String userid) {
         if (videoUri != null) {
             final ProgressDialog progressDialog = new ProgressDialog(SelectPrivateLocation.this);
             progressDialog.setTitle("Uploading...");
@@ -291,6 +294,13 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                                         if (task.isSuccessful()){
                                             progressDialog.dismiss();
                                             db.collection("Inbox").document(rf).update("videoUrl",task.getResult().toString());
+                                            notification noti = new notification();
+                                            noti.setDocument(rf);
+                                            noti.setTyp(1);
+                                            noti.setUserid(auth.getUid());
+                                            noti.setText(currentUser.getUserName() + "  Sent You Private Post");
+                                            CollectionReference  notiref= db.collection("Users").document(userid).collection("notify");
+                                            notiref.add(noti);
                                             sendto.remove(sendto.size() -1);
                                             if (sendto.size()==0){
                                                 Intent intent = new Intent();
@@ -326,7 +336,7 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                     });
         }
     }
-    private void uploadFire(final int type, String text, final String ext, final Uri uri ,String userid){
+    private void uploadFire(final int type, String text, final String ext, final Uri uri , final String userid){
         final message post = new message();
         GeoPoint geoPoint = new GeoPoint(latLngfinal.latitude,latLngfinal.longitude);
         post.setLocation(geoPoint);
@@ -342,7 +352,13 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (type==1){
-
+                            notification noti = new notification();
+                            noti.setDocument(commentref);
+                            noti.setTyp(1);
+                            noti.setUserid(auth.getUid());
+                            noti.setText(currentUser.getUserName() + "  Sent You Private Post");
+                            CollectionReference  notiref= db.collection("Users").document(userid).collection("notify");
+                            notiref.add(noti);
                             sendto.remove(sendto.size() -1);
                             if (sendto.size()==0){
                              Intent intent = new Intent();
@@ -351,11 +367,11 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                             }
                         }
                         if (type==2){
-                            UploadPicture(commentref,uri);
+                            UploadPicture(commentref,uri,userid);
                         }if (type==3) {
-                            UploadVideo(commentref,ext,uri);
+                            UploadVideo(commentref,ext,uri,userid);
                         }if (type==4){
-                            UploadAudio(commentref,ext,uri);
+                            UploadAudio(commentref,ext,uri,userid);
                         }
 
                     }
@@ -364,7 +380,7 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
         });
     }
 
-    private void UploadAudio(final String commentref, String ext, Uri audiouri) {
+    private void UploadAudio(final String commentref, String ext, Uri audiouri, final String userid) {
         final ProgressDialog progressDialog = new ProgressDialog(SelectPrivateLocation.this);
         progressDialog.setTitle("Uploading...");
         progressDialog.setCancelable(false);
@@ -381,6 +397,13 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                                     if (task.isSuccessful()){
                                         progressDialog.dismiss();
                                         db.collection("Inbox").document(commentref).update("audioUrl",task.getResult().toString());
+                                        notification noti = new notification();
+                                        noti.setDocument(commentref);
+                                        noti.setTyp(1);
+                                        noti.setUserid(auth.getUid());
+                                        noti.setText(currentUser.getUserName() + "  Sent You Private Post");
+                                        CollectionReference  notiref= db.collection("Users").document(userid).collection("notify");
+                                        notiref.add(noti);
                                         sendto.remove(sendto.size() -1);
                                         if (sendto.size()==0){
                                             Intent intent = new Intent();
@@ -414,7 +437,7 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                 });
     }
 
-    private void UploadPicture(final String commentref, Uri imguri) {
+    private void UploadPicture(final String commentref, Uri imguri , final String userid) {
         final ProgressDialog progressDialog = new ProgressDialog(SelectPrivateLocation.this);
         progressDialog.setTitle("Uploading...");
         progressDialog.setCancelable(false);
@@ -431,6 +454,13 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                                     if (task.isSuccessful()){
                                         progressDialog.dismiss();
                                         db.collection("Inbox").document(commentref).update("imageUrl",task.getResult().toString());
+                                        notification noti = new notification();
+                                        noti.setDocument(commentref);
+                                        noti.setTyp(1);
+                                        noti.setUserid(auth.getUid());
+                                        noti.setText(currentUser.getUserName() + "  Sent You Private Post");
+                                        CollectionReference  notiref= db.collection("Users").document(userid).collection("notify");
+                                        notiref.add(noti);
                                         sendto.remove(sendto.size() -1);
                                         if (sendto.size()==0){
                                             Intent intent = new Intent();

@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/s"
-            android:text="No Post Was Made By Your Friends" />
+            android:text="No Result Found" />
     </RelativeLayout>
     <LinearLayout
         android:id="@+id/search_view"
@@ -40,7 +40,7 @@
             android:layout_weight="1"
             android:padding="8dp"
             android:tint="@android:color/white"
-            android:src="@drawable/ic_close"/>
+            android:src="@drawable/ic_done"/>
         <androidx.appcompat.widget.SearchView
             android:layout_width="0dp"
             android:layout_weight="9"

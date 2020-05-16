@@ -204,7 +204,7 @@ public class NearByPrivateAdapter extends FirestoreRecyclerAdapter<message, Near
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, PrivatePostDisplay.class);
-                    intent.putExtra("Inbox", getSnapshots().get(getAdapterPosition()).getRefmsg());
+                    intent.putExtra("ppost", getSnapshots().get(getAdapterPosition()).getRefmsg());
                     mContext.startActivity(intent);
                 }
             });

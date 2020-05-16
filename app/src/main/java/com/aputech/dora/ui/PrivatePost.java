@@ -85,16 +85,23 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
     private LocationCallback locationCallback;
     private View mapView;
     private final float DEFAULT_ZOOM = 15;
+    private String notimsg;
+    private int typ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private_post);
+        Intent intent=getIntent();
+        notimsg=intent.getStringExtra("post");
+        typ=intent.getIntExtra("typ",0);
         Places.initialize(getApplicationContext(), getResources().getString(R.string.google_api_key));
         PlacesClient placesClient = Places.createClient(this);
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG));
         autocompleteFragment.setHint("Search Location");
+
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -128,6 +135,22 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setOnMarkerClickListener(this);
         loadData();
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                if (typ==1){
+                    db.collection("Inbox").document(notimsg).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            message m=documentSnapshot.toObject(message.class);
+                            LatLng LL= new LatLng(m.getLocation().getLatitude(),m.getLocation().getLatitude());
+                            moveMap(LL);
+                        }
+                    });
+
+                }
+            }
+        });
         if (mapView != null && mapView.findViewById(Integer.parseInt("1")) != null) {
             View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
@@ -215,7 +238,7 @@ private void loadData(){
                     message msg=document.toObject(message.class);
                     listInbox.add(msg);
                     final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne));
                 }
             } else {
                 Toast.makeText(PrivatePost.this,"Error",Toast.LENGTH_SHORT).show();

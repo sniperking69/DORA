@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,6 +49,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -66,30 +69,30 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.narayanacharya.waveview.WaveView;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 public class PrivatePostDisplay extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth auth= FirebaseAuth.getInstance();
-    private CommentAdapter adapter;
     ImageView delete,edit;
     ImageView image;
     private TextView postText;
     private TextView userName,post_time;
     ImageView locate,ProfileImg;
-    DocumentReference documentReference;
     private Uri videoUri;
     private View audioView;
     private Uri audioUri;
     private WaveView sine;
     TextView curTime;
     TextView totTime;
+    TextView GeoLocation;
     private PlayerView playerView;
     private SimpleExoPlayer player;
     static MediaPlayer mMediaPlayer;
     FloatingActionButton playPause;
     SeekBar mSeekBar;
-    RecyclerView recyclerView;
     private boolean playWhenReady = true;
     private int currentWindow = 0;
     private long playbackPosition = 0;
@@ -108,12 +111,11 @@ public class PrivatePostDisplay extends AppCompatActivity {
         mSeekBar = findViewById(R.id.mSeekBar);
         playPause=findViewById(R.id.playPause);
         curTime = findViewById(R.id.curTime);
+        GeoLocation=findViewById(R.id.GeoCode);
         totTime = findViewById(R.id.totalTime);
         playerView=findViewById(R.id.videoDisplay);
         audioView= findViewById(R.id.audiocard);
         sine = findViewById(R.id.waveView);
-        recyclerView = findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(PrivatePostDisplay.this));
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
         }
@@ -124,8 +126,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
             }
         });
         Intent intent = getIntent();
-        String msg= intent.getStringExtra("ppost");
-
+        String msg= intent.getStringExtra("post");
 
         db.collection("Inbox").document(msg).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -168,20 +169,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
                     post_time.setText(df);
                 }
                 postText.setText(pst.getDescription());
-                if (pst.getLocation() != null) {
-                    locate.setImageResource(R.drawable.ic_locationhappy);
-                    locate.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent1 = new Intent(PrivatePostDisplay.this, DispPostLocation.class);
-                            intent1.putExtra("lat", pst.getLocation().getLatitude());
-                            intent1.putExtra("lng", pst.getLocation().getLongitude());
-                            startActivity(intent1);
-                        }
-                    });
-                } else {
-                    locate.setImageResource(R.drawable.ic_locationsad);
-                }
+                Geocodeget(pst.getLocation().getLatitude(),pst.getLocation().getLongitude());
                 db.collection("Users").document(pst.getSender()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -460,5 +448,25 @@ public class PrivatePostDisplay extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
+    }
+    private void Geocodeget(double lat, double lng){
+
+        LatLng latLng= new LatLng(lat,lng);
+        Geocoder geocoder = new Geocoder(PrivatePostDisplay.this);
+        try {
+            List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if (addressList != null && addressList.size() > 0) {
+                String locality = addressList.get(0).getAddressLine(0);
+                String country = addressList.get(0).getCountryName();
+                String geocode = null;
+                if (!locality.isEmpty() && !country.isEmpty())
+                    geocode=locality ;
+                GeoLocation.setText(geocode);
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

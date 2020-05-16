@@ -22,6 +22,7 @@ import com.aputech.dora.LocationJob;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.Fragments.Profile;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -43,19 +44,21 @@ public class ProfileSettings extends AppCompatActivity {
         myToolbar.setTitle("Settings");
         myToolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        if (isJobServiceOn(ProfileSettings.this)){
-            notiswitch.setChecked(true);
+        SharedPreferences sharedPref = getSharedPreferences("usersettings", Context.MODE_PRIVATE);
+        int set = sharedPref.getInt("JOB", 1);
+        if (set==1) {
+           notiswitch.setChecked(true);
         }else{
             notiswitch.setChecked(false);
         }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         notiswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences sharedPref = getSharedPreferences("usersettings", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
-
+                editor.clear();
                 if (isChecked){
                     MainOpen();
                     editor.putInt("JOB", 1);
@@ -80,6 +83,9 @@ public class ProfileSettings extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                JobScheduler jobScheduler =
+                        (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                jobScheduler.cancel(JOB_ID);
                                 AuthUI.getInstance().signOut(ProfileSettings.this).addOnCompleteListener(new OnCompleteListener<Void>() {
                             public void onComplete(@NonNull Task<Void> task) {
                                 Intent intent = new Intent(ProfileSettings.this,SplashActivity.class);

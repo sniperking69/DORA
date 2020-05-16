@@ -15,9 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
+import com.aputech.dora.Model.message;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
+import com.aputech.dora.ui.MapView;
 import com.aputech.dora.ui.PostDisplay;
+import com.aputech.dora.ui.PrivatePost;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -47,20 +50,28 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
         }
 
         holder.notidesc.setText(model.getText());
-        DocumentReference documentReference = db.collection("Users").document(model.getUserid());
-        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User user = documentSnapshot.toObject(User.class);
-                if (user.getProfileUrl() != null) {
-                    Glide
-                            .with(mContext)
-                            .load(user.getProfileUrl())
-                            .into(holder.img);
-                }
+        if (!model.getUserid().equals("nearby")){
+            DocumentReference documentReference = db.collection("Users").document(model.getUserid());
+            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    User user = documentSnapshot.toObject(User.class);
+                    if (user.getProfileUrl() != null) {
+                        Glide
+                                .with(mContext)
+                                .load(user.getProfileUrl())
+                                .into(holder.img);
+                    }
 
-            }
-        });
+                }
+            });
+        }else{
+            Glide
+                    .with(mContext)
+                    .load(R.drawable.ic_locationhappy)
+                    .into(holder.img);
+        }
+
     }
 
     @NonNull
@@ -93,9 +104,23 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
             notidoc.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, PostDisplay.class);
-                    intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
-                    mContext.startActivity(intent);
+                    if (getSnapshots().get(getAdapterPosition()).getTyp()==1){
+                        Intent intent = new Intent(mContext, PrivatePost.class);
+                        intent.putExtra("typ",1);
+                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                        mContext.startActivity(intent);
+                    }if (getSnapshots().get(getAdapterPosition()).getTyp()==2){
+                        Intent intent = new Intent(mContext, MapView.class);
+                        intent.putExtra("typ",2);
+                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                        mContext.startActivity(intent);
+                    }else{
+                        Intent intent = new Intent(mContext, PostDisplay.class);
+                        intent.putExtra("typ",0);
+                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                        mContext.startActivity(intent);
+                    }
+
                 }
             });
         }

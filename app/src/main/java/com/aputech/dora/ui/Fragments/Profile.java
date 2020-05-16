@@ -140,7 +140,7 @@ public class Profile extends Fragment {
         name = root.findViewById(R.id.nametitle);
         profileimg = root.findViewById(R.id.profiledisplay);
         MaterialButton settings = root.findViewById(R.id.followandset);
-        Query query = collectionReference.whereEqualTo("userid",auth.getUid()).orderBy("priority", Query.Direction.DESCENDING);
+        Query query = collectionReference.whereEqualTo("userid",auth.getUid()).orderBy("timestamp", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
                 .setQuery(query, Post.class)
                 .build();

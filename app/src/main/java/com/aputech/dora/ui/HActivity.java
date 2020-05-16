@@ -297,14 +297,10 @@ public class HActivity extends AppCompatActivity {
             }
         });
         createNotificationChannels();
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences("usersettings", Context.MODE_PRIVATE);
         int set = sharedPref.getInt("JOB", 1);
-        if (set==1){
+        if (set==1) {
             MainOpen();
-        }else{
-            JobScheduler jobScheduler =
-                    (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            jobScheduler.cancel(JOB_ID);
         }
 
 

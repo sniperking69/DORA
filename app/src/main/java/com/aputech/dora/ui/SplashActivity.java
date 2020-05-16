@@ -56,22 +56,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        db.collection("Posts").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                current = System.currentTimeMillis();
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    Post post= documentSnapshot.toObject(Post.class);
-                    long posttime=post.getTimestamp().getTime();
-                    long ftime= current-posttime;
-                    if (ftime>86400000){
-                        DeletePost(post.getRefComments(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
-                    }
-                }
-
-            }
-        });
-
         auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser()!=null){
             checkifalreadyuser();
@@ -116,6 +100,21 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void UpdateUI(){
+        db.collection("Posts").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                current = System.currentTimeMillis();
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    Post post= documentSnapshot.toObject(Post.class);
+                    long posttime=post.getTimestamp().getTime();
+                    long ftime= current-posttime;
+                    if (ftime>86400000){
+                        DeletePost(post.getRefComments(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
+                    }
+                }
+
+            }
+        });
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

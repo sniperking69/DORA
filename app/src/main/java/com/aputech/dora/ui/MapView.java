@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.aputech.dora.Model.Post;
+import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
@@ -51,6 +52,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -68,13 +70,17 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
     private Location mLastKnownLocation;
     private LocationCallback locationCallback;
     private View mapView;
+    String notipost;
     private final float DEFAULT_ZOOM = 15;
+    private int typ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
-
+        Intent intent= getIntent();
+        notipost=intent.getStringExtra("post");
+        typ=intent.getIntExtra("typ",0);
         Places.initialize(getApplicationContext(), getResources().getString(R.string.google_api_key));
         PlacesClient placesClient = Places.createClient(this);
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -108,7 +114,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
                             mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
                         } else {
                             final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
-                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne));
                         }
 
                     }
@@ -130,6 +136,22 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setOnMarkerClickListener(this);
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                if (typ==2){
+                    db.collection("Inbox").document(notipost).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            message m=documentSnapshot.toObject(message.class);
+                            LatLng LL= new LatLng(m.getLocation().getLatitude(),m.getLocation().getLatitude());
+                            moveMap(LL);
+                        }
+                    });
+
+                }
+            }
+        });
         if (mapView != null && mapView.findViewById(Integer.parseInt("1")) != null) {
             View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
@@ -307,5 +329,6 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
         float zoom = 15;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
+
 
 }

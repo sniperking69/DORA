@@ -7,17 +7,18 @@ import java.util.Date;
 public class notification {
     @ServerTimestamp
     private Date timestamp;
+    private int typ;
     private String Text,Document,userid;
     public notification() {
         //empty constructor needed
     }
 
-    public notification(Date timestamp, String text, String document, String userid) {
+    public notification(Date timestamp, int typ, String text, String document, String userid) {
         this.timestamp = timestamp;
+        this.typ = typ;
         Text = text;
         Document = document;
         this.userid = userid;
-
     }
 
     public Date getTimestamp() {
@@ -26,6 +27,14 @@ public class notification {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getTyp() {
+        return typ;
+    }
+
+    public void setTyp(int typ) {
+        this.typ = typ;
     }
 
     public String getText() {
@@ -51,5 +60,4 @@ public class notification {
     public void setUserid(String userid) {
         this.userid = userid;
     }
-
 }

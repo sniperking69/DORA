@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -40,9 +42,8 @@ public class NearByPrivatePosts extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_near_by_posts);
         myToolbar = findViewById(R.id.my_toolbar);
-        myToolbar.setTitle("Settings");
+        myToolbar.setTitle("NearBy");
         setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextColor(Color.WHITE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         Intent intent= getIntent();
@@ -52,7 +53,7 @@ public class NearByPrivatePosts extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(NearByPrivatePosts.this));
         relativeLayout.setVisibility(View.VISIBLE);
-                Query query = db.collection("Inbox").orderBy("priority", Query.Direction.DESCENDING);
+                Query query = db.collection("Inbox");
                 FirestoreRecyclerOptions<message> options = new FirestoreRecyclerOptions.Builder<message>()
                         .setQuery(query, message.class)
                         .build();

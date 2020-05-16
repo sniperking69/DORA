@@ -110,6 +110,7 @@ public class makePost extends AppCompatActivity {
     private int currentWindow = 0;
     private long playbackPosition = 0;
     ImageView curListIcon;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +167,7 @@ public class makePost extends AppCompatActivity {
         documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User user = documentSnapshot.toObject(User.class);
+                 user = documentSnapshot.toObject(User.class);
                 user_name.setText(user.getUserName());
                 String currentDateTimeString = java.text.DateFormat.getDateTimeInstance().format(new Date());
                 time.setText(currentDateTimeString);
@@ -176,7 +177,7 @@ public class makePost extends AppCompatActivity {
                             .load(R.drawable.ic_grade)
                             .into(level);
                 }
-                if (user.getPostnum() < 100 && user.getPostnum() > 500) {
+                if (user.getPostnum() > 100 && user.getPostnum() < 500) {
                     Glide
                             .with(makePost.this)
                             .load(R.drawable.ic_grade1)
@@ -337,6 +338,7 @@ public class makePost extends AppCompatActivity {
         }
         if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK){
             finish();
+            db.collection("Users").document(auth.getUid()).update("postnum",user.getPostnum()+1);
         }
     }
     private String getfileExt(Uri videoUri){
