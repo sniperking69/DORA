@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +18,7 @@ import android.view.ViewAnimationUtils;
 import android.widget.Toast;
 
 import com.aputech.dora.Model.Post;
+import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -32,6 +35,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.ServerTimestamp;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.firestore.v1.DocumentTransform;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -77,19 +81,22 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    private void locationCheck(){
+    public void locationCheck(){
         Dexter.withActivity(this)
                 .withPermissions(Arrays.asList(
                         Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.CAMERA
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.INTERNET
                 ))
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
-                            UpdateUI();
-                            revealFAB();
+                        UpdateUI();
+                        revealFAB();
                     }
 
                     @Override
@@ -100,21 +107,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void UpdateUI(){
-        db.collection("Posts").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                current = System.currentTimeMillis();
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    Post post= documentSnapshot.toObject(Post.class);
-                    long posttime=post.getTimestamp().getTime();
-                    long ftime= current-posttime;
-                    if (ftime>86400000){
-                        DeletePost(post.getRefComments(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
-                    }
-                }
-
-            }
-        });
+        CheckPostTimer();
+        CheckPrivateTimer();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -186,11 +180,14 @@ public class SplashActivity extends AppCompatActivity {
     private void DeletePost(final String Postid,int type,String Audio,String Video,String Image) {
         FirebaseStorage firebaseStorage= FirebaseStorage.getInstance();
         if (type==2){
-            firebaseStorage.getReferenceFromUrl(Image);
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Image);
+            ref.delete();
         }if (type==3){
-            firebaseStorage.getReferenceFromUrl(Video);
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Video);
+            ref.delete();
         }if (type==4){
-            firebaseStorage.getReferenceFromUrl(Audio);
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Audio);
+            ref.delete();
         }
         final WriteBatch writeBatch = db.batch();
         db.collection("Posts").document(Postid).collection("vote").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -232,6 +229,69 @@ public class SplashActivity extends AppCompatActivity {
 
         });
 
+    }
+    private void CheckPrivateTimer(){
+        db.collection("Inbox").whereEqualTo("receiver",auth.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                current = System.currentTimeMillis();
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    message post= documentSnapshot.toObject(message.class);
+                    long posttime=post.getTimestamp().getTime();
+                    long ftime= current-posttime;
+                    if (ftime>86400000){
+                        DeletePrivatePost(post.getRefmsg(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
+                    }
+                }
+
+            }
+        });
+        db.collection("Inbox").whereEqualTo("sender",auth.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                current = System.currentTimeMillis();
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    message post= documentSnapshot.toObject(message.class);
+                    long posttime=post.getTimestamp().getTime();
+                    long ftime= current-posttime;
+                    if (ftime>86400000){
+                        DeletePrivatePost(post.getRefmsg(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
+                    }
+                }
+
+            }
+        });
+    }
+    private void DeletePrivatePost(final String Postid,int type,String Audio,String Video,String Image) {
+        FirebaseStorage firebaseStorage= FirebaseStorage.getInstance();
+        if (type==2){
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Image);
+            ref.delete();
+        }if (type==3){
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Video);
+            ref.delete();
+        }if (type==4){
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Audio);
+            ref.delete();
+        }
+        db.collection("Inbox").document(Postid).delete();
+    }
+    private void CheckPostTimer(){
+        db.collection("Posts").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                current = System.currentTimeMillis();
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    Post post= documentSnapshot.toObject(Post.class);
+                    long posttime=post.getTimestamp().getTime();
+                    long ftime= current-posttime;
+                    if (ftime>86400000){
+                        DeletePost(post.getRefComments(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
+                    }
+                }
+
+            }
+        });
     }
 }
 

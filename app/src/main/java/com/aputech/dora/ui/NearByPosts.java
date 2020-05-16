@@ -45,7 +45,7 @@ public class NearByPosts extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_near_by_posts);
         myToolbar = findViewById(R.id.my_toolbar);
-        myToolbar.setTitle("Settings");
+        myToolbar.setTitle("NearBy Posts");
         setSupportActionBar(myToolbar);
         myToolbar.setTitleTextColor(Color.WHITE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

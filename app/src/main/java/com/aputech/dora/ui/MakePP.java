@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -54,14 +55,21 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.narayanacharya.waveview.WaveView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -92,7 +100,7 @@ public class MakePP extends AppCompatActivity {
     TextView totTime;
     private PlayerView playerView;
     private SimpleExoPlayer player;
-    static MediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer;
     FloatingActionButton playPause;
     SeekBar mSeekBar;
     ArrayList<User> sendto=new ArrayList<>();
@@ -109,6 +117,7 @@ public class MakePP extends AppCompatActivity {
         setContentView(R.layout.activity_make_p_p);
         editText = findViewById(R.id.para);
         time = findViewById(R.id.time);
+        locationCheck();
         level = findViewById(R.id.level);
         MaterialButton button= findViewById(R.id.AddUser);
         contact_view= findViewById(R.id.contact_view);
@@ -575,6 +584,29 @@ public class MakePP extends AppCompatActivity {
             releasePlayer();
             pause();
         }
+    }
+    public void locationCheck(){
+        Dexter.withActivity(this)
+                .withPermissions(Arrays.asList(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.INTERNET
+                ))
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
     }
 
 }

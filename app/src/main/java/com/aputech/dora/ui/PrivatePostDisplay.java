@@ -67,6 +67,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.narayanacharya.waveview.WaveView;
 
 import java.io.IOException;
@@ -210,7 +212,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
                                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            DeletePost(pst.getRefmsg());
+                                            DeletePrivatePost(pst.getRefmsg(),pst.getType(),pst.getAudioUrl(),pst.getVideoUrl(),pst.getImageUrl());
                                             finish();
                                             Toast.makeText(getApplicationContext(),
                                                     "PostDeleted", Toast.LENGTH_SHORT).show();
@@ -273,8 +275,19 @@ public class PrivatePostDisplay extends AppCompatActivity {
 
 
 
-    private void DeletePost(final String Postid) {
-                db.collection("Inbox").document(Postid).delete();
+    private void DeletePrivatePost(final String Postid,int type,String Audio,String Video,String Image) {
+        FirebaseStorage firebaseStorage= FirebaseStorage.getInstance();
+        if (type==2){
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Image);
+            ref.delete();
+        }if (type==3){
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Video);
+            ref.delete();
+        }if (type==4){
+            StorageReference ref = firebaseStorage.getReferenceFromUrl(Audio);
+            ref.delete();
+        }
+        db.collection("Inbox").document(Postid).delete();
     }
 
     private void initPlayer(final Uri songResourceUri) {

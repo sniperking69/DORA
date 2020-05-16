@@ -212,6 +212,7 @@ public class NearByAdapter extends FirestoreRecyclerAdapter<Post, NearByAdapter.
             up= itemView.findViewById(R.id.upbutton);
             down= itemView.findViewById(R.id.downbutton);
             edit =itemView.findViewById(R.id.edit);
+            card =itemView.findViewById(R.id.card);
             playButton=itemView.findViewById(R.id.playbutton);
             thumbnail=itemView.findViewById(R.id.thumbnail);
             audioview =itemView.findViewById(R.id.audiocard);

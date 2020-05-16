@@ -251,43 +251,33 @@ public class LocationJob extends JobService {
             SharedPreferences sharedPref = getSharedPreferences("userseen", Context.MODE_PRIVATE);
             ArrayList<String> listdata = new ArrayList<String>();
             String jArray = sharedPref.getString("nearme",null);
-            Log.d(TAG, "MessageCalculated: "+jArray);
             try {
-                if (jArray!=null){
+
                     JSONArray jsonArray = new JSONArray(jArray);
                         for (int i=0;i<jsonArray.length();i++){
                             listdata.add(jsonArray.getString(i));
                         }
+
+                for (int y=0;y<PostNearby.size();y++){
+                    if (!listdata.contains(PostNearby.get(y))){
+                        foundnew = true;
+                    }else{
+                        foundnew=false;
+                    }
+                }
+                if (foundnew){
+                    notification noti = new notification();
+                    noti.setDocument(PostNearby.get(0));
+                    noti.setTyp(2);
+                    noti.setUserid("nearby");
+                    noti.setText("You Have Post Near By");
+                    CollectionReference  notiref= db.collection("Users").document(auth.getUid()).collection("notify");
+                    notiref.add(noti);
                 }
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            for (int y=0;y<PostNearby.size();y++){
-                if (!listdata.contains(PostNearby.get(y))){
-                    ArrayList<String> newlistdata = new ArrayList<String>();
-                    newlistdata=listdata;
-                    newlistdata.add(PostNearby.get(y));
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    JSONArray mJSONArray = new JSONArray(newlistdata);
-                    mJSONArray.toString();
-                    editor.putString("nearme",mJSONArray.toString());
-                    editor.apply();
-                    foundnew = true;
-                }else{
-                    foundnew=false;
-                }
-            }
-            if (foundnew){
-                notification noti = new notification();
-                noti.setDocument(PostNearby.get(0));
-                noti.setTyp(2);
-                noti.setUserid("nearby");
-                noti.setText("You Have Post Near By");
-                CollectionReference  notiref= db.collection("Users").document(auth.getUid()).collection("notify");
-                notiref.add(noti);
-            }
-
 
             }
         }
@@ -318,41 +308,39 @@ public class LocationJob extends JobService {
             SharedPreferences sharedPref = getSharedPreferences("userseen", Context.MODE_PRIVATE);
             ArrayList<String> listdata = new ArrayList<String>();
             String jArray = sharedPref.getString("nearme",null);
-            Log.d(TAG, "MessageCalculated: "+jArray);
             try {
                 JSONArray jsonArray = new JSONArray(jArray);
-                if (jArray != null) {
                     for (int i=0;i<jsonArray.length();i++){
                         listdata.add(jsonArray.getString(i));
                     }
+                for (int y=0;y<PostNearby.size();y++){
+                    if (!listdata.contains(PostNearby.get(y))){
+                        ArrayList<String> newlistdata;
+                        newlistdata=listdata;
+                        newlistdata.add(PostNearby.get(y));
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        JSONArray mJSONArray = new JSONArray(newlistdata);
+                        mJSONArray.toString();
+                        editor.putString("nearme",mJSONArray.toString());
+                        editor.apply();
+                        foundnew = true;
+                    }else{
+                        foundnew=false;
+                    }
+                }
+                if (foundnew){
+                    notification noti = new notification();
+                    noti.setDocument(PostNearby.get(0));
+                    noti.setTyp(1);
+                    noti.setUserid("nearby");
+                    noti.setText("You Have A Private Post NearBy");
+                    CollectionReference  notiref= db.collection("Users").document(auth.getUid()).collection("notify");
+                    notiref.add(noti);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            for (int y=0;y<PostNearby.size();y++){
-                if (!listdata.contains(PostNearby.get(y))){
-                    ArrayList<String> newlistdata = new ArrayList<String>();
-                    newlistdata=listdata;
-                    newlistdata.add(PostNearby.get(y));
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    JSONArray mJSONArray = new JSONArray(newlistdata);
-                    mJSONArray.toString();
-                    editor.putString("nearme",mJSONArray.toString());
-                    editor.apply();
-                    foundnew = true;
-                }else{
-                    foundnew=false;
-                }
-            }
-            if (foundnew){
-                notification noti = new notification();
-                noti.setDocument(PostNearby.get(0));
-                noti.setTyp(1);
-                noti.setUserid("nearby");
-                noti.setText("You Have A Private Post NearBy");
-                CollectionReference  notiref= db.collection("Users").document(auth.getUid()).collection("notify");
-                notiref.add(noti);
-            }
+
             }
         }
 

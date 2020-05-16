@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -64,12 +65,19 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.narayanacharya.waveview.WaveView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -102,7 +110,7 @@ public class makePost extends AppCompatActivity {
     TextView totTime;
     private PlayerView playerView;
     private SimpleExoPlayer player;
-    static MediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer;
     FloatingActionButton playPause;
     Uri songResourceUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/dora-275f8.appspot.com/o/videos%2FsB0bujdAyTlu3GwM9tW2.mp4?alt=media&token=f376e368-4032-4d3e-a4b5-9169b037ee71");
     SeekBar mSeekBar;
@@ -116,6 +124,7 @@ public class makePost extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_post);
+        locationCheck();
         editText=findViewById(R.id.para);
         imageView = findViewById(R.id.dispimg);
         audio = findViewById(R.id.Audio);
@@ -548,5 +557,28 @@ public class makePost extends AppCompatActivity {
             releasePlayer();
             pause();
         }
+    }
+    public void locationCheck(){
+        Dexter.withActivity(this)
+                .withPermissions(Arrays.asList(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.INTERNET
+                ))
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
     }
 }

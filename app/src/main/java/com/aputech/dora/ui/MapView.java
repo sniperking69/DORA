@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -20,6 +21,7 @@ import androidx.core.content.ContextCompat;
 
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.message;
+import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
@@ -56,6 +58,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +104,28 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
             }
         });
 
+        notebookRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    Post p = documentSnapshot.toObject(Post.class);
+                    posts.add(p);
+                }
+                for (int x = 0; x < posts.size(); x++) {
+                    Post msg = posts.get(x);
+                    if (msg.getLocation() != null) {
+                        if (auth.getUid().equals(msg.getUserid())) {
+                            LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
+                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                        } else {
+                            final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
+                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne));
+                        }
 
+                    }
+                }
+            }
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -127,29 +153,8 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
                             moveMap(LL);
                         }
                     });
-                    notebookRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                                Post p = documentSnapshot.toObject(Post.class);
-                                posts.add(p);
-                            }
-                            for (int x = 0; x < posts.size(); x++) {
-                                Post msg = posts.get(x);
-                                if (msg.getLocation() != null) {
-                                    if (auth.getUid().equals(msg.getUserid())) {
-                                        LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
-                                        mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                                    } else {
-                                        final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
-                                        mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne));
-                                    }
-
-                                }
-                            }
-                        }
-                    });
                 }
+
             }
         });
         if (mapView != null && mapView.findViewById(Integer.parseInt("1")) != null) {
@@ -252,27 +257,27 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
             while (x<posts.size()){
                 Post post= posts.get(x);
                 if (post.getLocation()!=null){
-                 if (post.getLocation().getLongitude()==marker.getPosition().longitude &&
-                         post.getLocation().getLatitude() ==marker.getPosition().latitude){
-                     PostNearby.add(post.getRefComments());
-                     x+=1;
-                     while(x<posts.size()){
-                         Post pst= posts.get(x);
-                         if (pst.getLocation()!=null){
-                             Location postA = new Location("");
-                             postA.setLatitude(pst.getLocation().getLatitude());
-                             postA.setLongitude(pst.getLocation().getLongitude());
-                             Location postB = new Location("");
-                             postB.setLatitude(post.getLocation().getLatitude());
-                             postB.setLongitude(post.getLocation().getLongitude());
-                             if (closekm(postA,postB)){
-                                 PostNearby.add(pst.getRefComments());
-                             }
-                         }
-                         x+=1;
-                     }
-                     break;
-                 }
+                    if (post.getLocation().getLongitude()==marker.getPosition().longitude &&
+                            post.getLocation().getLatitude() ==marker.getPosition().latitude){
+                        PostNearby.add(post.getRefComments());
+                        x+=1;
+                        while(x<posts.size()){
+                            Post pst= posts.get(x);
+                            if (pst.getLocation()!=null){
+                                Location postA = new Location("");
+                                postA.setLatitude(pst.getLocation().getLatitude());
+                                postA.setLongitude(pst.getLocation().getLongitude());
+                                Location postB = new Location("");
+                                postB.setLatitude(post.getLocation().getLatitude());
+                                postB.setLongitude(post.getLocation().getLongitude());
+                                if (closekm(postA,postB)){
+                                    PostNearby.add(pst.getRefComments());
+                                }
+                            }
+                            x+=1;
+                        }
+                        break;
+                    }
                 }
                 x+=1;
             }
@@ -330,5 +335,31 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
+    private String PostCalculate(double latitude ,double longitude){
+        Location postlocation = new Location("");
+        postlocation.setLatitude(latitude);
+        postlocation.setLongitude(longitude);
+        if (closekm(postlocation,mLastKnownLocation)) {
+            int x=0;
+            while (x<posts.size()){
+                Post pst= posts.get(x);
+                if (pst.getLocation()!=null){
+                    Location postA = new Location("");
+                    postA.setLatitude(pst.getLocation().getLatitude());
+                    postA.setLongitude(pst.getLocation().getLongitude());
+                    Location postB = new Location("");
+                    postB.setLatitude(pst.getLocation().getLatitude());
+                    postB.setLongitude(pst.getLocation().getLongitude());
+                    if (closekm(postA,postB)){
+                        return pst.getRefComments();
+                       // PostNearby.add(pst.getRefComments());
+                    }
+                }
+                x+=1;
+            }
+        }
+            return "0";
 
+
+    }
 }
