@@ -159,7 +159,7 @@ public class PostDisplay extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
               final Post post = documentSnapshot.toObject(Post.class);
                 if (post.getType()==2){
-                    if (postText.getText().toString().isEmpty()){
+                    if (post.getDescription().isEmpty()){
                         postText.setVisibility(View.GONE);
                     }
                     image.setVisibility(View.VISIBLE);
@@ -168,13 +168,13 @@ public class PostDisplay extends AppCompatActivity {
                             .load(post.getImageUrl())
                             .into(image);
                 }if (post.getType()==3){
-                    if (postText.getText().toString().isEmpty()){
+                    if (post.getDescription().isEmpty()){
                         postText.setVisibility(View.GONE);
                     }
                     playerView.setVisibility(View.VISIBLE);
                     initializePlayer(Uri.parse(post.getVideoUrl()));
                 }if (post.getType()==4){
-                    if (postText.getText().toString().isEmpty()){
+                    if (post.getDescription().isEmpty()){
                         postText.setVisibility(View.GONE);
                     }
                     audioView.setVisibility(View.VISIBLE);
@@ -199,7 +199,6 @@ public class PostDisplay extends AppCompatActivity {
                     post_time.setText(df);
                 }
                 postText.setText(post.getDescription());
-                Log.d(TAG, "onCreate: "+post.getLocation());
                 if (post.getLocation()!=null){
                     locate.setImageResource(R.drawable.ic_locationhappy);
                     locate.setOnClickListener(new View.OnClickListener() {

@@ -121,8 +121,39 @@ public class LocationJob extends JobService {
                         }
                         for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                             if (dc.getType() == DocumentChange.Type.ADDED) {
-                                notification noti = dc.getDocument().toObject(notification.class);
-                                sendOnChannel1(noti);
+                                boolean foundnew=false;
+                                SharedPreferences sharedPref = getSharedPreferences("userseen", Context.MODE_PRIVATE);
+                                ArrayList<String> listdata = new ArrayList<String>();
+                                String jArray = sharedPref.getString("notidone",null);
+                                try {
+
+                                    if (jArray!=null){
+                                        JSONArray jsonArray = new JSONArray(jArray);
+                                        for (int i=0;i<jsonArray.length();i++){
+                                            listdata.add(jsonArray.getString(i));
+                                        }
+                                    }
+                                        if (!listdata.contains(dc.getDocument().getId())){
+                                            ArrayList<String> newlistdata;
+                                            newlistdata=listdata;
+                                            newlistdata.add(dc.getDocument().getId());
+                                            SharedPreferences.Editor editor = sharedPref.edit();
+                                            JSONArray mJSONArray = new JSONArray(newlistdata);
+                                            mJSONArray.toString();
+                                            editor.putString("notidone",mJSONArray.toString());
+                                            editor.apply();
+                                            foundnew = true;
+                                        }
+
+                                    if (foundnew){
+                                        notification noti = dc.getDocument().toObject(notification.class);
+                                        sendOnChannel1(noti);
+                                    }
+
+                                } catch (JSONException j) {
+                                    j.printStackTrace();
+                                }
+
                             }
                         }
                     }
@@ -182,7 +213,6 @@ public class LocationJob extends JobService {
                         if (task.isSuccessful()) {
                             mLastKnownLocation = task.getResult();
                             if (mLastKnownLocation != null) {
-                                Log.d(TAG, "in if: "+mLastKnownLocation);
                                 for (int i=0;i<posts.size();i++){
                                     PostCalculate(posts.get(i).getLocation().getLatitude() ,posts.get(i).getLocation().getLongitude());
                                 }
@@ -253,19 +283,31 @@ public class LocationJob extends JobService {
             String jArray = sharedPref.getString("nearme",null);
             try {
 
+                if (jArray!=null){
                     JSONArray jsonArray = new JSONArray(jArray);
-                        for (int i=0;i<jsonArray.length();i++){
-                            listdata.add(jsonArray.getString(i));
-                        }
+                    for (int i=0;i<jsonArray.length();i++){
+                        listdata.add(jsonArray.getString(i));
+                    }
+                }
+
 
                 for (int y=0;y<PostNearby.size();y++){
                     if (!listdata.contains(PostNearby.get(y))){
+                        ArrayList<String> newlistdata;
+                        newlistdata=listdata;
+                        newlistdata.add(PostNearby.get(y));
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        JSONArray mJSONArray = new JSONArray(newlistdata);
+                        mJSONArray.toString();
+                        editor.putString("nearme",mJSONArray.toString());
+                        editor.apply();
                         foundnew = true;
                     }else{
                         foundnew=false;
                     }
                 }
                 if (foundnew){
+                    Log.d(TAG, "PostCalculate: found new is true");
                     notification noti = new notification();
                     noti.setDocument(PostNearby.get(0));
                     noti.setTyp(2);
@@ -307,12 +349,14 @@ public class LocationJob extends JobService {
             }
             SharedPreferences sharedPref = getSharedPreferences("userseen", Context.MODE_PRIVATE);
             ArrayList<String> listdata = new ArrayList<String>();
-            String jArray = sharedPref.getString("nearme",null);
+            String jArray = sharedPref.getString("nearmeprivate",null);
             try {
-                JSONArray jsonArray = new JSONArray(jArray);
+                if (jArray!=null){
+                    JSONArray jsonArray = new JSONArray(jArray);
                     for (int i=0;i<jsonArray.length();i++){
                         listdata.add(jsonArray.getString(i));
                     }
+                }
                 for (int y=0;y<PostNearby.size();y++){
                     if (!listdata.contains(PostNearby.get(y))){
                         ArrayList<String> newlistdata;
@@ -321,7 +365,7 @@ public class LocationJob extends JobService {
                         SharedPreferences.Editor editor = sharedPref.edit();
                         JSONArray mJSONArray = new JSONArray(newlistdata);
                         mJSONArray.toString();
-                        editor.putString("nearme",mJSONArray.toString());
+                        editor.putString("nearmeprivate",mJSONArray.toString());
                         editor.apply();
                         foundnew = true;
                     }else{

@@ -134,7 +134,7 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setOnMarkerClickListener(this);
-        loadData();
+
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
@@ -149,6 +149,7 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
                     });
 
                 }
+                loadData();
             }
         });
         if (mapView != null && mapView.findViewById(Integer.parseInt("1")) != null) {
@@ -321,8 +322,7 @@ private void loadData(){
                 }
             }
             if (PostNearby.size()==0) {
-                View contextView = findViewById(R.id.main);
-                Snackbar.make(contextView, R.string.not_at_location, Snackbar.LENGTH_SHORT).show();
+                Toast.makeText(PrivatePost.this,"Not Near the Post",Toast.LENGTH_SHORT).show();
             }else{
                 if (PostNearby.size()==1){
                     Intent intent = new Intent(PrivatePost.this, PrivatePostDisplay.class);
