@@ -146,7 +146,7 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
                             }
                         });
 
-                    }else{
+                    }if (getSnapshots().get(getAdapterPosition()).getTyp()==0){
                         db.collection("Posts").document(getSnapshots().get(getAdapterPosition()).getDocument()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

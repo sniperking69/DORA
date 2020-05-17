@@ -38,12 +38,14 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/edit"
+        android:visibility="gone"
         android:layout_margin="2dp"
         app:srcCompat="@drawable/ic_edit"/>
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/delete"
+        android:visibility="gone"
         android:layout_margin="2dp"
         app:srcCompat="@drawable/ic_delete"/>
     <androidx.appcompat.widget.AppCompatImageView

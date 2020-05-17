@@ -366,10 +366,8 @@ public class MakePP extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK && data !=null && data.getData()!=null){
+        if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK ){
             finish();
-
-
         }
         if (requestCode ==GET_USERS && resultCode == RESULT_OK ){
             sendto=data.getParcelableArrayListExtra("sendto");

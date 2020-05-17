@@ -252,7 +252,7 @@ public class LocationJob extends JobService {
     }
     private boolean closekm(Location A, Location B){
         float dis = A.distanceTo(B) / 1000;
-        return dis < 1;
+        return dis < 2;
 
     }
     private void PostCalculate(double latitude ,double longitude){

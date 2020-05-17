@@ -185,6 +185,7 @@ public class NearByPrivateAdapter extends FirestoreRecyclerAdapter<message, Near
             thumbnail = itemView.findViewById(R.id.thumbnail);
             audioview = itemView.findViewById(R.id.audiocard);
             delete = itemView.findViewById(R.id.delete);
+            card =itemView.findViewById(R.id.card);
             user_name = itemView.findViewById(R.id.user_name);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
             time = itemView.findViewById(R.id.time);
@@ -196,7 +197,7 @@ public class NearByPrivateAdapter extends FirestoreRecyclerAdapter<message, Near
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, PrivatePostDisplay.class);
-                    intent.putExtra("ppost", getSnapshots().get(getAdapterPosition()).getRefmsg());
+                    intent.putExtra("post", getSnapshots().get(getAdapterPosition()).getRefmsg());
                     mContext.startActivity(intent);
                 }
             });
@@ -204,7 +205,7 @@ public class NearByPrivateAdapter extends FirestoreRecyclerAdapter<message, Near
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, PrivatePostDisplay.class);
-                    intent.putExtra("ppost", getSnapshots().get(getAdapterPosition()).getRefmsg());
+                    intent.putExtra("post", getSnapshots().get(getAdapterPosition()).getRefmsg());
                     mContext.startActivity(intent);
                 }
             });
