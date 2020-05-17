@@ -7,7 +7,6 @@
     tools:context=".ui.PostDisplay">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedscroll"
         android:layout_width="match_parent"
         android:layout_above="@+id/comarea"
         android:layout_height="match_parent">

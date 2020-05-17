@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">DropChat</string>
-    <string name="title_activity_maps">Map</string>
     <string name="title_activity_h">HActivity</string>
     <string name="title_post">Post</string>
     <string name="Continue">Continue</string>
@@ -22,6 +21,4 @@
     <string name="title_activity_private_post">Map</string>
     <string name="title_activity_disp_post_location">Map</string>
     <string name="title_activity_select_location">Map</string>
-    <string name="title_activity_near_by">Map</string>
-    <string name="not_at_location">You Must be At the Location To view Post</string>
 </resources>

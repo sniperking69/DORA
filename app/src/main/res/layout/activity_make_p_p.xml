@@ -116,7 +116,6 @@
                 android:layout_height="380dp" />
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:layout_width="wrap_content"
-                android:id="@+id/PPVideo"
                 app:fabSize="normal"
                 android:visibility="invisible"
                 android:layout_centerHorizontal="true"
