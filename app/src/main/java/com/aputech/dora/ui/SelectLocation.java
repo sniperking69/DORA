@@ -1,9 +1,5 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.FragmentActivity;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -19,6 +15,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.R;
@@ -37,8 +36,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -64,8 +61,15 @@ import java.util.List;
 
 public class SelectLocation extends FragmentActivity implements OnMapReadyCallback {
 
+    private final float DEFAULT_ZOOM = 15;
+    MaterialButton SKIP, Forward;
+    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+    LatLng latLngfinal;
+    Uri uri;
+    int type;
+    String ext;
+    String txt;
     private GoogleMap mMap;
-    MaterialButton SKIP,Forward;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Location mLastKnownLocation;
@@ -73,40 +77,32 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
     private View mapView;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private String geocode;
-    FirebaseStorage firebaseStorage=FirebaseStorage.getInstance();
-
-    LatLng latLngfinal;
-     Uri uri;
-    private final float DEFAULT_ZOOM = 15;
     private TextView resutText;
-    int type;
-    String ext;
-    String txt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_location);
-        resutText = (TextView) findViewById(R.id.dragg_result);
-        SKIP= findViewById(R.id.SKIP);
+        resutText = findViewById(R.id.dragg_result);
+        SKIP = findViewById(R.id.SKIP);
         Forward = findViewById(R.id.forward);
-        Intent intent= getIntent();
-        txt=intent.getStringExtra("Desc");
-        type=intent.getIntExtra("type",1);
-        if (intent.getStringExtra("Uri")!=null){
-            uri=Uri.parse(intent.getStringExtra("Uri"));
-             ext=intent.getStringExtra("ext");
+        Intent intent = getIntent();
+        txt = intent.getStringExtra("Desc");
+        type = intent.getIntExtra("type", 1);
+        if (intent.getStringExtra("Uri") != null) {
+            uri = Uri.parse(intent.getStringExtra("Uri"));
+            ext = intent.getStringExtra("ext");
         }
         SKIP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadFire(type,false,txt,ext,uri);
+                uploadFire(type, false, txt, ext, uri);
             }
         });
         Forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadFire(type,true,txt,ext,uri);
+                uploadFire(type, true, txt, ext, uri);
             }
         });
 
@@ -243,19 +239,19 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
                 });
     }
 
-    private void Geocodeget(){
-        double lng=mMap.getCameraPosition().target.longitude;
-        double lat=mMap.getCameraPosition().target.latitude;
-        LatLng latLng= new LatLng(lat,lng);
+    private void Geocodeget() {
+        double lng = mMap.getCameraPosition().target.longitude;
+        double lat = mMap.getCameraPosition().target.latitude;
+        LatLng latLng = new LatLng(lat, lng);
         Geocoder geocoder = new Geocoder(SelectLocation.this);
-        latLngfinal=latLng;
+        latLngfinal = latLng;
         try {
             List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
             if (addressList != null && addressList.size() > 0) {
                 String locality = addressList.get(0).getAddressLine(0);
                 String country = addressList.get(0).getCountryName();
                 if (!locality.isEmpty() && !country.isEmpty())
-                    geocode=locality ;
+                    geocode = locality;
                 resutText.setText(geocode);
 
             }
@@ -264,18 +260,20 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
             e.printStackTrace();
         }
     }
+
     private void moveMap(LatLng latLng) {
         float zoom = 15;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
-    public void UploadVideo(final String rf ,String ext,Uri videoUri) {
+
+    public void UploadVideo(final String rf, String ext, Uri videoUri) {
         if (videoUri != null) {
             final ProgressDialog progressDialog = new ProgressDialog(SelectLocation.this);
             progressDialog.setTitle("Uploading...");
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            final StorageReference ref = firebaseStorage.getReference("videos").child(rf+"."+ ext);
+            final StorageReference ref = firebaseStorage.getReference("videos").child(rf + "." + ext);
             ref.putFile(videoUri)
                     .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -284,12 +282,12 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
                                 ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.isSuccessful()){
+                                        if (task.isSuccessful()) {
                                             progressDialog.dismiss();
-                                            db.collection("Posts").document(rf).update("videoUrl",task.getResult().toString());
-                                                            Intent intent = new Intent();
-                                                            setResult(Activity.RESULT_OK, intent);
-                                                            finish();
+                                            db.collection("Posts").document(rf).update("videoUrl", task.getResult().toString());
+                                            Intent intent = new Intent();
+                                            setResult(Activity.RESULT_OK, intent);
+                                            finish();
                                         }
 
                                     }
@@ -318,12 +316,13 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
                     });
         }
     }
-    private void uploadFire(final int type, boolean skip, String text, final String ext, final Uri uri ){
+
+    private void uploadFire(final int type, boolean skip, String text, final String ext, final Uri uri) {
         final Post post = new Post();
-        if (skip){
-            GeoPoint geoPoint = new GeoPoint(latLngfinal.latitude,latLngfinal.longitude);
+        if (skip) {
+            GeoPoint geoPoint = new GeoPoint(latLngfinal.latitude, latLngfinal.longitude);
             post.setLocation(geoPoint);
-        }else{
+        } else {
             post.setLocation(null);
         }
         post.setType(type);
@@ -333,20 +332,22 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 final String commentref = documentReference.getId();
-                db.collection("Posts").document(commentref).update("refComments",commentref).addOnCompleteListener(new OnCompleteListener<Void>() {
+                db.collection("Posts").document(commentref).update("refComments", commentref).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (type==1){
+                        if (type == 1) {
                             Intent intent = new Intent();
                             setResult(Activity.RESULT_OK, intent);
                             finish();
                         }
-                        if (type==2){
-                            UploadPicture(commentref,uri);
-                        }if (type==3) {
-                            UploadVideo(commentref,ext,uri);
-                        }if (type==4){
-                            UploadAudio(commentref,ext,uri);
+                        if (type == 2) {
+                            UploadPicture(commentref, uri);
+                        }
+                        if (type == 3) {
+                            UploadVideo(commentref, ext, uri);
+                        }
+                        if (type == 4) {
+                            UploadAudio(commentref, ext, uri);
                         }
 
                     }
@@ -360,7 +361,7 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         progressDialog.setTitle("Uploading...");
         progressDialog.setCancelable(false);
         progressDialog.show();
-        final StorageReference ref = firebaseStorage.getReference("audio").child(commentref +"."+ ext);
+        final StorageReference ref = firebaseStorage.getReference("audio").child(commentref + "." + ext);
         ref.putFile(audiouri)
                 .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -369,9 +370,9 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
                             ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Uri> task) {
-                                    if (task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         progressDialog.dismiss();
-                                        db.collection("Posts").document(commentref).update("audioUrl",task.getResult().toString());
+                                        db.collection("Posts").document(commentref).update("audioUrl", task.getResult().toString());
                                         Intent intent = new Intent();
                                         setResult(Activity.RESULT_OK, intent);
                                         finish();
@@ -403,50 +404,50 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
     }
 
     private void UploadPicture(final String commentref, Uri imguri) {
-            final ProgressDialog progressDialog = new ProgressDialog(SelectLocation.this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-            final StorageReference ref = firebaseStorage.getReference("images").child(commentref +"."+ ext);
-            ref.putFile(imguri)
-                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.isSuccessful()){
-                                            progressDialog.dismiss();
-                                            db.collection("Posts").document(commentref).update("imageUrl",task.getResult().toString());
-                                            Intent intent = new Intent();
-                                            setResult(Activity.RESULT_OK, intent);
-                                            finish();
-                                        }
+        final ProgressDialog progressDialog = new ProgressDialog(SelectLocation.this);
+        progressDialog.setTitle("Uploading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        final StorageReference ref = firebaseStorage.getReference("images").child(commentref + "." + ext);
+        ref.putFile(imguri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()) {
+                                        progressDialog.dismiss();
+                                        db.collection("Posts").document(commentref).update("imageUrl", task.getResult().toString());
+                                        Intent intent = new Intent();
+                                        setResult(Activity.RESULT_OK, intent);
+                                        finish();
                                     }
-                                });
-                            } else {
-                                progressDialog.dismiss();
-                                Toast.makeText(SelectLocation.this, "Upload Failed Network Error", Toast.LENGTH_LONG).show();
-                            }
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
+                                }
+                            });
+                        } else {
                             progressDialog.dismiss();
-                            Toast.makeText(SelectLocation.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SelectLocation.this, "Upload Failed Network Error", Toast.LENGTH_LONG).show();
                         }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
-                        }
-                    });
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(SelectLocation.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                .getTotalByteCount());
+                        progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                    }
+                });
 
     }
 }

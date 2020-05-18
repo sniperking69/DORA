@@ -1,9 +1,5 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,6 +13,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
@@ -58,14 +58,14 @@ public class regUser extends AppCompatActivity {
     CircleImageView dispimg;
     FirebaseStorage storage;
     StorageReference storageReference;
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection("Users");
-    private Uri filePath;
     boolean permission;
     MaterialButton Continue;
     FloatingActionButton remove;
     boolean act;
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference notebookRef = db.collection("Users");
+    private Uri filePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,19 +84,19 @@ public class regUser extends AppCompatActivity {
         dispimg = findViewById(R.id.profiledefault);
         Continue = findViewById(R.id.button_next);
         upimg = findViewById(R.id.upimage);
-        Intent intent= getIntent();
-         act=intent.getBooleanExtra("edit",false);
-        if (act){
+        Intent intent = getIntent();
+        act = intent.getBooleanExtra("edit", false);
+        if (act) {
             Continue.setText("UPDATE");
-            DocumentReference documentReference =db.collection("Users").document(firebaseAuth.getUid());
+            DocumentReference documentReference = db.collection("Users").document(firebaseAuth.getUid());
             documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    User user= documentSnapshot.toObject(User.class);
+                    User user = documentSnapshot.toObject(User.class);
                     Uname.getEditText().setText(user.getUserName());
                     Bio.getEditText().setText(user.getBio());
                     Email.getEditText().setText(user.getEmailAdress());
-                    if (user.getProfileUrl()!=null){
+                    if (user.getProfileUrl() != null) {
                         Glide
                                 .with(regUser.this)
                                 .load(user.getProfileUrl())
@@ -105,7 +105,7 @@ public class regUser extends AppCompatActivity {
                         remove.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                filePath=null;
+                                filePath = null;
                                 dispimg.setImageResource(R.drawable.ic_user);
                                 remove.setVisibility(View.INVISIBLE);
                             }
@@ -120,7 +120,7 @@ public class regUser extends AppCompatActivity {
                 }
             });
 
-        }else{
+        } else {
             Continue.setText("CONTINUE");
             Continue.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -135,11 +135,7 @@ public class regUser extends AppCompatActivity {
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
-                            permission = true;
-                        } else {
-                            permission = false;
-                        }
+                        permission = report.areAllPermissionsGranted();
                     }
 
                     @Override
@@ -163,7 +159,6 @@ public class regUser extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -180,7 +175,7 @@ public class regUser extends AppCompatActivity {
             remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    filePath=null;
+                    filePath = null;
                     dispimg.setImageResource(R.drawable.ic_user);
                     remove.setVisibility(View.INVISIBLE);
                 }
@@ -197,7 +192,7 @@ public class regUser extends AppCompatActivity {
                 remove.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        filePath=null;
+                        filePath = null;
                         dispimg.setImageResource(R.drawable.ic_user);
                         remove.setVisibility(View.INVISIBLE);
                     }
@@ -280,7 +275,7 @@ public class regUser extends AppCompatActivity {
                             }
                         });
             } else {
-                if (!act){
+                if (!act) {
                     user.setProfileUrl(null);
                 }
                 notebookRef.document(firebaseAuth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {

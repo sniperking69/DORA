@@ -8,15 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +17,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.aputech.dora.Adpater.FireAdapter;
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
-import com.aputech.dora.ui.ProfileSettings;
 import com.aputech.dora.R;
+import com.aputech.dora.ui.ProfileSettings;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -67,23 +65,23 @@ public class Profile extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int GALLERY = 2;
+    ImageView editImage;
+    FireAdapter adapter;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageReference = storage.getReference();
+    RecyclerView recyclerView;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference userinfo = db.collection("Users").document(auth.getUid());
     private User user;
     private CollectionReference collectionReference = db.collection("Posts");
     private RelativeLayout relativeLayout;
     private CircleImageView profileimg;
-    ImageView editImage;
     private Uri filePath;
-    FireAdapter adapter;
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageReference = storage.getReference();
-    private TextView following, posts, followers, name, bio,email;
+    private TextView following, posts, followers, name, bio, email;
     private ImageView level;
-    RecyclerView recyclerView;
     private RecyclerView.AdapterDataObserver observer;
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -126,7 +124,7 @@ public class Profile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
-       recyclerView = root.findViewById(R.id.recycler_view);
+        recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         bio = root.findViewById(R.id.bio);
@@ -136,15 +134,15 @@ public class Profile extends Fragment {
         following = root.findViewById(R.id.numFoly);
         posts = root.findViewById(R.id.numPosts);
         level = root.findViewById(R.id.level);
-        email =root.findViewById(R.id.email);
+        email = root.findViewById(R.id.email);
         name = root.findViewById(R.id.nametitle);
         profileimg = root.findViewById(R.id.profiledisplay);
         MaterialButton settings = root.findViewById(R.id.followandset);
-        Query query = collectionReference.whereEqualTo("userid",auth.getUid()).orderBy("timestamp", Query.Direction.DESCENDING);
+        Query query = collectionReference.whereEqualTo("userid", auth.getUid()).orderBy("timestamp", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
                 .setQuery(query, Post.class)
                 .build();
-        adapter = new FireAdapter(options,getActivity());
+        adapter = new FireAdapter(options, getActivity());
         recyclerView.setAdapter(adapter);
         settings.setText("SETTINGS");
         settings.setOnClickListener(new View.OnClickListener() {
@@ -155,19 +153,19 @@ public class Profile extends Fragment {
             }
         });
         relativeLayout.setVisibility(View.VISIBLE);
-        observer =new RecyclerView.AdapterDataObserver() {
+        observer = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeRemoved(int positionStart, int itemCount) {
-                if (adapter.getItemCount()==0){
+                if (adapter.getItemCount() == 0) {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                if (adapter.getItemCount() >0){
+                if (adapter.getItemCount() > 0) {
                     relativeLayout.setVisibility(View.INVISIBLE);
-                }else{
+                } else {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
@@ -183,33 +181,33 @@ public class Profile extends Fragment {
                 email.setText(user.getEmailAdress());
                 followers.setText(String.valueOf(user.getFollower()));
                 following.setText(String.valueOf(user.getFollowing()));
-                if (getActivity()!=null){
+                if (getActivity() != null) {
 
                     if (user.getPostnum() < 100) {
-                    Glide
-                            .with(getActivity())
-                            .load(R.drawable.ic_grade)
-                            .into(level);
-                }
-                if (user.getPostnum() > 100 && user.getPostnum() < 500 ) {
-                    Glide
-                            .with(getActivity())
-                            .load(R.drawable.ic_grade1)
-                            .into(level);
-                }
-                if (user.getPostnum() > 500) {
-                    Glide
-                            .with(getActivity())
-                            .load(R.drawable.ic_grade2)
-                            .into(level);
-                }
-                name.setText(user.getUserName());
-                if (user.getProfileUrl()!=null){
-                    Glide
-                            .with(getActivity())
-                            .load(user.getProfileUrl())
-                            .into(profileimg);
-                }
+                        Glide
+                                .with(getActivity())
+                                .load(R.drawable.ic_grade)
+                                .into(level);
+                    }
+                    if (user.getPostnum() > 100 && user.getPostnum() < 500) {
+                        Glide
+                                .with(getActivity())
+                                .load(R.drawable.ic_grade1)
+                                .into(level);
+                    }
+                    if (user.getPostnum() > 500) {
+                        Glide
+                                .with(getActivity())
+                                .load(R.drawable.ic_grade2)
+                                .into(level);
+                    }
+                    name.setText(user.getUserName());
+                    if (user.getProfileUrl() != null) {
+                        Glide
+                                .with(getActivity())
+                                .load(user.getProfileUrl())
+                                .into(profileimg);
+                    }
                 }
 
             }
@@ -249,6 +247,7 @@ public class Profile extends Fragment {
                 });
         pictureDialog.show();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -282,61 +281,60 @@ public class Profile extends Fragment {
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "ProfileImage", null);
         return Uri.parse(path);
     }
+
     private void takePhotoFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+
     public void Continue() {
-            if (filePath != null) {
-                final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setTitle("Uploading...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                final StorageReference ref = storageReference.child("images/" + auth.getUid());
-                ref.putFile(filePath)
-                        .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            progressDialog.dismiss();
-                                            userinfo.update("profileUrl",uri.toString());
-                                        }
-                                    });
-                                } else {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(getActivity(), "Upload Failed Network Error", Toast.LENGTH_LONG).show();
-                                }
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
+        if (filePath != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setTitle("Uploading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            final StorageReference ref = storageReference.child("images/" + auth.getUid());
+            ref.putFile(filePath)
+                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        progressDialog.dismiss();
+                                        userinfo.update("profileUrl", uri.toString());
+                                    }
+                                });
+                            } else {
                                 progressDialog.dismiss();
-                                Toast.makeText(getActivity(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Upload Failed Network Error", Toast.LENGTH_LONG).show();
                             }
-                        })
-                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                                double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                        .getTotalByteCount());
-                                progressDialog.setMessage("Uploaded " + (int) progress + "%");
-                            }
-                        });
-            }
 
-
-
-
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getActivity(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        }
 
 
     }
+
     public void choosePhotoFromGallary() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -352,7 +350,7 @@ public class Profile extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (adapter!=null){
+        if (adapter != null) {
             adapter.stopListening();
         }
     }
@@ -360,7 +358,7 @@ public class Profile extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (adapter!=null){
+        if (adapter != null) {
             adapter.startListening();
         }
     }

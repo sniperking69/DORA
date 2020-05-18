@@ -2,16 +2,15 @@ package com.aputech.dora.ui.Fragments;
 
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.aputech.dora.Adpater.NotiAdapter;
 import com.aputech.dora.Model.notification;
@@ -32,12 +31,12 @@ public class Notify extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    RelativeLayout relativeLayout;
+    RecyclerView.AdapterDataObserver observer;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private CollectionReference notebookRef = db.collection("Users").document(auth.getUid()).collection("notify");
     private NotiAdapter adapter;
-    RelativeLayout relativeLayout;
-    RecyclerView.AdapterDataObserver observer;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -79,30 +78,30 @@ public class Notify extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_notify, container, false);
-        Query query = notebookRef.orderBy("timestamp",Query.Direction.DESCENDING);
-       relativeLayout= root.findViewById(R.id.noresult);
+        Query query = notebookRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        relativeLayout = root.findViewById(R.id.noresult);
         FirestoreRecyclerOptions<notification> options = new FirestoreRecyclerOptions.Builder<notification>()
                 .setQuery(query, notification.class)
                 .build();
-        adapter = new NotiAdapter(options,getContext());
+        adapter = new NotiAdapter(options, getContext());
         final RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
         relativeLayout.setVisibility(View.VISIBLE);
-        observer =new RecyclerView.AdapterDataObserver() {
+        observer = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeRemoved(int positionStart, int itemCount) {
-                if (adapter.getItemCount()==0){
+                if (adapter.getItemCount() == 0) {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                if (adapter.getItemCount() >0){
+                if (adapter.getItemCount() > 0) {
                     relativeLayout.setVisibility(View.INVISIBLE);
-                }else{
+                } else {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
@@ -124,6 +123,7 @@ public class Notify extends Fragment {
         adapter.registerAdapterDataObserver(observer);
         return root;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -133,14 +133,15 @@ public class Notify extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (adapter!=null){
+        if (adapter != null) {
             adapter.stopListening();
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
-        if (adapter!=null){
+        if (adapter != null) {
             adapter.startListening();
         }
     }

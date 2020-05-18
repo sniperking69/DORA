@@ -7,7 +7,7 @@ import java.util.Date;
 public class Comment {
     @ServerTimestamp
     private Date timestamp;
-    private String uid,commentText;
+    private String uid, commentText;
     private int priority;
     private int upnum;
     private int downnum;

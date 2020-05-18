@@ -8,7 +8,8 @@ public class notification {
     @ServerTimestamp
     private Date timestamp;
     private int typ;
-    private String Text,Document,userid;
+    private String Text, Document, userid;
+
     public notification() {
         //empty constructor needed
     }

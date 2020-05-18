@@ -1,13 +1,8 @@
 package com.aputech.dora.ui;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,11 +12,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.aputech.dora.Model.Post;
-import com.aputech.dora.Model.message;
-import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
@@ -37,7 +29,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -51,7 +42,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -59,33 +49,30 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MapView extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+    private final float DEFAULT_ZOOM = 15;
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+    String notipost;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Posts");
     private ArrayList<Post> posts = new ArrayList<>();
-    FirebaseAuth auth = FirebaseAuth.getInstance();
     private Location mLastKnownLocation;
     private LocationCallback locationCallback;
     private View mapView;
-    String notipost;
-    private final float DEFAULT_ZOOM = 15;
     private int typ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
-        Intent intent= getIntent();
-        notipost=intent.getStringExtra("post");
-        typ=intent.getIntExtra("typ",0);
+        Intent intent = getIntent();
+        notipost = intent.getStringExtra("post");
+        typ = intent.getIntExtra("typ", 0);
         Places.initialize(getApplicationContext(), getResources().getString(R.string.google_api_key));
         PlacesClient placesClient = Places.createClient(this);
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -105,7 +92,6 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
         });
 
 
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mapView = mapFragment.getView();
@@ -123,12 +109,12 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                if (typ==2){
+                if (typ == 2) {
                     db.collection("Posts").document(notipost).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            Post m=documentSnapshot.toObject(Post.class);
-                            LatLng LL= new LatLng(m.getLocation().getLatitude(),m.getLocation().getLongitude());
+                            Post m = documentSnapshot.toObject(Post.class);
+                            LatLng LL = new LatLng(m.getLocation().getLatitude(), m.getLocation().getLongitude());
                             moveMap(LL);
                         }
                     });
@@ -249,46 +235,46 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        ArrayList<String> PostNearby=new ArrayList<>();
+        ArrayList<String> PostNearby = new ArrayList<>();
         Location postlocation = new Location("");
         postlocation.setLatitude(marker.getPosition().latitude);
         postlocation.setLongitude(marker.getPosition().longitude);
-        if (closekm(postlocation,mLastKnownLocation)) {
-            int x=0;
-            while (x<posts.size()){
-                Post post= posts.get(x);
-                if (post.getLocation()!=null){
-                    if (post.getLocation().getLongitude()==marker.getPosition().longitude &&
-                            post.getLocation().getLatitude() ==marker.getPosition().latitude){
+        if (closekm(postlocation, mLastKnownLocation)) {
+            int x = 0;
+            while (x < posts.size()) {
+                Post post = posts.get(x);
+                if (post.getLocation() != null) {
+                    if (post.getLocation().getLongitude() == marker.getPosition().longitude &&
+                            post.getLocation().getLatitude() == marker.getPosition().latitude) {
                         PostNearby.add(post.getRefComments());
-                        x+=1;
-                        while(x<posts.size()){
-                            Post pst= posts.get(x);
-                            if (pst.getLocation()!=null){
+                        x += 1;
+                        while (x < posts.size()) {
+                            Post pst = posts.get(x);
+                            if (pst.getLocation() != null) {
                                 Location postA = new Location("");
                                 postA.setLatitude(pst.getLocation().getLatitude());
                                 postA.setLongitude(pst.getLocation().getLongitude());
                                 Location postB = new Location("");
                                 postB.setLatitude(post.getLocation().getLatitude());
                                 postB.setLongitude(post.getLocation().getLongitude());
-                                if (closekm(postA,postB)){
+                                if (closekm(postA, postB)) {
                                     PostNearby.add(pst.getRefComments());
                                 }
                             }
-                            x+=1;
+                            x += 1;
                         }
                         break;
                     }
                 }
-                x+=1;
+                x += 1;
             }
-            if (PostNearby.size()==1){
+            if (PostNearby.size() == 1) {
                 Intent intent = new Intent(MapView.this, PostDisplay.class);
                 intent.putExtra("post", PostNearby.get(0));
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                 PostNearby.add(PostNearby.get(0));
-            }else {
+            } else {
                 Intent intent = new Intent(MapView.this, NearByPosts.class);
                 intent.putExtra("post", PostNearby);
                 startActivity(intent);
@@ -303,16 +289,16 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
                     }
                 }
             }
-            if (PostNearby.size()==0) {
-                Toast.makeText(MapView.this,"Not Near the Post",Toast.LENGTH_SHORT).show();
-            }else{
-                if (PostNearby.size()==1){
+            if (PostNearby.size() == 0) {
+                Toast.makeText(MapView.this, "Not Near the Post", Toast.LENGTH_SHORT).show();
+            } else {
+                if (PostNearby.size() == 1) {
                     Intent intent = new Intent(MapView.this, PostDisplay.class);
                     intent.putExtra("post", PostNearby.get(0));
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                     PostNearby.add(PostNearby.get(0));
-                }else{
+                } else {
                     Intent intent = new Intent(MapView.this, NearByPosts.class);
                     intent.putExtra("post", PostNearby);
                     startActivity(intent);
@@ -324,7 +310,8 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
 
         return false;
     }
-    private boolean closekm(Location A, Location B){
+
+    private boolean closekm(Location A, Location B) {
         float dis = A.distanceTo(B) / 1000;
         return dis < 2;
 
@@ -335,30 +322,30 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
-    private String PostCalculate(double latitude ,double longitude){
+    private String PostCalculate(double latitude, double longitude) {
         Location postlocation = new Location("");
         postlocation.setLatitude(latitude);
         postlocation.setLongitude(longitude);
-        if (closekm(postlocation,mLastKnownLocation)) {
-            int x=0;
-            while (x<posts.size()){
-                Post pst= posts.get(x);
-                if (pst.getLocation()!=null){
+        if (closekm(postlocation, mLastKnownLocation)) {
+            int x = 0;
+            while (x < posts.size()) {
+                Post pst = posts.get(x);
+                if (pst.getLocation() != null) {
                     Location postA = new Location("");
                     postA.setLatitude(pst.getLocation().getLatitude());
                     postA.setLongitude(pst.getLocation().getLongitude());
                     Location postB = new Location("");
                     postB.setLatitude(pst.getLocation().getLatitude());
                     postB.setLongitude(pst.getLocation().getLongitude());
-                    if (closekm(postA,postB)){
+                    if (closekm(postA, postB)) {
                         return pst.getRefComments();
-                       // PostNearby.add(pst.getRefComments());
+                        // PostNearby.add(pst.getRefComments());
                     }
                 }
-                x+=1;
+                x += 1;
             }
         }
-            return "0";
+        return "0";
 
 
     }

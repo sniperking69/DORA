@@ -1,13 +1,5 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,18 +9,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Adpater.CommentAdapter;
 import com.aputech.dora.Model.Comment;
@@ -38,7 +35,6 @@ import com.aputech.dora.Model.Vote;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -72,65 +68,75 @@ import com.narayanacharya.waveview.WaveView;
 
 import java.util.Date;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class PostDisplay extends AppCompatActivity {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseAuth auth= FirebaseAuth.getInstance();
-    private CommentAdapter adapter;
-    MaterialButton up,down;
-    private EditText editText;
+    static MediaPlayer mMediaPlayer;
+    MaterialButton up, down;
     RelativeLayout noresult;
     int Commentnum;
     EventListener<DocumentSnapshot> eventListener;
-    ImageView delete,edit;
-    String TAG="bigp";
+    ImageView delete, edit;
+    String TAG = "bigp";
     MaterialButton sendcom;
     NestedScrollView nestedScrollView;
     ImageView image;
     ListenerRegistration listenerRegistration;
-    private TextView postText;
-    private TextView userName,post_time;
-    ImageView locate,ProfileImg;
+    ImageView locate, ProfileImg;
     DocumentReference documentReference;
+    TextView curTime;
+    TextView totTime;
+    FloatingActionButton playPause;
+    SeekBar mSeekBar;
+    RecyclerView recyclerView;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private CommentAdapter adapter;
+    private EditText editText;
+    private TextView postText;
+    private TextView userName, post_time;
     private Uri videoUri;
     private View audioView;
     private Uri audioUri;
     private WaveView sine;
-    TextView curTime;
-    TextView totTime;
     private PlayerView playerView;
     private SimpleExoPlayer player;
-    static MediaPlayer mMediaPlayer;
-    FloatingActionButton playPause;
-    SeekBar mSeekBar;
-    RecyclerView recyclerView;
     private boolean playWhenReady = true;
     private int currentWindow = 0;
     private long playbackPosition = 0;
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+//            Log.i("handler ", "handler called");
+            int current_position = msg.what;
+            mSeekBar.setProgress(current_position);
+            String cTime = createTimeLabel(current_position);
+            curTime.setText(cTime);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_display);
         editText = findViewById(R.id.commenttext);
-        noresult= findViewById(R.id.noresult);
+        noresult = findViewById(R.id.noresult);
         userName = findViewById(R.id.user_name);
         post_time = findViewById(R.id.time);
-        image=findViewById(R.id.img);
-        locate =findViewById(R.id.locate);
+        image = findViewById(R.id.img);
+        locate = findViewById(R.id.locate);
         up = findViewById(R.id.upbutton);
         delete = findViewById(R.id.delete);
-        sendcom= findViewById(R.id.sendcomment);
+        sendcom = findViewById(R.id.sendcomment);
         edit = findViewById(R.id.edit);
         down = findViewById(R.id.downbutton);
         postText = findViewById(R.id.text_view_description);
         ProfileImg = findViewById(R.id.poster_profile);
         mSeekBar = findViewById(R.id.mSeekBar);
-        playPause=findViewById(R.id.playPause);
+        playPause = findViewById(R.id.playPause);
         curTime = findViewById(R.id.curTime);
         totTime = findViewById(R.id.totalTime);
-        playerView=findViewById(R.id.videoDisplay);
-        audioView= findViewById(R.id.audiocard);
+        playerView = findViewById(R.id.videoDisplay);
+        audioView = findViewById(R.id.audiocard);
         sine = findViewById(R.id.waveView);
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(PostDisplay.this));
@@ -138,7 +144,7 @@ public class PostDisplay extends AppCompatActivity {
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus){
+                if (hasFocus) {
 
                 }
             }
@@ -153,13 +159,13 @@ public class PostDisplay extends AppCompatActivity {
             }
         });
         Intent intent = getIntent();
-        String postID= intent.getStringExtra("post");
+        String postID = intent.getStringExtra("post");
         db.collection("Posts").document(postID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-              final Post post = documentSnapshot.toObject(Post.class);
-                if (post.getType()==2){
-                    if (post.getDescription().isEmpty()){
+                final Post post = documentSnapshot.toObject(Post.class);
+                if (post.getType() == 2) {
+                    if (post.getDescription().isEmpty()) {
                         postText.setVisibility(View.GONE);
                     }
                     image.setVisibility(View.VISIBLE);
@@ -167,24 +173,26 @@ public class PostDisplay extends AppCompatActivity {
                             .with(PostDisplay.this)
                             .load(post.getImageUrl())
                             .into(image);
-                }if (post.getType()==3){
-                    if (post.getDescription().isEmpty()){
+                }
+                if (post.getType() == 3) {
+                    if (post.getDescription().isEmpty()) {
                         postText.setVisibility(View.GONE);
                     }
                     playerView.setVisibility(View.VISIBLE);
                     initializePlayer(Uri.parse(post.getVideoUrl()));
-                }if (post.getType()==4){
-                    if (post.getDescription().isEmpty()){
+                }
+                if (post.getType() == 4) {
+                    if (post.getDescription().isEmpty()) {
                         postText.setVisibility(View.GONE);
                     }
                     audioView.setVisibility(View.VISIBLE);
-                    audioUri=Uri.parse(post.getAudioUrl());
+                    audioUri = Uri.parse(post.getAudioUrl());
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             initPlayer(audioUri);
                         }
-                    },500);
+                    }, 500);
                 }
                 sendcom.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -199,18 +207,18 @@ public class PostDisplay extends AppCompatActivity {
                     post_time.setText(df);
                 }
                 postText.setText(post.getDescription());
-                if (post.getLocation()!=null){
+                if (post.getLocation() != null) {
                     locate.setImageResource(R.drawable.ic_locationhappy);
                     locate.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent1= new Intent(PostDisplay.this,DispPostLocation.class);
-                            intent1.putExtra("lat",post.getLocation().getLatitude());
-                            intent1.putExtra("lng",post.getLocation().getLongitude());
+                            Intent intent1 = new Intent(PostDisplay.this, DispPostLocation.class);
+                            intent1.putExtra("lat", post.getLocation().getLatitude());
+                            intent1.putExtra("lng", post.getLocation().getLongitude());
                             startActivity(intent1);
                         }
                     });
-                }else{
+                } else {
                     locate.setImageResource(R.drawable.ic_locationsad);
                 }
                 db.collection("Users").document(post.getUserid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -222,7 +230,7 @@ public class PostDisplay extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(PostDisplay.this, ProfileDisplayActivity.class);
-                                intent.putExtra("user",user);
+                                intent.putExtra("user", user);
                                 startActivity(intent);
                             }
                         });
@@ -230,11 +238,11 @@ public class PostDisplay extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(PostDisplay.this, ProfileDisplayActivity.class);
-                                intent.putExtra("user",user);
+                                intent.putExtra("user", user);
                                 startActivity(intent);
                             }
                         });
-                        if (user.getProfileUrl()!=null){
+                        if (user.getProfileUrl() != null) {
                             Glide
                                     .with(PostDisplay.this)
                                     .load(user.getProfileUrl())
@@ -242,7 +250,7 @@ public class PostDisplay extends AppCompatActivity {
                         }
 
 
-                        if (user.getUserid().equals(auth.getUid())){
+                        if (user.getUserid().equals(auth.getUid())) {
                             delete.setVisibility(View.VISIBLE);
                             delete.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -253,10 +261,10 @@ public class PostDisplay extends AppCompatActivity {
                                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            DeletePost(post.getRefComments(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
+                                            DeletePost(post.getRefComments(), post.getType(), post.getAudioUrl(), post.getVideoUrl(), post.getImageUrl());
                                             finish();
                                             Toast.makeText(getApplicationContext(),
-                                                    "PostDeleted",Toast.LENGTH_SHORT).show();
+                                                    "PostDeleted", Toast.LENGTH_SHORT).show();
 
                                         }
                                     });
@@ -278,19 +286,19 @@ public class PostDisplay extends AppCompatActivity {
                                 public void onClick(View v) {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(PostDisplay.this);
                                     builder.setTitle("Edit Post");
-                                    final View customLayout =  LayoutInflater.from(PostDisplay.this).inflate(R.layout.custom_alert, null);
+                                    final View customLayout = LayoutInflater.from(PostDisplay.this).inflate(R.layout.custom_alert, null);
                                     builder.setView(customLayout);
                                     final EditText editText = customLayout.findViewById(R.id.para);
                                     editText.setText(post.getDescription());
                                     builder.setPositiveButton("DONE", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            if (!editText.getText().toString().isEmpty()){
-                                                db.collection("Posts").document(post.getRefComments()).update("description",editText.getText().toString());
+                                            if (!editText.getText().toString().isEmpty()) {
+                                                db.collection("Posts").document(post.getRefComments()).update("description", editText.getText().toString());
                                                 postText.setText(editText.getText().toString());
-                                                Toast.makeText(PostDisplay.this,"Post Updated",Toast.LENGTH_LONG).show();
-                                            }else{
-                                                Toast.makeText(PostDisplay.this,"Unable to Make Changes Field Empty",Toast.LENGTH_LONG).show();
+                                                Toast.makeText(PostDisplay.this, "Post Updated", Toast.LENGTH_LONG).show();
+                                            } else {
+                                                Toast.makeText(PostDisplay.this, "Unable to Make Changes Field Empty", Toast.LENGTH_LONG).show();
                                             }
                                         }
                                     });
@@ -307,13 +315,11 @@ public class PostDisplay extends AppCompatActivity {
                         }
 
 
-
-
                     }
                 });
 
                 documentReference = db.collection("Posts").document(post.getRefComments());
-                eventListener =new EventListener<DocumentSnapshot>() {
+                eventListener = new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                         Post n = documentSnapshot.toObject(Post.class);
@@ -330,7 +336,7 @@ public class PostDisplay extends AppCompatActivity {
                                         Vote vote = document.toObject(Vote.class);
                                         if (vote.isVotecheck()) {
                                             up.setIconTintResource(R.color.level2);
-                                        }else{
+                                        } else {
                                             down.setIconTintResource(R.color.level2);
                                         }
                                     }
@@ -342,7 +348,7 @@ public class PostDisplay extends AppCompatActivity {
                 };
                 final DocumentReference postrefrence = db.collection("Posts").document(post.getRefComments());
                 final DocumentReference Reference = db.collection("Posts").document(post.getRefComments()).collection("vote").document(auth.getUid());
-                listenerRegistration=documentReference.addSnapshotListener(eventListener);
+                listenerRegistration = documentReference.addSnapshotListener(eventListener);
                 up.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -361,14 +367,14 @@ public class PostDisplay extends AppCompatActivity {
                                                     Reference.delete();
                                                     postrefrence.update("upnum", doc.getUpnum() - 1);
                                                     postrefrence.update("priority", (doc.getUpnum() - 1) * 0.4 + (doc.getDownnum()) * 0.2 + doc.getCommentnum() * 0.4);
-                                                }else{
-                                                    Reference.update("votecheck",true);
+                                                } else {
+                                                    Reference.update("votecheck", true);
                                                     postrefrence.update("upnum", doc.getUpnum() + 1);
                                                     postrefrence.update("downnum", doc.getDownnum() - 1);
-                                                    postrefrence.update("priority", (doc.getUpnum() + 1) * 0.4 + (doc.getDownnum()-1) * 0.2 + doc.getCommentnum() * 0.4);
+                                                    postrefrence.update("priority", (doc.getUpnum() + 1) * 0.4 + (doc.getDownnum() - 1) * 0.2 + doc.getCommentnum() * 0.4);
                                                 }
                                             } else {
-                                                Vote v= new Vote();
+                                                Vote v = new Vote();
                                                 v.setVotecheck(true);
                                                 Reference.set(v);
                                                 postrefrence.update("upnum", doc.getUpnum() + 1);
@@ -402,16 +408,16 @@ public class PostDisplay extends AppCompatActivity {
                                                 if (!vote.isVotecheck()) {
                                                     Reference.delete();
                                                     postrefrence.update("downnum", doc.getDownnum() - 1);
-                                                    postrefrence.update("priority", (doc.getUpnum()) * 0.4 + (doc.getDownnum() -1) * 0.2 + doc.getCommentnum() * 0.4);
-                                                }else{
+                                                    postrefrence.update("priority", (doc.getUpnum()) * 0.4 + (doc.getDownnum() - 1) * 0.2 + doc.getCommentnum() * 0.4);
+                                                } else {
                                                     down.setIconTintResource(R.color.level2);
-                                                    Reference.update("votecheck",false);
+                                                    Reference.update("votecheck", false);
                                                     postrefrence.update("downnum", doc.getDownnum() + 1);
                                                     postrefrence.update("upnum", doc.getUpnum() - 1);
-                                                    postrefrence.update("priority", (doc.getUpnum() - 1) * 0.4 + (doc.getDownnum()+1) * 0.2 + doc.getCommentnum() * 0.4);
+                                                    postrefrence.update("priority", (doc.getUpnum() - 1) * 0.4 + (doc.getDownnum() + 1) * 0.2 + doc.getCommentnum() * 0.4);
                                                 }
                                             } else {
-                                                Vote v= new Vote();
+                                                Vote v = new Vote();
                                                 v.setVotecheck(false);
                                                 Reference.set(v);
                                                 postrefrence.update("downnum", doc.getDownnum() + 1);
@@ -432,7 +438,7 @@ public class PostDisplay extends AppCompatActivity {
                 FirestoreRecyclerOptions<Comment> options = new FirestoreRecyclerOptions.Builder<Comment>()
                         .setQuery(query, Comment.class)
                         .build();
-                adapter = new CommentAdapter(options, post.getRefComments(),PostDisplay.this);
+                adapter = new CommentAdapter(options, post.getRefComments(), PostDisplay.this);
 
                 recyclerView.setAdapter(adapter);
                 adapter.startListening();
@@ -440,16 +446,16 @@ public class PostDisplay extends AppCompatActivity {
                 adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onItemRangeRemoved(int positionStart, int itemCount) {
-                        if (adapter.getItemCount()==0){
+                        if (adapter.getItemCount() == 0) {
                             noresult.setVisibility(View.VISIBLE);
                         }
                     }
 
                     @Override
                     public void onItemRangeInserted(int positionStart, int itemCount) {
-                        if (adapter.getItemCount() >0){
+                        if (adapter.getItemCount() > 0) {
                             noresult.setVisibility(View.INVISIBLE);
-                        }else{
+                        } else {
                             noresult.setVisibility(View.VISIBLE);
                         }
                     }
@@ -462,17 +468,17 @@ public class PostDisplay extends AppCompatActivity {
 
     }
 
-
-
-    private void DeletePost(final String Postid,int type,String Audio,String Video,String Image) {
-        FirebaseStorage firebaseStorage= FirebaseStorage.getInstance();
-        if (type==2){
+    private void DeletePost(final String Postid, int type, String Audio, String Video, String Image) {
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        if (type == 2) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Image);
             ref.delete();
-        }if (type==3){
+        }
+        if (type == 3) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Video);
             ref.delete();
-        }if (type==4){
+        }
+        if (type == 4) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Audio);
             ref.delete();
         }
@@ -488,7 +494,7 @@ public class PostDisplay extends AppCompatActivity {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             writeBatch.delete(documentSnapshot.getReference());
-                            deleteComment(documentSnapshot.getReference().getId(),Postid);
+                            deleteComment(documentSnapshot.getReference().getId(), Postid);
                         }
                         writeBatch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -503,6 +509,7 @@ public class PostDisplay extends AppCompatActivity {
 
         });
     }
+
     private void deleteComment(String ref, String post) {
         final WriteBatch writeBatch = db.batch();
         db.collection("Posts").document(post).collection("comments").document(ref).collection("vote").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -517,14 +524,15 @@ public class PostDisplay extends AppCompatActivity {
         });
 
     }
+
     public void sendcomment(final Post post) {
 
-        String comenttext= editText.getText().toString();
-        if (!comenttext.isEmpty()){
+        String comenttext = editText.getText().toString();
+        if (!comenttext.isEmpty()) {
 
             DocumentReference documentReference = db.collection("Posts").document(post.getRefComments());
-            final CollectionReference col=db.collection("Posts").document(post.getRefComments()).collection("comments");
-            documentReference.update("commentnum",Commentnum+1);
+            final CollectionReference col = db.collection("Posts").document(post.getRefComments()).collection("comments");
+            documentReference.update("commentnum", Commentnum + 1);
             Comment comment = new Comment();
             comment.setUid(auth.getUid());
             comment.setCommentText(comenttext);
@@ -532,12 +540,12 @@ public class PostDisplay extends AppCompatActivity {
             col.add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
-                    col.document(documentReference.getId()).update("commentid",documentReference.getId());
+                    col.document(documentReference.getId()).update("commentid", documentReference.getId());
                 }
             });
             editText.setText("");
             DocumentReference userinfo = db.collection("Users").document(auth.getUid());
-            if (!auth.getUid().equals(post.getUserid())){
+            if (!auth.getUid().equals(post.getUserid())) {
                 userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -547,16 +555,14 @@ public class PostDisplay extends AppCompatActivity {
                         noti.setTyp(0);
                         noti.setUserid(auth.getUid());
                         noti.setText(u.getUserName() + "  Commented On Your Post");
-                        CollectionReference  notiref= db.collection("Users").document(post.getUserid()).collection("notify");
+                        CollectionReference notiref = db.collection("Users").document(post.getUserid()).collection("notify");
                         notiref.add(noti);
                     }
                 });
             }
-        }else{
+        } else {
             Toast.makeText(PostDisplay.this, "Nothing to comment", Toast.LENGTH_LONG).show();
         }
-
-
 
 
     }
@@ -630,19 +636,6 @@ public class PostDisplay extends AppCompatActivity {
         }).start();
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-//            Log.i("handler ", "handler called");
-            int current_position = msg.what;
-            mSeekBar.setProgress(current_position);
-            String cTime = createTimeLabel(current_position);
-            curTime.setText(cTime);
-        }
-    };
-
-
     private void play() {
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
@@ -655,7 +648,7 @@ public class PostDisplay extends AppCompatActivity {
     }
 
     private void pause() {
-        if (mMediaPlayer!=null){
+        if (mMediaPlayer != null) {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
                 sine.pause();
@@ -685,6 +678,7 @@ public class PostDisplay extends AppCompatActivity {
 
 
     }
+
     private void initializePlayer(Uri uri) {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
@@ -693,6 +687,7 @@ public class PostDisplay extends AppCompatActivity {
         player.seekTo(currentWindow, playbackPosition);
         player.prepare(mediaSource, false, false);
     }
+
     private MediaSource buildMediaSource(Uri uri) {
         DataSource.Factory dataSourceFactory =
                 new DefaultDataSourceFactory(this, "Drop Chat");
@@ -714,7 +709,7 @@ public class PostDisplay extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (listenerRegistration!=null && adapter !=null){
+        if (listenerRegistration != null && adapter != null) {
             listenerRegistration.remove();
             adapter.stopListening();
         }
@@ -727,10 +722,10 @@ public class PostDisplay extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (listenerRegistration!=null && adapter !=null){
+        if (listenerRegistration != null && adapter != null) {
             adapter.startListening();
         }
-        if (player == null && videoUri !=null) {
+        if (player == null && videoUri != null) {
             initializePlayer(videoUri);
         }
     }
@@ -738,6 +733,6 @@ public class PostDisplay extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
+        overridePendingTransition(R.anim.slide_from_top, R.anim.slide_in_top);
     }
 }

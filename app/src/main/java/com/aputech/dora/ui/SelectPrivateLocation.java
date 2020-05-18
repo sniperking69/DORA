@@ -1,8 +1,5 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -19,14 +16,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aputech.dora.Model.Post;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.message;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.data.DataBufferObserver;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -39,10 +37,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,14 +48,11 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -72,8 +64,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SelectPrivateLocation extends AppCompatActivity implements OnMapReadyCallback {
-    private GoogleMap mMap;
+    private final float DEFAULT_ZOOM = 15;
     MaterialButton Forward;
+    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+    LatLng latLngfinal;
+    Uri uri;
+    int type;
+    String ext;
+    ArrayList<User> sendto;
+    String txt;
+    User currentUser;
+    private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Location mLastKnownLocation;
@@ -81,37 +82,28 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
     private View mapView;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private String geocode;
-    FirebaseStorage firebaseStorage=FirebaseStorage.getInstance();
-    LatLng latLngfinal;
-    Uri uri;
-    private final float DEFAULT_ZOOM = 15;
     private TextView resutText;
-    int type;
-    String ext;
-    ArrayList<User> sendto;
-    String txt;
-    User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_private_location);
-        resutText = (TextView) findViewById(R.id.dragg_result);
+        resutText = findViewById(R.id.dragg_result);
         Forward = findViewById(R.id.forward);
-        Intent intent= getIntent();
-        currentUser=intent.getParcelableExtra("currentuser");
-        sendto=intent.getParcelableArrayListExtra("sendto");
-        txt=intent.getStringExtra("Desc");
-        type=intent.getIntExtra("type",1);
-        if (intent.getStringExtra("Uri")!=null){
-            uri=Uri.parse(intent.getStringExtra("Uri"));
-            ext=intent.getStringExtra("ext");
+        Intent intent = getIntent();
+        currentUser = intent.getParcelableExtra("currentuser");
+        sendto = intent.getParcelableArrayListExtra("sendto");
+        txt = intent.getStringExtra("Desc");
+        type = intent.getIntExtra("type", 1);
+        if (intent.getStringExtra("Uri") != null) {
+            uri = Uri.parse(intent.getStringExtra("Uri"));
+            ext = intent.getStringExtra("ext");
         }
         Forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int x=0;x<sendto.size();x++){
-                    uploadFire(type,txt,ext,uri,sendto.get(x).getUserid());
+                for (int x = 0; x < sendto.size(); x++) {
+                    uploadFire(type, txt, ext, uri, sendto.get(x).getUserid());
                 }
 
             }
@@ -250,19 +242,19 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                 });
     }
 
-    private void Geocodeget(){
-        double lng=mMap.getCameraPosition().target.longitude;
-        double lat=mMap.getCameraPosition().target.latitude;
-        LatLng latLng= new LatLng(lat,lng);
+    private void Geocodeget() {
+        double lng = mMap.getCameraPosition().target.longitude;
+        double lat = mMap.getCameraPosition().target.latitude;
+        LatLng latLng = new LatLng(lat, lng);
         Geocoder geocoder = new Geocoder(SelectPrivateLocation.this);
-        latLngfinal=latLng;
+        latLngfinal = latLng;
         try {
             List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
             if (addressList != null && addressList.size() > 0) {
                 String locality = addressList.get(0).getAddressLine(0);
                 String country = addressList.get(0).getCountryName();
                 if (!locality.isEmpty() && !country.isEmpty())
-                    geocode=locality ;
+                    geocode = locality;
                 resutText.setText(geocode);
 
             }
@@ -271,18 +263,20 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
             e.printStackTrace();
         }
     }
+
     private void moveMap(LatLng latLng) {
         float zoom = 15;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
-    public void UploadVideo(final String rf , String ext, Uri videoUri, final String userid) {
+
+    public void UploadVideo(final String rf, String ext, Uri videoUri, final String userid) {
         if (videoUri != null) {
             final ProgressDialog progressDialog = new ProgressDialog(SelectPrivateLocation.this);
             progressDialog.setTitle("Uploading...");
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            final StorageReference ref = firebaseStorage.getReference("videos").child(rf+"."+ ext);
+            final StorageReference ref = firebaseStorage.getReference("videos").child(rf + "." + ext);
             ref.putFile(videoUri)
                     .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -291,18 +285,18 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                                 ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.isSuccessful()){
+                                        if (task.isSuccessful()) {
                                             progressDialog.dismiss();
-                                            db.collection("Inbox").document(rf).update("videoUrl",task.getResult().toString());
+                                            db.collection("Inbox").document(rf).update("videoUrl", task.getResult().toString());
                                             notification noti = new notification();
                                             noti.setDocument(rf);
                                             noti.setTyp(1);
                                             noti.setUserid(auth.getUid());
                                             noti.setText(currentUser.getUserName() + "  Sent You Private Post");
-                                            CollectionReference  notiref= db.collection("Users").document(userid).collection("notify");
+                                            CollectionReference notiref = db.collection("Users").document(userid).collection("notify");
                                             notiref.add(noti);
-                                            sendto.remove(sendto.size() -1);
-                                            if (sendto.size()==0){
+                                            sendto.remove(sendto.size() - 1);
+                                            if (sendto.size() == 0) {
                                                 Intent intent = new Intent();
                                                 setResult(Activity.RESULT_OK, intent);
                                                 finish();
@@ -336,9 +330,10 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                     });
         }
     }
-    private void uploadFire(final int type, String text, final String ext, final Uri uri , final String userid){
+
+    private void uploadFire(final int type, String text, final String ext, final Uri uri, final String userid) {
         final message post = new message();
-        GeoPoint geoPoint = new GeoPoint(latLngfinal.latitude,latLngfinal.longitude);
+        GeoPoint geoPoint = new GeoPoint(latLngfinal.latitude, latLngfinal.longitude);
         post.setLocation(geoPoint);
         post.setType(type);
         post.setDescription(text);
@@ -348,30 +343,32 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 final String commentref = documentReference.getId();
-                db.collection("Inbox").document(commentref).update("refmsg",commentref).addOnCompleteListener(new OnCompleteListener<Void>() {
+                db.collection("Inbox").document(commentref).update("refmsg", commentref).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (type==1){
+                        if (type == 1) {
                             notification noti = new notification();
                             noti.setDocument(commentref);
                             noti.setTyp(1);
                             noti.setUserid(auth.getUid());
                             noti.setText(currentUser.getUserName() + "  Sent You Private Post");
-                            CollectionReference  notiref= db.collection("Users").document(userid).collection("notify");
+                            CollectionReference notiref = db.collection("Users").document(userid).collection("notify");
                             notiref.add(noti);
-                            sendto.remove(sendto.size() -1);
-                            if (sendto.size()==0){
-                             Intent intent = new Intent();
-                            setResult(Activity.RESULT_OK, intent);
-                            finish();
+                            sendto.remove(sendto.size() - 1);
+                            if (sendto.size() == 0) {
+                                Intent intent = new Intent();
+                                setResult(Activity.RESULT_OK, intent);
+                                finish();
                             }
                         }
-                        if (type==2){
-                            UploadPicture(commentref,uri,userid);
-                        }if (type==3) {
-                            UploadVideo(commentref,ext,uri,userid);
-                        }if (type==4){
-                            UploadAudio(commentref,ext,uri,userid);
+                        if (type == 2) {
+                            UploadPicture(commentref, uri, userid);
+                        }
+                        if (type == 3) {
+                            UploadVideo(commentref, ext, uri, userid);
+                        }
+                        if (type == 4) {
+                            UploadAudio(commentref, ext, uri, userid);
                         }
 
                     }
@@ -385,7 +382,7 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
         progressDialog.setTitle("Uploading...");
         progressDialog.setCancelable(false);
         progressDialog.show();
-        final StorageReference ref = firebaseStorage.getReference("audio").child(commentref +"."+ ext);
+        final StorageReference ref = firebaseStorage.getReference("audio").child(commentref + "." + ext);
         ref.putFile(audiouri)
                 .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -394,18 +391,18 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                             ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Uri> task) {
-                                    if (task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         progressDialog.dismiss();
-                                        db.collection("Inbox").document(commentref).update("audioUrl",task.getResult().toString());
+                                        db.collection("Inbox").document(commentref).update("audioUrl", task.getResult().toString());
                                         notification noti = new notification();
                                         noti.setDocument(commentref);
                                         noti.setTyp(1);
                                         noti.setUserid(auth.getUid());
                                         noti.setText(currentUser.getUserName() + "  Sent You Private Post");
-                                        CollectionReference  notiref= db.collection("Users").document(userid).collection("notify");
+                                        CollectionReference notiref = db.collection("Users").document(userid).collection("notify");
                                         notiref.add(noti);
-                                        sendto.remove(sendto.size() -1);
-                                        if (sendto.size()==0){
+                                        sendto.remove(sendto.size() - 1);
+                                        if (sendto.size() == 0) {
                                             Intent intent = new Intent();
                                             setResult(Activity.RESULT_OK, intent);
                                             finish();
@@ -437,12 +434,12 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                 });
     }
 
-    private void UploadPicture(final String commentref, Uri imguri , final String userid) {
+    private void UploadPicture(final String commentref, Uri imguri, final String userid) {
         final ProgressDialog progressDialog = new ProgressDialog(SelectPrivateLocation.this);
         progressDialog.setTitle("Uploading...");
         progressDialog.setCancelable(false);
         progressDialog.show();
-        final StorageReference ref = firebaseStorage.getReference("images").child(commentref +"."+ ext);
+        final StorageReference ref = firebaseStorage.getReference("images").child(commentref + "." + ext);
         ref.putFile(imguri)
                 .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -451,18 +448,18 @@ public class SelectPrivateLocation extends AppCompatActivity implements OnMapRea
                             ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Uri> task) {
-                                    if (task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         progressDialog.dismiss();
-                                        db.collection("Inbox").document(commentref).update("imageUrl",task.getResult().toString());
+                                        db.collection("Inbox").document(commentref).update("imageUrl", task.getResult().toString());
                                         notification noti = new notification();
                                         noti.setDocument(commentref);
                                         noti.setTyp(1);
                                         noti.setUserid(auth.getUid());
                                         noti.setText(currentUser.getUserName() + "  Sent You Private Post");
-                                        CollectionReference  notiref= db.collection("Users").document(userid).collection("notify");
+                                        CollectionReference notiref = db.collection("Users").document(userid).collection("notify");
                                         notiref.add(noti);
-                                        sendto.remove(sendto.size() -1);
-                                        if (sendto.size()==0){
+                                        sendto.remove(sendto.size() - 1);
+                                        if (sendto.size() == 0) {
                                             Intent intent = new Intent();
                                             setResult(Activity.RESULT_OK, intent);
                                             finish();

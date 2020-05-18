@@ -1,9 +1,6 @@
 package com.aputech.dora.Model;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ServerTimestamp;
 
@@ -21,6 +18,7 @@ public class message {
     private String audioUrl;
     private String sender;
     private String receiver;
+
     public message() {
         //empty constructor needed
     }

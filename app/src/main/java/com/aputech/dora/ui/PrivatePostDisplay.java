@@ -1,13 +1,5 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,27 +11,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aputech.dora.Adpater.CommentAdapter;
-import com.aputech.dora.Model.Comment;
-import com.aputech.dora.Model.Post;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.aputech.dora.Model.User;
-import com.aputech.dora.Model.Vote;
 import com.aputech.dora.Model.message;
-import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -50,23 +36,11 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.narayanacharya.waveview.WaveView;
@@ -76,47 +50,59 @@ import java.util.Date;
 import java.util.List;
 
 public class PrivatePostDisplay extends AppCompatActivity {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseAuth auth= FirebaseAuth.getInstance();
-    ImageView delete,edit;
+    static MediaPlayer mMediaPlayer;
+    ImageView delete, edit;
     ImageView image;
+    ImageView locate, ProfileImg;
+    TextView curTime;
+    TextView totTime;
+    TextView GeoLocation;
+    FloatingActionButton playPause;
+    SeekBar mSeekBar;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private TextView postText;
-    private TextView userName,post_time;
-    ImageView locate,ProfileImg;
+    private TextView userName, post_time;
     private Uri videoUri;
     private View audioView;
     private Uri audioUri;
     private WaveView sine;
-    TextView curTime;
-    TextView totTime;
-    TextView GeoLocation;
     private PlayerView playerView;
     private SimpleExoPlayer player;
-    static MediaPlayer mMediaPlayer;
-    FloatingActionButton playPause;
-    SeekBar mSeekBar;
     private boolean playWhenReady = true;
     private int currentWindow = 0;
     private long playbackPosition = 0;
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+//            Log.i("handler ", "handler called");
+            int current_position = msg.what;
+            mSeekBar.setProgress(current_position);
+            String cTime = createTimeLabel(current_position);
+            curTime.setText(cTime);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private_post_display);
         userName = findViewById(R.id.user_name);
         post_time = findViewById(R.id.time);
-        image=findViewById(R.id.img);
-        locate =findViewById(R.id.locate);
+        image = findViewById(R.id.img);
+        locate = findViewById(R.id.locate);
         delete = findViewById(R.id.delete);
         edit = findViewById(R.id.edit);
         postText = findViewById(R.id.text_view_description);
         ProfileImg = findViewById(R.id.poster_profile);
         mSeekBar = findViewById(R.id.mSeekBar);
-        playPause=findViewById(R.id.playPause);
+        playPause = findViewById(R.id.playPause);
         curTime = findViewById(R.id.curTime);
-        GeoLocation=findViewById(R.id.GeoCode);
+        GeoLocation = findViewById(R.id.GeoCode);
         totTime = findViewById(R.id.totalTime);
-        playerView=findViewById(R.id.videoDisplay);
-        audioView= findViewById(R.id.audiocard);
+        playerView = findViewById(R.id.videoDisplay);
+        audioView = findViewById(R.id.audiocard);
         sine = findViewById(R.id.waveView);
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
@@ -128,7 +114,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
             }
         });
         Intent intent = getIntent();
-        String msg= intent.getStringExtra("post");
+        String msg = intent.getStringExtra("post");
 
         db.collection("Inbox").document(msg).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -171,7 +157,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
                     post_time.setText(df);
                 }
                 postText.setText(pst.getDescription());
-                Geocodeget(pst.getLocation().getLatitude(),pst.getLocation().getLongitude());
+                Geocodeget(pst.getLocation().getLatitude(), pst.getLocation().getLongitude());
                 db.collection("Users").document(pst.getSender()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -212,7 +198,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
                                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            DeletePrivatePost(pst.getRefmsg(),pst.getType(),pst.getAudioUrl(),pst.getVideoUrl(),pst.getImageUrl());
+                                            DeletePrivatePost(pst.getRefmsg(), pst.getType(), pst.getAudioUrl(), pst.getVideoUrl(), pst.getImageUrl());
                                             finish();
                                             Toast.makeText(getApplicationContext(),
                                                     "PostDeleted", Toast.LENGTH_SHORT).show();
@@ -270,20 +256,21 @@ public class PrivatePostDisplay extends AppCompatActivity {
                 });
 
 
-            }});
+            }
+        });
     }
 
-
-
-    private void DeletePrivatePost(final String Postid,int type,String Audio,String Video,String Image) {
-        FirebaseStorage firebaseStorage= FirebaseStorage.getInstance();
-        if (type==2){
+    private void DeletePrivatePost(final String Postid, int type, String Audio, String Video, String Image) {
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        if (type == 2) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Image);
             ref.delete();
-        }if (type==3){
+        }
+        if (type == 3) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Video);
             ref.delete();
-        }if (type==4){
+        }
+        if (type == 4) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Audio);
             ref.delete();
         }
@@ -358,19 +345,6 @@ public class PrivatePostDisplay extends AppCompatActivity {
         }).start();
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-//            Log.i("handler ", "handler called");
-            int current_position = msg.what;
-            mSeekBar.setProgress(current_position);
-            String cTime = createTimeLabel(current_position);
-            curTime.setText(cTime);
-        }
-    };
-
-
     private void play() {
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
@@ -383,7 +357,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
     }
 
     private void pause() {
-        if (mMediaPlayer!=null){
+        if (mMediaPlayer != null) {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
                 sine.pause();
@@ -413,6 +387,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
 
 
     }
+
     private void initializePlayer(Uri uri) {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
@@ -421,6 +396,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
         player.seekTo(currentWindow, playbackPosition);
         player.prepare(mediaSource, false, false);
     }
+
     private MediaSource buildMediaSource(Uri uri) {
         DataSource.Factory dataSourceFactory =
                 new DefaultDataSourceFactory(PrivatePostDisplay.this, "Drop Chat");
@@ -452,7 +428,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (player == null && videoUri !=null) {
+        if (player == null && videoUri != null) {
             initializePlayer(videoUri);
         }
     }
@@ -460,11 +436,12 @@ public class PrivatePostDisplay extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_from_top,R.anim.slide_in_top);
+        overridePendingTransition(R.anim.slide_from_top, R.anim.slide_in_top);
     }
-    private void Geocodeget(double lat, double lng){
 
-        LatLng latLng= new LatLng(lat,lng);
+    private void Geocodeget(double lat, double lng) {
+
+        LatLng latLng = new LatLng(lat, lng);
         Geocoder geocoder = new Geocoder(PrivatePostDisplay.this);
         try {
             List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
@@ -473,7 +450,7 @@ public class PrivatePostDisplay extends AppCompatActivity {
                 String country = addressList.get(0).getCountryName();
                 String geocode = null;
                 if (!locality.isEmpty() && !country.isEmpty())
-                    geocode=locality ;
+                    geocode = locality;
                 GeoLocation.setText(geocode);
 
             }

@@ -1,10 +1,5 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -18,37 +13,55 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
 import com.aputech.dora.LocationJob;
 import com.aputech.dora.R;
-import com.aputech.dora.ui.Fragments.Profile;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import static com.aputech.dora.ui.HActivity.JOB_ID;
 
 public class ProfileSettings extends AppCompatActivity {
-    CardView profileedit,logout;
-    private Toolbar myToolbar;
+    CardView profileedit, logout;
     Switch notiswitch;
+    private Toolbar myToolbar;
+
+    public static boolean isJobServiceOn(Context context) {
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        boolean hasBeenScheduled = false;
+        if (scheduler != null) {
+            for (JobInfo jobInfo : scheduler.getAllPendingJobs()) {
+                if (jobInfo.getId() == JOB_ID) {
+                    hasBeenScheduled = true;
+                    break;
+                }
+
+            }
+        }
+        return hasBeenScheduled;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_settings);
-        profileedit= findViewById(R.id.editProfile);
+        profileedit = findViewById(R.id.editProfile);
         logout = findViewById(R.id.logout);
         myToolbar = findViewById(R.id.my_toolbar);
-        notiswitch=findViewById(R.id.notiswitch);
+        notiswitch = findViewById(R.id.notiswitch);
         myToolbar.setTitle("Settings");
         myToolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(myToolbar);
         SharedPreferences sharedPref = getSharedPreferences("usersettings", Context.MODE_PRIVATE);
         int set = sharedPref.getInt("JOB", 1);
-        if (set==1) {
-           notiswitch.setChecked(true);
-        }else{
+        if (set == 1) {
+            notiswitch.setChecked(true);
+        } else {
             notiswitch.setChecked(false);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -59,11 +72,11 @@ public class ProfileSettings extends AppCompatActivity {
                 SharedPreferences sharedPref = getSharedPreferences("usersettings", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.clear();
-                if (isChecked){
+                if (isChecked) {
                     MainOpen();
                     editor.putInt("JOB", 1);
                     editor.apply();
-                }else{
+                } else {
                     editor.putInt("JOB", 0);
                     editor.apply();
                     JobScheduler jobScheduler =
@@ -75,8 +88,8 @@ public class ProfileSettings extends AppCompatActivity {
         profileedit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProfileSettings.this,regUser.class);
-                intent.putExtra("edit",true);
+                Intent intent = new Intent(ProfileSettings.this, regUser.class);
+                intent.putExtra("edit", true);
                 startActivity(intent);
             }
         });
@@ -86,18 +99,19 @@ public class ProfileSettings extends AppCompatActivity {
                 JobScheduler jobScheduler =
                         (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
                 jobScheduler.cancel(JOB_ID);
-                                AuthUI.getInstance().signOut(ProfileSettings.this).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Intent intent = new Intent(ProfileSettings.this,SplashActivity.class);
-                                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                                startActivity(intent);
+                AuthUI.getInstance().signOut(ProfileSettings.this).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Intent intent = new Intent(ProfileSettings.this, SplashActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
 
-                            }
-                        });
+                    }
+                });
             }
         });
 
     }
+
     public void MainOpen() {
         ComponentName componentName = new ComponentName(this, LocationJob.class);
         JobInfo info = new JobInfo.Builder(JOB_ID, componentName)
@@ -119,20 +133,7 @@ public class ProfileSettings extends AppCompatActivity {
         }
 
     }
-    public static boolean isJobServiceOn(Context context) {
-        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        boolean hasBeenScheduled = false;
-        if (scheduler != null) {
-            for (JobInfo jobInfo : scheduler.getAllPendingJobs()) {
-                if (jobInfo.getId() == JOB_ID) {
-                    hasBeenScheduled = true;
-                    break;
-                }
 
-            }
-        }
-        return hasBeenScheduled;
-    }
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();

@@ -7,6 +7,20 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Adpater.FireAdapter;
 import com.aputech.dora.Model.Fol;
@@ -34,41 +48,17 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.provider.MediaStore;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileDisplayActivity extends AppCompatActivity {
-    private static final int GALLERY =78 ;
+    private static final int GALLERY = 78;
     private static final int REQUEST_IMAGE_CAPTURE = 5678;
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FireAdapter adapter;
     FloatingActionButton editImage;
-    private User user;
     CollapsingToolbarLayout collapsingToolbarLayout;
     RelativeLayout layout;
-    private MaterialButton settings;
-    private CircleImageView profileimg;
-    private TextView following,posts,followers,name,bio;
-    private ImageView level;
-    private Uri filePath;
     boolean Following;
     AppBarLayout appBarLayout;
     Query query;
@@ -76,34 +66,43 @@ public class ProfileDisplayActivity extends AppCompatActivity {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageReference = storage.getReference();
     RecyclerView recyclerView;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FireAdapter adapter;
+    private User user;
+    private MaterialButton settings;
+    private CircleImageView profileimg;
+    private TextView following, posts, followers, name, bio;
+    private ImageView level;
+    private Uri filePath;
     private RecyclerView.AdapterDataObserver observer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_display);
-        Toolbar toolbar =findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.recycler_view);
-        settings= findViewById(R.id.followandset);
+        settings = findViewById(R.id.followandset);
         bio = findViewById(R.id.bio);
-        layout= findViewById(R.id.topdisp);
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        email= findViewById(R.id.email);
+        layout = findViewById(R.id.topdisp);
+        collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
+        appBarLayout = findViewById(R.id.app_bar);
+        email = findViewById(R.id.email);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(ProfileDisplayActivity.this));
-        Intent intent= getIntent();
+        Intent intent = getIntent();
         user = intent.getParcelableExtra("user");
         editImage = findViewById(R.id.editimage);
-        followers= findViewById(R.id.numFolo);
-        name= findViewById(R.id.nametitle);
-        final RelativeLayout relativeLayout= findViewById(R.id.noresult);
-        profileimg= findViewById(R.id.profiledisplay);
-        following =findViewById(R.id.numFoly);
-        posts =findViewById(R.id.numPosts);
-        level=findViewById(R.id.level);
+        followers = findViewById(R.id.numFolo);
+        name = findViewById(R.id.nametitle);
+        final RelativeLayout relativeLayout = findViewById(R.id.noresult);
+        profileimg = findViewById(R.id.profiledisplay);
+        following = findViewById(R.id.numFoly);
+        posts = findViewById(R.id.numPosts);
+        level = findViewById(R.id.level);
         posts.setText(String.valueOf(user.getPostnum()));
         bio.setText(user.getBio());
         email.setText(user.getEmailAdress());
@@ -117,7 +116,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                     .load(R.drawable.ic_grade)
                     .into(level);
         }
-        if (user.getPostnum() > 100 && user.getPostnum() > 500 ) {
+        if (user.getPostnum() > 100 && user.getPostnum() > 500) {
             Glide
                     .with(ProfileDisplayActivity.this)
                     .load(R.drawable.ic_grade1)
@@ -130,7 +129,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                     .into(level);
         }
 
-        if (user.getProfileUrl()!=null){
+        if (user.getProfileUrl() != null) {
             Glide
                     .with(ProfileDisplayActivity.this)
                     .load(user.getProfileUrl())
@@ -150,16 +149,16 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                     collapsingToolbarLayout.setTitle(user.getUserName());
                     layout.setVisibility(View.INVISIBLE);
                     isShow = true;
-                } else if(isShow) {
+                } else if (isShow) {
                     collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
                     layout.setVisibility(View.VISIBLE);
                     isShow = false;
                 }
             }
         });
-        CollectionReference userpost= db.collection("Posts");
+        CollectionReference userpost = db.collection("Posts");
 
-        if (user.getUserid().equals(auth.getUid())){
+        if (user.getUserid().equals(auth.getUid())) {
             editImage.setVisibility(View.VISIBLE);
             settings.setText("SETTINGS");
             settings.setOnClickListener(new View.OnClickListener() {
@@ -175,10 +174,10 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                     showPictureDialog();
                 }
             });
-            query = userpost.whereEqualTo("userid",auth.getUid()).orderBy("priority", Query.Direction.DESCENDING);
-        }else{
+            query = userpost.whereEqualTo("userid", auth.getUid()).orderBy("priority", Query.Direction.DESCENDING);
+        } else {
             editImage.setVisibility(View.INVISIBLE);
-            query = userpost.whereEqualTo("userid",user.getUserid()).orderBy("priority", Query.Direction.DESCENDING);
+            query = userpost.whereEqualTo("userid", user.getUserid()).orderBy("priority", Query.Direction.DESCENDING);
             final DocumentReference docref = db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid());
             docref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -187,9 +186,9 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             settings.setText("UNFOLLOW");
-                            Following=true;
-                        }else{
-                            Following=false;
+                            Following = true;
+                        } else {
+                            Following = false;
                             settings.setText("FOLLOW");
                         }
                     }
@@ -202,28 +201,28 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                     db.collection("Users").document(auth.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            final User me= documentSnapshot.toObject(User.class);
+                            final User me = documentSnapshot.toObject(User.class);
                             db.collection("Users").document(user.getUserid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    User you= documentSnapshot.toObject(User.class);
-                                    if (Following){
+                                    User you = documentSnapshot.toObject(User.class);
+                                    if (Following) {
                                         db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid()).delete();
-                                        db.collection("Users").document(auth.getUid()).update("Following",me.getFollowing()-1);
-                                        db.collection("Users").document(user.getUserid()).update("Follower",you.getFollower()-1);
-                                        followers.setText(String.valueOf(you.getFollower()-1));
+                                        db.collection("Users").document(auth.getUid()).update("Following", me.getFollowing() - 1);
+                                        db.collection("Users").document(user.getUserid()).update("Follower", you.getFollower() - 1);
+                                        followers.setText(String.valueOf(you.getFollower() - 1));
                                         settings.setText("FOLLOW");
-                                        Following=false;
+                                        Following = false;
 
-                                    }else{
-                                        Fol fol= new Fol();
+                                    } else {
+                                        Fol fol = new Fol();
                                         fol.setExists("");
                                         db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid()).set(fol);
-                                        db.collection("Users").document(auth.getUid()).update("Following",me.getFollowing()+1);
-                                        db.collection("Users").document(user.getUserid()).update("Follower",you.getFollower()+1);
-                                        followers.setText(String.valueOf(you.getFollower()+1));
+                                        db.collection("Users").document(auth.getUid()).update("Following", me.getFollowing() + 1);
+                                        db.collection("Users").document(user.getUserid()).update("Follower", you.getFollower() + 1);
+                                        followers.setText(String.valueOf(you.getFollower() + 1));
                                         settings.setText("UNFOLLOW");
-                                        Following=true;
+                                        Following = true;
                                     }
 
                                 }
@@ -233,37 +232,36 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                     });
 
 
-
                 }
             });
         }
         FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
                 .setQuery(query, Post.class)
                 .build();
-        adapter = new FireAdapter(options,ProfileDisplayActivity.this);
+        adapter = new FireAdapter(options, ProfileDisplayActivity.this);
         recyclerView.setAdapter(adapter);
         relativeLayout.setVisibility(View.VISIBLE);
-        observer =new RecyclerView.AdapterDataObserver() {
+        observer = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeRemoved(int positionStart, int itemCount) {
-                if (adapter.getItemCount()==0){
+                if (adapter.getItemCount() == 0) {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                if (adapter.getItemCount() >0){
+                if (adapter.getItemCount() > 0) {
                     relativeLayout.setVisibility(View.INVISIBLE);
-                }else{
+                } else {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
         };
 
 
-
     }
+
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(ProfileDisplayActivity.this);
         pictureDialog.setTitle("Select Action");
@@ -287,6 +285,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                 });
         pictureDialog.show();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -320,12 +319,14 @@ public class ProfileDisplayActivity extends AppCompatActivity {
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "ProfileImage", null);
         return Uri.parse(path);
     }
+
     private void takePhotoFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(ProfileDisplayActivity.this.getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+
     public void Continue() {
         if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(ProfileDisplayActivity.this);
@@ -343,7 +344,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                                     public void onSuccess(Uri uri) {
                                         progressDialog.dismiss();
                                         DocumentReference userinfo = db.collection("Users").document(auth.getUid());
-                                        userinfo.update("profileUrl",uri.toString());
+                                        userinfo.update("profileUrl", uri.toString());
                                     }
                                 });
                             } else {
@@ -371,11 +372,8 @@ public class ProfileDisplayActivity extends AppCompatActivity {
         }
 
 
-
-
-
-
     }
+
     public void choosePhotoFromGallary() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -404,7 +402,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-        if (adapter !=null){
+        if (adapter != null) {
             adapter.unregisterAdapterDataObserver(observer);
             adapter.stopListening();
         }

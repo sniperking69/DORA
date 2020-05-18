@@ -1,10 +1,5 @@
 package com.aputech.dora.ui;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -18,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -27,11 +21,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aputech.dora.Adpater.ContactInterface;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.aputech.dora.Adpater.PillAdapter;
-import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
-import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -43,17 +39,13 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -64,28 +56,34 @@ import com.narayanacharya.waveview.WaveView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MakePP extends AppCompatActivity {
-    private static final int REQUEST_IMAGE_CAPTURE =8;
+    private static final int REQUEST_IMAGE_CAPTURE = 8;
     private static final int REQUEST_LOCATION = 9;
     private static final int REQUEST_VIDEO = 10;
-    private static final int REQUEST_AUDIO=11;
+    private static final int REQUEST_AUDIO = 11;
     private static final int GALLERY = 12;
+    MaterialButton camera, gallery, audio;
+    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+    TextView curTime;
+    TextView totTime;
+    FloatingActionButton playPause;
+    SeekBar mSeekBar;
+    ArrayList<User> sendto = new ArrayList<>();
+    PillAdapter pillAdapter;
+    RecyclerView contact_view;
+    User user;
     private EditText editText;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ImageView imageView;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-    MaterialButton camera,gallery,audio;
-    private int type=1;
-    FirebaseStorage firebaseStorage=FirebaseStorage.getInstance();
+    private int type = 1;
     private TextView user_name;
     private TextView time;
     private MaterialButton remover;
@@ -96,21 +94,25 @@ public class MakePP extends AppCompatActivity {
     private Uri imgUri;
     private Uri audioUri;
     private WaveView sine;
-    TextView curTime;
-    TextView totTime;
     private PlayerView playerView;
     private SimpleExoPlayer player;
     private MediaPlayer mMediaPlayer;
-    FloatingActionButton playPause;
-    SeekBar mSeekBar;
-    ArrayList<User> sendto=new ArrayList<>();
-    PillAdapter pillAdapter;
     private boolean playWhenReady = true;
     private int currentWindow = 0;
     private long playbackPosition = 0;
-    RecyclerView contact_view;
-    private int GET_USERS=15;
-    User user;
+    private int GET_USERS = 15;
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+//            Log.i("handler ", "handler called");
+            int current_position = msg.what;
+            mSeekBar.setProgress(current_position);
+            String cTime = createTimeLabel(current_position);
+            curTime.setText(cTime);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,32 +121,32 @@ public class MakePP extends AppCompatActivity {
         time = findViewById(R.id.time);
         locationCheck();
         level = findViewById(R.id.level);
-        MaterialButton button= findViewById(R.id.AddUser);
-        contact_view= findViewById(R.id.contact_view);
+        MaterialButton button = findViewById(R.id.AddUser);
+        contact_view = findViewById(R.id.contact_view);
         contact_view.setHasFixedSize(true);
-        contact_view.setLayoutManager(new LinearLayoutManager(MakePP.this,LinearLayoutManager.HORIZONTAL, false));
-        pillAdapter= new PillAdapter(sendto);
+        contact_view.setLayoutManager(new LinearLayoutManager(MakePP.this, LinearLayoutManager.HORIZONTAL, false));
+        pillAdapter = new PillAdapter(sendto);
         contact_view.setAdapter(pillAdapter);
         profile = findViewById(R.id.poster_profile);
         gallery = findViewById(R.id.Gallery);
         camera = findViewById(R.id.Camera);
         imageView = findViewById(R.id.dispimg);
         audio = findViewById(R.id.Audio);
-        audioView= findViewById(R.id.audiolayout);
-        firebaseStorage= FirebaseStorage.getInstance();
+        audioView = findViewById(R.id.audiolayout);
+        firebaseStorage = FirebaseStorage.getInstance();
         user_name = findViewById(R.id.user_name);
         time = findViewById(R.id.time);
-        remover= findViewById(R.id.remover);
-        level= findViewById(R.id.level);
+        remover = findViewById(R.id.remover);
+        level = findViewById(R.id.level);
         mSeekBar = findViewById(R.id.mSeekBar);
-        playPause=findViewById(R.id.playPause);
+        playPause = findViewById(R.id.playPause);
         curTime = findViewById(R.id.curTime);
         totTime = findViewById(R.id.totalTime);
-        playerView=findViewById(R.id.videoDisplay);
-        gallery=findViewById(R.id.Gallery);
+        playerView = findViewById(R.id.videoDisplay);
+        gallery = findViewById(R.id.Gallery);
         sine = findViewById(R.id.waveView);
-        camera =findViewById(R.id.Camera);
-        profile=findViewById(R.id.poster_profile);
+        camera = findViewById(R.id.Camera);
+        profile = findViewById(R.id.poster_profile);
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
         }
@@ -159,12 +161,12 @@ public class MakePP extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pause();
-                videoUri=null;
-                imgUri=null;
-                audioUri=null;
-                type=1;
-                if (player!=null){
-                    if (isPlaying()){
+                videoUri = null;
+                imgUri = null;
+                audioUri = null;
+                type = 1;
+                if (player != null) {
+                    if (isPlaying()) {
                         player.stop();
                         player.release();
                     }
@@ -178,10 +180,10 @@ public class MakePP extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MakePP.this,SelectUser.class);
-                intent.putExtra("sendto",pillAdapter.getUserList());
-                startActivityForResult(intent,GET_USERS);
-                overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
+                Intent intent = new Intent(MakePP.this, SelectUser.class);
+                intent.putExtra("sendto", pillAdapter.getUserList());
+                startActivityForResult(intent, GET_USERS);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
             }
         });
         DocumentReference documentReference = db.collection("Users").document(auth.getUid());
@@ -210,7 +212,7 @@ public class MakePP extends AppCompatActivity {
                             .load(R.drawable.ic_grade2)
                             .into(level);
                 }
-                if (user.getProfileUrl()!=null){
+                if (user.getProfileUrl() != null) {
                     Glide
                             .with(MakePP.this)
                             .load(user.getProfileUrl())
@@ -244,81 +246,83 @@ public class MakePP extends AppCompatActivity {
         });
 
 
-
     }
+
     public void Done(View view) {
-        if (!editText.getText().toString().isEmpty()){
-            if (!pillAdapter.getUserList().isEmpty()){
-                Intent intent= new Intent(MakePP.this,SelectPrivateLocation.class);
-                intent.putExtra("type",type);
-                intent.putExtra("currentuser",user);
-                intent.putExtra("sendto",sendto);
-                intent.putExtra("Desc",editText.getText().toString());
-                intent.putExtra("user_id",auth.getUid());
-                if (type==2){
+        if (!editText.getText().toString().isEmpty()) {
+            if (!pillAdapter.getUserList().isEmpty()) {
+                Intent intent = new Intent(MakePP.this, SelectPrivateLocation.class);
+                intent.putExtra("type", type);
+                intent.putExtra("currentuser", user);
+                intent.putExtra("sendto", sendto);
+                intent.putExtra("Desc", editText.getText().toString());
+                intent.putExtra("user_id", auth.getUid());
+                if (type == 2) {
                     intent.putExtra("Uri", imgUri.toString());
-                    intent.putExtra("ext",getfileExt(imgUri));
+                    intent.putExtra("ext", getfileExt(imgUri));
                 }
                 if (type == 3) {
                     intent.putExtra("Uri", videoUri.toString());
-                    intent.putExtra("ext",getfileExt(videoUri));
+                    intent.putExtra("ext", getfileExt(videoUri));
                 }
                 if (type == 4) {
                     intent.putExtra("Uri", audioUri.toString());
-                    intent.putExtra("ext",getfileExt(audioUri));
+                    intent.putExtra("ext", getfileExt(audioUri));
                 }
-                startActivityForResult(intent,REQUEST_LOCATION);
-            }else{
-                Toast.makeText(MakePP.this, "Pick A User to Send The Message" , Toast.LENGTH_SHORT).show();
+                startActivityForResult(intent, REQUEST_LOCATION);
+            } else {
+                Toast.makeText(MakePP.this, "Pick A User to Send The Message", Toast.LENGTH_SHORT).show();
             }
 
-        }else{
-            Toast.makeText(MakePP.this, "Write Something To Post" , Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MakePP.this, "Write Something To Post", Toast.LENGTH_SHORT).show();
         }
 
     }
+
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "ProfileImage", null);
         return Uri.parse(path);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==REQUEST_VIDEO && resultCode ==RESULT_OK && data !=null && data.getData()!=null){
-            videoUri=data.getData();
+        if (requestCode == REQUEST_VIDEO && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            videoUri = data.getData();
             initializePlayer(videoUri);
             remover.setVisibility(View.VISIBLE);
             playerView.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.GONE);
-            if (player!=null){
-                if (isPlaying()){
+            if (player != null) {
+                if (isPlaying()) {
                     player.stop();
                     player.release();
                 }
             }
             audioView.setVisibility(View.GONE);
-            audioUri=null;
-            imgUri=null;
-            type=3;
+            audioUri = null;
+            imgUri = null;
+            type = 3;
         }
-        if (requestCode == REQUEST_AUDIO && resultCode ==RESULT_OK && data !=null && data.getData()!=null) {
+        if (requestCode == REQUEST_AUDIO && resultCode == RESULT_OK && data != null && data.getData() != null) {
             audioUri = data.getData();
             initPlayer(audioUri);
             remover.setVisibility(View.VISIBLE);
             playerView.setVisibility(View.GONE);
             imageView.setVisibility(View.GONE);
-            if (player!=null){
-                if (isPlaying()){
+            if (player != null) {
+                if (isPlaying()) {
                     player.stop();
                     player.release();
                 }
             }
             audioView.setVisibility(View.VISIBLE);
-            videoUri=null;
-            imgUri=null;
-            type=4;
+            videoUri = null;
+            imgUri = null;
+            type = 4;
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
@@ -328,17 +332,17 @@ public class MakePP extends AppCompatActivity {
             remover.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.VISIBLE);
             playerView.setVisibility(View.GONE);
-            if (player!=null){
-                if (isPlaying()){
+            if (player != null) {
+                if (isPlaying()) {
                     player.stop();
                     player.release();
                 }
             }
             audioView.setVisibility(View.GONE);
             pause();
-            videoUri=null;
-            audioUri=null;
-            type=2;
+            videoUri = null;
+            audioUri = null;
+            type = 2;
 
         }
         if (requestCode == GALLERY && resultCode == RESULT_OK
@@ -350,8 +354,8 @@ public class MakePP extends AppCompatActivity {
                 remover.setVisibility(View.VISIBLE);
                 imageView.setVisibility(View.VISIBLE);
                 playerView.setVisibility(View.GONE);
-                if (player!=null){
-                    if (isPlaying()){
+                if (player != null) {
+                    if (isPlaying()) {
                         player.stop();
                         player.release();
                     }
@@ -359,28 +363,28 @@ public class MakePP extends AppCompatActivity {
 
                 audioView.setVisibility(View.GONE);
                 pause();
-                videoUri=null;
-                audioUri=null;
-                type=2;
+                videoUri = null;
+                audioUri = null;
+                type = 2;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        if (requestCode ==REQUEST_LOCATION && resultCode == RESULT_OK ){
+        if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
             finish();
         }
-        if (requestCode ==GET_USERS && resultCode == RESULT_OK ){
-            sendto=data.getParcelableArrayListExtra("sendto");
-            pillAdapter= new PillAdapter(sendto);
+        if (requestCode == GET_USERS && resultCode == RESULT_OK) {
+            sendto = data.getParcelableArrayListExtra("sendto");
+            pillAdapter = new PillAdapter(sendto);
             contact_view.setAdapter(pillAdapter);
         }
     }
-    private String getfileExt(Uri videoUri){
-        ContentResolver contentResolver= getContentResolver();
+
+    private String getfileExt(Uri videoUri) {
+        ContentResolver contentResolver = getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(videoUri));
     }
-
 
     private void initPlayer(final Uri songResourceUri) {
 
@@ -453,19 +457,6 @@ public class MakePP extends AppCompatActivity {
         }).start();
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-//            Log.i("handler ", "handler called");
-            int current_position = msg.what;
-            mSeekBar.setProgress(current_position);
-            String cTime = createTimeLabel(current_position);
-            curTime.setText(cTime);
-        }
-    };
-
-
     private void play() {
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
@@ -478,7 +469,7 @@ public class MakePP extends AppCompatActivity {
     }
 
     private void pause() {
-        if (mMediaPlayer!=null){
+        if (mMediaPlayer != null) {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
                 sine.pause();
@@ -508,6 +499,7 @@ public class MakePP extends AppCompatActivity {
 
 
     }
+
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Action");
@@ -538,19 +530,22 @@ public class MakePP extends AppCompatActivity {
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, GALLERY);
     }
+
     public void chooseVideo() {
-        Intent intent= new Intent();
+        Intent intent = new Intent();
         intent.setType("video/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent,REQUEST_VIDEO);
+        startActivityForResult(intent, REQUEST_VIDEO);
     }
+
     @Override
     public void onResume() {
         super.onResume();
-        if (player == null && videoUri !=null) {
+        if (player == null && videoUri != null) {
             initializePlayer(videoUri);
         }
     }
+
     private void initializePlayer(Uri uri) {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
@@ -559,6 +554,7 @@ public class MakePP extends AppCompatActivity {
         player.seekTo(currentWindow, playbackPosition);
         player.prepare(mediaSource, false, false);
     }
+
     private MediaSource buildMediaSource(Uri uri) {
         DataSource.Factory dataSourceFactory =
                 new DefaultDataSourceFactory(this, "Drop Chat");
@@ -575,6 +571,7 @@ public class MakePP extends AppCompatActivity {
             player = null;
         }
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -583,7 +580,8 @@ public class MakePP extends AppCompatActivity {
             pause();
         }
     }
-    public void locationCheck(){
+
+    public void locationCheck() {
         Dexter.withActivity(this)
                 .withPermissions(Arrays.asList(
                         Manifest.permission.ACCESS_FINE_LOCATION,

@@ -1,7 +1,5 @@
 package com.aputech.dora.Adpater;
 
-import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,27 +7,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
-import com.aputech.dora.ui.ProfileDisplayActivity;
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
 public class PillAdapter extends RecyclerView.Adapter<PillAdapter.UserViewHolder> {
     private ArrayList<User> UserList;
-    static class UserViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewTitle;
-        ImageView remove;
-        UserViewHolder(View itemView) {
-            super(itemView);
-            textViewTitle = itemView.findViewById(R.id.contactname);
-            remove =itemView.findViewById(R.id.remove);
-        }
-    }
 
     public PillAdapter(ArrayList<User> UserList) {
         this.UserList = UserList;
@@ -56,7 +42,6 @@ public class PillAdapter extends RecyclerView.Adapter<PillAdapter.UserViewHolder
         });
     }
 
-
     @Override
     public int getItemCount() {
         return UserList.size();
@@ -66,8 +51,19 @@ public class PillAdapter extends RecyclerView.Adapter<PillAdapter.UserViewHolder
         return UserList.get(position);
     }
 
-    public ArrayList<User> getUserList(){
+    public ArrayList<User> getUserList() {
         return this.UserList;
+    }
+
+    static class UserViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewTitle;
+        ImageView remove;
+
+        UserViewHolder(View itemView) {
+            super(itemView);
+            textViewTitle = itemView.findViewById(R.id.contactname);
+            remove = itemView.findViewById(R.id.remove);
+        }
     }
 
 

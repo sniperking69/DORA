@@ -1,14 +1,8 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.message;
@@ -28,25 +26,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.ServerTimestamp;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firestore.v1.DocumentTransform;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,9 +53,9 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser()!=null){
+        if (auth.getCurrentUser() != null) {
             checkifalreadyuser();
-        }else{
+        } else {
             startActivityForResult(
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
@@ -81,7 +73,7 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    public void locationCheck(){
+    public void locationCheck() {
         Dexter.withActivity(this)
                 .withPermissions(Arrays.asList(
                         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -106,7 +98,7 @@ public class SplashActivity extends AppCompatActivity {
                 }).check();
     }
 
-    private void UpdateUI(){
+    private void UpdateUI() {
         CheckPostTimer();
         CheckPrivateTimer();
         new Handler().postDelayed(new Runnable() {
@@ -115,13 +107,14 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(new Intent(SplashActivity.this, HActivity.class));
                 finish();
             }
-        },3000);
+        }, 3000);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -136,7 +129,8 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
     }
-    private void checkifalreadyuser(){
+
+    private void checkifalreadyuser() {
         DocumentReference docIdRef = db.collection("Users").document(auth.getCurrentUser().getUid());
         docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -146,7 +140,7 @@ public class SplashActivity extends AppCompatActivity {
                     if (document.exists()) {
                         locationCheck();
                     } else {
-                        Intent intent = new Intent(SplashActivity.this,regUser.class);
+                        Intent intent = new Intent(SplashActivity.this, regUser.class);
                         startActivity(intent);
                         finish();
                     }
@@ -156,11 +150,12 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
     }
+
     private void revealFAB() {
         final View view = findViewById(R.id.imageView);
         view.setVisibility(View.INVISIBLE);
-        int cx = view.getWidth() /2;
-        int cy = view.getHeight()/2 ;
+        int cx = view.getWidth() / 2;
+        int cy = view.getHeight() / 2;
 
         float finalRadius = (float) Math.hypot(cx, cy);
 
@@ -177,15 +172,18 @@ public class SplashActivity extends AppCompatActivity {
         anim.start();
 
     }
-    private void DeletePost(final String Postid,int type,String Audio,String Video,String Image) {
-        FirebaseStorage firebaseStorage= FirebaseStorage.getInstance();
-        if (type==2){
+
+    private void DeletePost(final String Postid, int type, String Audio, String Video, String Image) {
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        if (type == 2) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Image);
             ref.delete();
-        }if (type==3){
+        }
+        if (type == 3) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Video);
             ref.delete();
-        }if (type==4){
+        }
+        if (type == 4) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Audio);
             ref.delete();
         }
@@ -201,7 +199,7 @@ public class SplashActivity extends AppCompatActivity {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             writeBatch.delete(documentSnapshot.getReference());
-                            deleteComment(documentSnapshot.getReference().getId(),Postid);
+                            deleteComment(documentSnapshot.getReference().getId(), Postid);
                         }
                         writeBatch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -216,6 +214,7 @@ public class SplashActivity extends AppCompatActivity {
 
         });
     }
+
     private void deleteComment(String ref, String post) {
         final WriteBatch writeBatch = db.batch();
         db.collection("Posts").document(post).collection("comments").document(ref).collection("vote").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -230,63 +229,68 @@ public class SplashActivity extends AppCompatActivity {
         });
 
     }
-    private void CheckPrivateTimer(){
-        db.collection("Inbox").whereEqualTo("receiver",auth.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+
+    private void CheckPrivateTimer() {
+        db.collection("Inbox").whereEqualTo("receiver", auth.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 current = System.currentTimeMillis();
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    message post= documentSnapshot.toObject(message.class);
-                    long posttime=post.getTimestamp().getTime();
-                    long ftime= current-posttime;
-                    if (ftime>86400000){
-                        DeletePrivatePost(post.getRefmsg(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
+                    message post = documentSnapshot.toObject(message.class);
+                    long posttime = post.getTimestamp().getTime();
+                    long ftime = current - posttime;
+                    if (ftime > 86400000) {
+                        DeletePrivatePost(post.getRefmsg(), post.getType(), post.getAudioUrl(), post.getVideoUrl(), post.getImageUrl());
                     }
                 }
 
             }
         });
-        db.collection("Inbox").whereEqualTo("sender",auth.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        db.collection("Inbox").whereEqualTo("sender", auth.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 current = System.currentTimeMillis();
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    message post= documentSnapshot.toObject(message.class);
-                    long posttime=post.getTimestamp().getTime();
-                    long ftime= current-posttime;
-                    if (ftime>86400000){
-                        DeletePrivatePost(post.getRefmsg(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
+                    message post = documentSnapshot.toObject(message.class);
+                    long posttime = post.getTimestamp().getTime();
+                    long ftime = current - posttime;
+                    if (ftime > 86400000) {
+                        DeletePrivatePost(post.getRefmsg(), post.getType(), post.getAudioUrl(), post.getVideoUrl(), post.getImageUrl());
                     }
                 }
 
             }
         });
     }
-    private void DeletePrivatePost(final String Postid,int type,String Audio,String Video,String Image) {
-        FirebaseStorage firebaseStorage= FirebaseStorage.getInstance();
-        if (type==2){
+
+    private void DeletePrivatePost(final String Postid, int type, String Audio, String Video, String Image) {
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        if (type == 2) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Image);
             ref.delete();
-        }if (type==3){
+        }
+        if (type == 3) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Video);
             ref.delete();
-        }if (type==4){
+        }
+        if (type == 4) {
             StorageReference ref = firebaseStorage.getReferenceFromUrl(Audio);
             ref.delete();
         }
         db.collection("Inbox").document(Postid).delete();
     }
-    private void CheckPostTimer(){
+
+    private void CheckPostTimer() {
         db.collection("Posts").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 current = System.currentTimeMillis();
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    Post post= documentSnapshot.toObject(Post.class);
-                    long posttime=post.getTimestamp().getTime();
-                    long ftime= current-posttime;
-                    if (ftime>86400000){
-                        DeletePost(post.getRefComments(),post.getType(),post.getAudioUrl(),post.getVideoUrl(),post.getImageUrl());
+                    Post post = documentSnapshot.toObject(Post.class);
+                    long posttime = post.getTimestamp().getTime();
+                    long ftime = current - posttime;
+                    if (ftime > 86400000) {
+                        DeletePost(post.getRefComments(), post.getType(), post.getAudioUrl(), post.getVideoUrl(), post.getImageUrl());
                     }
                 }
 

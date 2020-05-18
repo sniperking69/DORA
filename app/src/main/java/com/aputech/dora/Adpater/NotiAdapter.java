@@ -14,9 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aputech.dora.Model.Post;
 import com.aputech.dora.Model.User;
-import com.aputech.dora.Model.message;
 import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.MapView;
@@ -53,7 +51,7 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
         }
 
         holder.notidesc.setText(model.getText());
-        if (!model.getUserid().equals("nearby")){
+        if (!model.getUserid().equals("nearby")) {
             DocumentReference documentReference = db.collection("Users").document(model.getUserid());
             documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
@@ -68,7 +66,7 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
 
                 }
             });
-        }else{
+        } else {
             Glide
                     .with(mContext)
                     .load(R.drawable.ic_locationhappy)
@@ -83,6 +81,15 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_notify,
                 parent, false);
         return new notificationHolder(v);
+    }
+
+    public void deleteItem(int position) {
+        getSnapshots().getSnapshot(position).getReference().delete();
+    }
+
+    @Override
+    public int getItemCount() {
+        return getSnapshots().size();
     }
 
     class notificationHolder extends RecyclerView.ViewHolder {
@@ -107,59 +114,61 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
             notidoc.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (getSnapshots().get(getAdapterPosition()).getTyp()==1){
+                    if (getSnapshots().get(getAdapterPosition()).getTyp() == 1) {
                         db.collection("Inbox").document(getSnapshots().get(getAdapterPosition()).getDocument()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
-                                    if (document.exists()){
+                                    if (document.exists()) {
                                         Intent intent = new Intent(mContext, PrivatePost.class);
-                                        intent.putExtra("typ",1);
-                                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                                        intent.putExtra("typ", 1);
+                                        intent.putExtra("post", getSnapshots().get(getAdapterPosition()).getDocument());
                                         mContext.startActivity(intent);
-                                    }else{
+                                    } else {
                                         deleteItem(getAdapterPosition());
-                                        Toast.makeText(mContext,"Post Was Removed",Toast.LENGTH_LONG).show();
+                                        Toast.makeText(mContext, "Post Was Removed", Toast.LENGTH_LONG).show();
                                     }
                                 }
                             }
                         });
 
-                    }if (getSnapshots().get(getAdapterPosition()).getTyp()==2){
+                    }
+                    if (getSnapshots().get(getAdapterPosition()).getTyp() == 2) {
                         db.collection("Posts").document(getSnapshots().get(getAdapterPosition()).getDocument()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
-                                    if (document.exists()){
+                                    if (document.exists()) {
                                         Intent intent = new Intent(mContext, MapView.class);
-                                        intent.putExtra("typ",2);
-                                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                                        intent.putExtra("typ", 2);
+                                        intent.putExtra("post", getSnapshots().get(getAdapterPosition()).getDocument());
                                         mContext.startActivity(intent);
 
-                                    }else{
+                                    } else {
                                         deleteItem(getAdapterPosition());
-                                        Toast.makeText(mContext,"Post Was Removed",Toast.LENGTH_LONG).show();
+                                        Toast.makeText(mContext, "Post Was Removed", Toast.LENGTH_LONG).show();
                                     }
                                 }
                             }
                         });
 
-                    }if (getSnapshots().get(getAdapterPosition()).getTyp()==0){
+                    }
+                    if (getSnapshots().get(getAdapterPosition()).getTyp() == 0) {
                         db.collection("Posts").document(getSnapshots().get(getAdapterPosition()).getDocument()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
-                                    if (document.exists()){
+                                    if (document.exists()) {
                                         Intent intent = new Intent(mContext, PostDisplay.class);
-                                        intent.putExtra("typ",0);
-                                        intent.putExtra("post",getSnapshots().get(getAdapterPosition()).getDocument());
+                                        intent.putExtra("typ", 0);
+                                        intent.putExtra("post", getSnapshots().get(getAdapterPosition()).getDocument());
                                         mContext.startActivity(intent);
-                                    }else{
+                                    } else {
                                         deleteItem(getAdapterPosition());
-                                        Toast.makeText(mContext,"Post Was Removed",Toast.LENGTH_LONG).show();
+                                        Toast.makeText(mContext, "Post Was Removed", Toast.LENGTH_LONG).show();
                                     }
 
                                 }
@@ -171,14 +180,5 @@ public class NotiAdapter extends FirestoreRecyclerAdapter<notification, NotiAdap
                 }
             });
         }
-    }
-
-    public void deleteItem(int position) {
-        getSnapshots().getSnapshot(position).getReference().delete();
-    }
-
-    @Override
-    public int getItemCount() {
-        return getSnapshots().size();
     }
 }

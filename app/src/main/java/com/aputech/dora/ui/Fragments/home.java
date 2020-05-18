@@ -1,61 +1,32 @@
 package com.aputech.dora.ui.Fragments;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-
-import androidx.lifecycle.LiveData;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.aputech.dora.Adpater.FireAdapter;
 import com.aputech.dora.Adpater.HomeAdapter;
-import com.aputech.dora.Model.User;
-import com.aputech.dora.R;
 import com.aputech.dora.Model.Post;
+import com.aputech.dora.R;
 import com.aputech.dora.ui.MapView;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.firebase.ui.firestore.ObservableSnapshotArray;
-import com.firebase.ui.firestore.SnapshotParser;
-import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
-import com.firebase.ui.firestore.paging.FirestorePagingOptions;
-import com.firebase.ui.firestore.paging.LoadingState;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -63,12 +34,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class home extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+    ArrayList<String> Following = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirebaseAuth auth= FirebaseAuth.getInstance();
     private CollectionReference notebookRef = db.collection("Users").document(auth.getUid()).collection("Following");
-    ArrayList<String> Following= new ArrayList<>();
     private HomeAdapter adapter;
-    private  RelativeLayout relativeLayout;
+    private RelativeLayout relativeLayout;
     private RecyclerView.AdapterDataObserver adapterDataObserver;
     private MaterialButton map_View;
 
@@ -90,10 +61,10 @@ public class home extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_h, container, false);
-        relativeLayout =root.findViewById(R.id.noresult);
+        relativeLayout = root.findViewById(R.id.noresult);
 
         final RecyclerView recyclerView = root.findViewById(R.id.recycler_view);
-        map_View= root.findViewById(R.id.map_style);
+        map_View = root.findViewById(R.id.map_style);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -119,20 +90,21 @@ public class home extends Fragment {
                         .setQuery(query, Post.class)
                         .build();
 
-                adapter = new HomeAdapter(options,getActivity(),Following);
+                adapter = new HomeAdapter(options, getActivity(), Following);
                 adapterDataObserver = new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onItemRangeRemoved(int positionStart, int itemCount) {
-                        if (adapter.ActualSize()==0){
+                        if (adapter.ActualSize() == 0) {
                             relativeLayout.setVisibility(View.VISIBLE);
                         }
 
                     }
+
                     @Override
                     public void onItemRangeInserted(int positionStart, int itemCount) {
-                        if (adapter.ActualSize() > 0){
+                        if (adapter.ActualSize() > 0) {
                             relativeLayout.setVisibility(View.INVISIBLE);
-                        }else{
+                        } else {
                             relativeLayout.setVisibility(View.VISIBLE);
                         }
                     }
@@ -146,6 +118,7 @@ public class home extends Fragment {
 
         return root;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -154,15 +127,16 @@ public class home extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (adapter!=null){
+        if (adapter != null) {
             adapter.stopListening();
         }
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
-        if (adapter!=null){
+        if (adapter != null) {
             adapter.startListening();
         }
 

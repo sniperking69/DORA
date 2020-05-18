@@ -1,7 +1,8 @@
 package com.aputech.dora.Model;
 
 public class Vote {
-    private  boolean votecheck;
+    private boolean votecheck;
+
     public Vote() {
         //empty constructor needed
     }

@@ -2,6 +2,7 @@ package com.aputech.dora.Model;
 
 public class Fol {
     String exists;
+
     public Fol() {
         //empty constructor needed
     }

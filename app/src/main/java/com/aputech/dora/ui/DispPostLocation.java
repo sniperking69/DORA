@@ -1,10 +1,10 @@
 package com.aputech.dora.ui;
 
-import androidx.fragment.app.FragmentActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.aputech.dora.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,11 +25,11 @@ public class DispPostLocation extends FragmentActivity implements OnMapReadyCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disp_post_location);
-        Intent intent= getIntent();
-        double Lat =intent.getDoubleExtra("lat",0);
-        double Lng =intent.getDoubleExtra("lng",0);
-     lat = Lat;
-     lng = Lng;
+        Intent intent = getIntent();
+        double Lat = intent.getDoubleExtra("lat", 0);
+        double Lng = intent.getDoubleExtra("lng", 0);
+        lat = Lat;
+        lng = Lng;
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -51,7 +51,7 @@ public class DispPostLocation extends FragmentActivity implements OnMapReadyCall
         mMap = googleMap;
         LatLng sydney = new LatLng(lat, lng);
         mMap.addMarker(new MarkerOptions().position(sydney).title("The Post is Located Here"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,15.0f));
-        Log.d("bigpp", "onMapReady: "+mMap.getCameraPosition().zoom);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15.0f));
+        Log.d("bigpp", "onMapReady: " + mMap.getCameraPosition().zoom);
     }
 }

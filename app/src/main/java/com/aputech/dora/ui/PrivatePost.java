@@ -1,35 +1,19 @@
 package com.aputech.dora.ui;
 
-import androidx.annotation.DrawableRes;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.location.Location;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentSender;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Message;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-
-import com.aputech.dora.Model.Post;
-import com.aputech.dora.Model.User;
 import com.aputech.dora.Model.message;
 import com.aputech.dora.R;
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -42,7 +26,6 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -59,32 +42,25 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EventListener;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PrivatePost extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+    private final float DEFAULT_ZOOM = 15;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private ArrayList<message> listInbox=new ArrayList<>();
+    private ArrayList<message> listInbox = new ArrayList<>();
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
     private LocationCallback locationCallback;
     private View mapView;
-    private final float DEFAULT_ZOOM = 15;
     private String notimsg;
     private int typ;
 
@@ -92,9 +68,9 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private_post);
-        Intent intent=getIntent();
-        notimsg=intent.getStringExtra("post");
-        typ=intent.getIntExtra("typ",0);
+        Intent intent = getIntent();
+        notimsg = intent.getStringExtra("post");
+        typ = intent.getIntExtra("typ", 0);
         Places.initialize(getApplicationContext(), getResources().getString(R.string.google_api_key));
         PlacesClient placesClient = Places.createClient(this);
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -110,14 +86,14 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
 
             @Override
             public void onError(Status status) {
-              //Show Error
+                //Show Error
             }
         });
         FloatingActionButton floatingActionButton = findViewById(R.id.button_add_msg);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PrivatePost.this,MakePP.class);
+                Intent intent = new Intent(PrivatePost.this, MakePP.class);
                 startActivity(intent);
             }
         });
@@ -138,12 +114,12 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                if (typ==1){
+                if (typ == 1) {
                     db.collection("Inbox").document(notimsg).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            message m=documentSnapshot.toObject(message.class);
-                            LatLng LL= new LatLng(m.getLocation().getLatitude(),m.getLocation().getLongitude());
+                            message m = documentSnapshot.toObject(message.class);
+                            LatLng LL = new LatLng(m.getLocation().getLatitude(), m.getLocation().getLongitude());
                             moveMap(LL);
                         }
                     });
@@ -193,6 +169,7 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
         });
 
     }
+
     @SuppressLint("MissingPermission")
     private void getDeviceLocation() {
         mFusedLocationProviderClient.getLastLocation()
@@ -230,83 +207,83 @@ public class PrivatePost extends FragmentActivity implements OnMapReadyCallback,
                 });
     }
 
-private void loadData(){
-    db.collection("Inbox").whereEqualTo("receiver",auth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    message msg=document.toObject(message.class);
-                    listInbox.add(msg);
-                    final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne));
-                }
-            } else {
-                Toast.makeText(PrivatePost.this,"Error",Toast.LENGTH_SHORT).show();
-            }
-            db.collection("Inbox").whereEqualTo("sender",auth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            message msg=document.toObject(message.class);
-                            listInbox.add(msg);
-                            LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
-                            mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                        }
-                    } else {
-                        Toast.makeText(PrivatePost.this,"Error",Toast.LENGTH_SHORT).show();
+    private void loadData() {
+        db.collection("Inbox").whereEqualTo("receiver", auth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        message msg = document.toObject(message.class);
+                        listInbox.add(msg);
+                        final LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
+                        mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne));
                     }
+                } else {
+                    Toast.makeText(PrivatePost.this, "Error", Toast.LENGTH_SHORT).show();
                 }
-            });
-        }
-    });
+                db.collection("Inbox").whereEqualTo("sender", auth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                message msg = document.toObject(message.class);
+                                listInbox.add(msg);
+                                LatLng customMarkerLocationOne = new LatLng(msg.getLocation().getLatitude(), msg.getLocation().getLongitude());
+                                mMap.addMarker(new MarkerOptions().position(customMarkerLocationOne).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                            }
+                        } else {
+                            Toast.makeText(PrivatePost.this, "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
 
 
-}
+    }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        ArrayList<String> PostNearby=new ArrayList<>();
+        ArrayList<String> PostNearby = new ArrayList<>();
         Location postlocation = new Location("");
         postlocation.setLatitude(marker.getPosition().latitude);
         postlocation.setLongitude(marker.getPosition().longitude);
-        if (closekm(postlocation,mLastKnownLocation)) {
-            int x=0;
-            while (x<listInbox.size()){
+        if (closekm(postlocation, mLastKnownLocation)) {
+            int x = 0;
+            while (x < listInbox.size()) {
                 message msg = listInbox.get(x);
-                if (msg.getLocation()!=null){
-                    if (msg.getLocation().getLongitude()==marker.getPosition().longitude &&
-                            msg.getLocation().getLatitude() ==marker.getPosition().latitude){
+                if (msg.getLocation() != null) {
+                    if (msg.getLocation().getLongitude() == marker.getPosition().longitude &&
+                            msg.getLocation().getLatitude() == marker.getPosition().latitude) {
                         PostNearby.add(msg.getRefmsg());
-                        x+=1;
-                        while(x<listInbox.size()){
-                            message pst= listInbox.get(x);
-                            if (pst.getLocation()!=null){
+                        x += 1;
+                        while (x < listInbox.size()) {
+                            message pst = listInbox.get(x);
+                            if (pst.getLocation() != null) {
                                 Location postA = new Location("");
                                 postA.setLatitude(pst.getLocation().getLatitude());
                                 postA.setLongitude(pst.getLocation().getLongitude());
                                 Location postB = new Location("");
                                 postB.setLatitude(msg.getLocation().getLatitude());
                                 postB.setLongitude(msg.getLocation().getLongitude());
-                                if (closekm(postA,postB)){
+                                if (closekm(postA, postB)) {
                                     PostNearby.add(pst.getRefmsg());
                                 }
                             }
-                            x+=1;
+                            x += 1;
                         }
                         break;
                     }
                 }
-                x+=1;
+                x += 1;
             }
-            if (PostNearby.size()==1){
+            if (PostNearby.size() == 1) {
                 Intent intent = new Intent(PrivatePost.this, PrivatePostDisplay.class);
                 intent.putExtra("post", PostNearby.get(0));
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                 PostNearby.add(PostNearby.get(0));
-            }else {
+            } else {
                 Intent intent = new Intent(PrivatePost.this, NearByPrivatePosts.class);
                 intent.putExtra("post", PostNearby);
                 startActivity(intent);
@@ -321,16 +298,16 @@ private void loadData(){
                     }
                 }
             }
-            if (PostNearby.size()==0) {
-                Toast.makeText(PrivatePost.this,"Not Near the Post",Toast.LENGTH_SHORT).show();
-            }else{
-                if (PostNearby.size()==1){
+            if (PostNearby.size() == 0) {
+                Toast.makeText(PrivatePost.this, "Not Near the Post", Toast.LENGTH_SHORT).show();
+            } else {
+                if (PostNearby.size() == 1) {
                     Intent intent = new Intent(PrivatePost.this, PrivatePostDisplay.class);
                     intent.putExtra("post", PostNearby.get(0));
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                     PostNearby.add(PostNearby.get(0));
-                }else{
+                } else {
                     Intent intent = new Intent(PrivatePost.this, NearByPrivatePosts.class);
                     intent.putExtra("post", PostNearby);
                     startActivity(intent);
@@ -342,7 +319,8 @@ private void loadData(){
 
         return false;
     }
-    private boolean closekm(Location A, Location B){
+
+    private boolean closekm(Location A, Location B) {
         float dis = A.distanceTo(B) / 1000;
         return dis < 2;
 

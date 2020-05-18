@@ -40,14 +40,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aputech.dora.Adpater.SAdapter;
 import com.aputech.dora.LocationJob;
 import com.aputech.dora.Model.User;
-import com.aputech.dora.Model.notification;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.Fragments.Notify;
 import com.aputech.dora.ui.Fragments.Profile;
 import com.aputech.dora.ui.Fragments.Trending;
 import com.aputech.dora.ui.Fragments.home;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -65,30 +63,45 @@ import java.util.ArrayList;
 
 public class HActivity extends AppCompatActivity {
 
+    public static final String CHANNEL_ID = "dropChannel";
+    public static int JOB_ID = 4576;
     FragmentContainerView fragmentContainerView;
     ImageView Home, Trending, Notification, profileImage;
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private Toolbar myToolbar;
     RelativeLayout searchlayout;
     SearchView searchView;
-    public static int JOB_ID = 4576;
-    public static final String CHANNEL_ID = "dropChannel";
     FloatingActionButton newPost;
     LinearLayout bottomlinear;
     ArrayList<User> users = new ArrayList<>();
-    ImageView highhome,highprofile,hightrending,highnoti,searchSubmit;
-    private SAdapter adapter;
+    ImageView highhome, highprofile, hightrending, highnoti, searchSubmit;
     boolean adapterlisten = false;
     RelativeLayout noresult;
     RecyclerView recyclerView;
     ListenerRegistration listenerReg;
-    private CollectionReference collectionReference = db.collection("Users");
     int page = 2;
     ListenerRegistration listenerRegistration;
     EventListener eventListener;
     TextView searchtext;
     boolean search_bool = false;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private Toolbar myToolbar;
+    private SAdapter adapter;
+    private CollectionReference collectionReference = db.collection("Users");
+
+    public static boolean isJobServiceOn(Context context) {
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        boolean hasBeenScheduled = false;
+        if (scheduler != null) {
+            for (JobInfo jobInfo : scheduler.getAllPendingJobs()) {
+                if (jobInfo.getId() == JOB_ID) {
+                    hasBeenScheduled = true;
+                    break;
+                }
+
+            }
+        }
+        return hasBeenScheduled;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,11 +125,11 @@ public class HActivity extends AppCompatActivity {
         searchView.setSubmitButtonEnabled(true);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(HActivity.this));
-        searchSubmit = (ImageView) searchView.findViewById(androidx.appcompat.R.id.search_go_btn);
-        searchtext = (TextView) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        searchSubmit = searchView.findViewById(androidx.appcompat.R.id.search_go_btn);
+        searchtext = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchtext.setTextColor(Color.parseColor("#ffffff"));
         searchSubmit.setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_ATOP);
-        eventListener =new EventListener<QuerySnapshot>() {
+        eventListener = new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
                 if (e != null) {
@@ -153,14 +166,12 @@ public class HActivity extends AppCompatActivity {
                 search_bool = false;
             }
         });
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            newFragment = new Trending();
-            transaction.replace(R.id.nav_host_fragment, newFragment);
-            transaction.commit();
-            page = 2;
-            hightrending.setVisibility(View.VISIBLE);
-
-
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        newFragment = new Trending();
+        transaction.replace(R.id.nav_host_fragment, newFragment);
+        transaction.commit();
+        page = 2;
+        hightrending.setVisibility(View.VISIBLE);
 
 
         Notification.setOnClickListener(new View.OnClickListener() {
@@ -245,11 +256,11 @@ public class HActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.toolbar_profile_image);
         if (auth.getCurrentUser() != null) {
             final DocumentReference documentReference = db.collection("Users").document(auth.getUid());
-            listenerReg =documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            listenerReg = documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                    User user= documentSnapshot.toObject(User.class);
-                    if (user.getProfileUrl()!=null){
+                    User user = documentSnapshot.toObject(User.class);
+                    if (user.getProfileUrl() != null) {
                         Glide
                                 .with(HActivity.this)
                                 .load(user.getProfileUrl())
@@ -299,16 +310,15 @@ public class HActivity extends AppCompatActivity {
         createNotificationChannels();
         SharedPreferences sharedPref = getSharedPreferences("usersettings", Context.MODE_PRIVATE);
         int set = sharedPref.getInt("JOB", 1);
-        if (set==1) {
+        if (set == 1) {
             MainOpen();
         }
-
 
 
     }
 
     private void filter(String text) {
-        if (adapter!=null){
+        if (adapter != null) {
             ArrayList<User> filteredList = new ArrayList<>();
 
             for (User item : users) {
@@ -317,10 +327,10 @@ public class HActivity extends AppCompatActivity {
                 }
             }
             adapter.filterList(filteredList);
-            if (adapter.getItemCount()==0){
+            if (adapter.getItemCount() == 0) {
                 noresult.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.INVISIBLE);
-            }else {
+            } else {
                 recyclerView.setVisibility(View.VISIBLE);
                 noresult.setVisibility(View.INVISIBLE);
             }
@@ -340,9 +350,9 @@ public class HActivity extends AppCompatActivity {
             case R.id.search:
                 revealFAB();
                 recyclerView.setVisibility(View.INVISIBLE);
-                adapter = new SAdapter(users,HActivity.this);
+                adapter = new SAdapter(users, HActivity.this);
                 recyclerView.setAdapter(adapter);
-                listenerRegistration=collectionReference.addSnapshotListener(this,eventListener);
+                listenerRegistration = collectionReference.addSnapshotListener(this, eventListener);
                 adapterlisten = true;
                 search_bool = true;
                 return true;
@@ -467,25 +477,10 @@ public class HActivity extends AppCompatActivity {
         }
     }
 
-    public static boolean isJobServiceOn(Context context) {
-        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        boolean hasBeenScheduled = false;
-        if (scheduler != null) {
-            for (JobInfo jobInfo : scheduler.getAllPendingJobs()) {
-                if (jobInfo.getId() == JOB_ID) {
-                    hasBeenScheduled = true;
-                    break;
-                }
-
-            }
-        }
-        return hasBeenScheduled;
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
-        if (listenerRegistration!=null && listenerReg!=null){
+        if (listenerRegistration != null && listenerReg != null) {
             listenerReg.remove();
             listenerRegistration.remove();
         }

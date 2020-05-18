@@ -165,6 +165,20 @@ public class NearByPrivateAdapter extends FirestoreRecyclerAdapter<message, Near
         return new NoteHolder(v);
     }
 
+    public int ActualSize() {
+        int actualSize = 0;
+        for (int x = 0; x < getSnapshots().size(); x++) {
+            if (UserMsgID.contains(getSnapshots().get(x).getRefmsg())) {
+                actualSize += 1;
+            }
+        }
+        return actualSize;
+    }
+
+    private void DeletePost(final String Postid) {
+        db.collection("Inbox").document(Postid).delete();
+    }
+
     class NoteHolder extends RecyclerView.ViewHolder {
         CardView card;
         TextView user_name;
@@ -185,7 +199,7 @@ public class NearByPrivateAdapter extends FirestoreRecyclerAdapter<message, Near
             thumbnail = itemView.findViewById(R.id.thumbnail);
             audioview = itemView.findViewById(R.id.audiocard);
             delete = itemView.findViewById(R.id.delete);
-            card =itemView.findViewById(R.id.card);
+            card = itemView.findViewById(R.id.card);
             user_name = itemView.findViewById(R.id.user_name);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
             time = itemView.findViewById(R.id.time);
@@ -267,19 +281,5 @@ public class NearByPrivateAdapter extends FirestoreRecyclerAdapter<message, Near
                 }
             });
         }
-    }
-
-    public int ActualSize() {
-        int actualSize = 0;
-        for (int x = 0; x < getSnapshots().size(); x++) {
-            if (UserMsgID.contains(getSnapshots().get(x).getRefmsg())) {
-                actualSize += 1;
-            }
-        }
-        return actualSize;
-    }
-
-    private void DeletePost(final String Postid) {
-        db.collection("Inbox").document(Postid).delete();
     }
 }

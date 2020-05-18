@@ -16,8 +16,6 @@ import com.aputech.dora.Model.User;
 import com.aputech.dora.R;
 import com.aputech.dora.ui.ProfileDisplayActivity;
 import com.bumptech.glide.Glide;
-import com.google.android.material.card.MaterialCardView;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -25,19 +23,6 @@ import java.util.ArrayList;
 public class SAdapter extends RecyclerView.Adapter<SAdapter.UserViewHolder> {
     private ArrayList<User> UserList;
     private Context mContext;
-
-    static class UserViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewTitle;
-        ImageView img;
-        CardView user_card;
-
-        UserViewHolder(View itemView) {
-            super(itemView);
-            user_card=itemView.findViewById(R.id.user_card);
-            textViewTitle = itemView.findViewById(R.id.nametitle);
-            img = itemView.findViewById(R.id.profiledisplay);
-        }
-    }
 
     public SAdapter(ArrayList<User> UserList, Context mContext) {
         this.UserList = UserList;
@@ -55,7 +40,7 @@ public class SAdapter extends RecyclerView.Adapter<SAdapter.UserViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         final User currentItem = UserList.get(position);
-        if (currentItem.getProfileUrl()!=null){
+        if (currentItem.getProfileUrl() != null) {
             Glide
                     .with(mContext)
                     .load(currentItem.getProfileUrl())
@@ -73,7 +58,6 @@ public class SAdapter extends RecyclerView.Adapter<SAdapter.UserViewHolder> {
         });
     }
 
-
     @Override
     public int getItemCount() {
         return UserList.size();
@@ -82,5 +66,18 @@ public class SAdapter extends RecyclerView.Adapter<SAdapter.UserViewHolder> {
     public void filterList(ArrayList<User> filteredList) {
         UserList = filteredList;
         notifyDataSetChanged();
+    }
+
+    static class UserViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewTitle;
+        ImageView img;
+        CardView user_card;
+
+        UserViewHolder(View itemView) {
+            super(itemView);
+            user_card = itemView.findViewById(R.id.user_card);
+            textViewTitle = itemView.findViewById(R.id.nametitle);
+            img = itemView.findViewById(R.id.profiledisplay);
+        }
     }
 }
