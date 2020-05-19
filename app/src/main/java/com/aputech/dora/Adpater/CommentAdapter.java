@@ -100,6 +100,10 @@ public class CommentAdapter extends FirestoreRecyclerAdapter<Comment, CommentAda
                             mContext.startActivity(intent);
                         }
                     });
+                    if (user.getUserid().equals(auth.getUid())){
+                        holder.edit.setVisibility(View.VISIBLE);
+                        holder.delete.setVisibility(View.VISIBLE);
+                    }
                 }
             });
         }

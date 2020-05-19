@@ -114,8 +114,11 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback, Go
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             Post m = documentSnapshot.toObject(Post.class);
-                            LatLng LL = new LatLng(m.getLocation().getLatitude(), m.getLocation().getLongitude());
-                            moveMap(LL);
+                            if (m.getLocation()!=null){
+                                LatLng LL = new LatLng(m.getLocation().getLatitude(), m.getLocation().getLongitude());
+                                moveMap(LL);
+                            }
+
                         }
                     });
                 }

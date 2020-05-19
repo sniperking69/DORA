@@ -553,7 +553,7 @@ public class PostDisplay extends AppCompatActivity {
                         notification noti = new notification();
                         noti.setDocument(post.getRefComments());
                         noti.setTyp(0);
-                        noti.setUserid(auth.getUid());
+                        noti.setUserid(u.getUserid());
                         noti.setText(u.getUserName() + "  Commented On Your Post");
                         CollectionReference notiref = db.collection("Users").document(post.getUserid()).collection("notify");
                         notiref.add(noti);

@@ -30,12 +30,13 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:id="@+id/delete"
+                    android:visibility="gone"
                     android:layout_marginEnd="20dp"
                     app:srcCompat="@drawable/ic_delete"/>
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-
+                    android:visibility="gone"
                     android:id="@+id/edit"
                     app:srcCompat="@drawable/ic_edit"/>
 
@@ -56,7 +57,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
-                        android:text="Karun Shrestha"
                         android:textColor="@android:color/black"
                         android:textSize="17sp" />
                     <androidx.appcompat.widget.AppCompatImageView
@@ -70,7 +70,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="11 hrs"
                     android:textColor="@android:color/black"
                     android:textSize="13sp" />
             </LinearLayout>
@@ -90,7 +89,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:text="This is Status"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
         </LinearLayout>
