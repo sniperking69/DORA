@@ -90,6 +90,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
         layout = findViewById(R.id.topdisp);
         collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
         appBarLayout = findViewById(R.id.app_bar);
+        settings.setText("FOLLOW");
         email = findViewById(R.id.email);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(ProfileDisplayActivity.this));
