@@ -257,18 +257,22 @@ public class LocationJob extends JobService {
         if (closekm(postlocation, mLastKnownLocation)) {
             int x = 0;
             while (x < posts.size()) {
+
                 Post pst = posts.get(x);
-                if (pst.getLocation() != null) {
-                    Location postA = new Location("");
-                    postA.setLatitude(pst.getLocation().getLatitude());
-                    postA.setLongitude(pst.getLocation().getLongitude());
-                    Location postB = new Location("");
-                    postB.setLatitude(pst.getLocation().getLatitude());
-                    postB.setLongitude(pst.getLocation().getLongitude());
-                    if (closekm(postA, postB)) {
-                        PostNearby.add(pst.getRefComments());
+                if (!pst.getUserid().equals(auth.getUid())){
+                    if (pst.getLocation() != null) {
+                        Location postA = new Location("");
+                        postA.setLatitude(pst.getLocation().getLatitude());
+                        postA.setLongitude(pst.getLocation().getLongitude());
+                        Location postB = new Location("");
+                        postB.setLatitude(pst.getLocation().getLatitude());
+                        postB.setLongitude(pst.getLocation().getLongitude());
+                        if (closekm(postA, postB)) {
+                            PostNearby.add(pst.getRefComments());
+                        }
                     }
                 }
+
                 x += 1;
             }
             SharedPreferences sharedPref = getSharedPreferences("userseen", Context.MODE_PRIVATE);
@@ -327,15 +331,17 @@ public class LocationJob extends JobService {
             int x = 0;
             while (x < listInbox.size()) {
                 message pst = listInbox.get(x);
-                if (pst.getLocation() != null) {
-                    Location postA = new Location("");
-                    postA.setLatitude(pst.getLocation().getLatitude());
-                    postA.setLongitude(pst.getLocation().getLongitude());
-                    Location postB = new Location("");
-                    postB.setLatitude(pst.getLocation().getLatitude());
-                    postB.setLongitude(pst.getLocation().getLongitude());
-                    if (closekm(postA, postB)) {
-                        PostNearby.add(pst.getRefmsg());
+                if (!pst.getSender().equals(auth.getUid())){
+                    if (pst.getLocation() != null) {
+                        Location postA = new Location("");
+                        postA.setLatitude(pst.getLocation().getLatitude());
+                        postA.setLongitude(pst.getLocation().getLongitude());
+                        Location postB = new Location("");
+                        postB.setLatitude(pst.getLocation().getLatitude());
+                        postB.setLongitude(pst.getLocation().getLongitude());
+                        if (closekm(postA, postB)) {
+                            PostNearby.add(pst.getRefmsg());
+                        }
                     }
                 }
                 x += 1;
