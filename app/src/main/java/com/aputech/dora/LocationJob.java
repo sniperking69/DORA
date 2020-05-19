@@ -259,7 +259,7 @@ public class LocationJob extends JobService {
             while (x < posts.size()) {
 
                 Post pst = posts.get(x);
-                if (pst.getUserid().equals(auth.getUid())){
+                if (!pst.getUserid().equals(auth.getUid())){
                     if (pst.getLocation() != null) {
                         Location postA = new Location("");
                         postA.setLatitude(pst.getLocation().getLatitude());
@@ -331,7 +331,7 @@ public class LocationJob extends JobService {
             int x = 0;
             while (x < listInbox.size()) {
                 message pst = listInbox.get(x);
-                if (pst.getSender().equals(auth.getUid())){
+                if (!pst.getSender().equals(auth.getUid())){
                     if (pst.getLocation() != null) {
                         Location postA = new Location("");
                         postA.setLatitude(pst.getLocation().getLatitude());
