@@ -96,11 +96,12 @@ public class ProfileSettings extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                JobScheduler jobScheduler =
-                        (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                jobScheduler.cancel(JOB_ID);
+
                 AuthUI.getInstance().signOut(ProfileSettings.this).addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
+                        JobScheduler jobScheduler =
+                                (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                        jobScheduler.cancel(JOB_ID);
                         Intent intent = new Intent(ProfileSettings.this, SplashActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
