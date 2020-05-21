@@ -87,6 +87,7 @@ public class HActivity extends AppCompatActivity {
     private Toolbar myToolbar;
     private SAdapter adapter;
     private CollectionReference collectionReference = db.collection("Users");
+    private EventListener<DocumentSnapshot> eventprofileimage;
 
     public static boolean isJobServiceOn(Context context) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
@@ -256,7 +257,7 @@ public class HActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.toolbar_profile_image);
         if (auth.getCurrentUser() != null) {
             final DocumentReference documentReference = db.collection("Users").document(auth.getUid());
-            listenerReg = documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            eventprofileimage=new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                     User user = documentSnapshot.toObject(User.class);
@@ -267,7 +268,8 @@ public class HActivity extends AppCompatActivity {
                                 .into(profileImage);
                     }
                 }
-            });
+            };
+            listenerReg = documentReference.addSnapshotListener(eventprofileimage);
 
         }
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -484,7 +486,7 @@ public class HActivity extends AppCompatActivity {
             listenerReg.remove();
             listenerRegistration.remove();
         }
-
     }
+
 
 }
