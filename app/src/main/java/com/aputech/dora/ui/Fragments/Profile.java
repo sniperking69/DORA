@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -54,6 +56,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.firebase.ui.auth.AuthUI.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -86,6 +89,7 @@ public class Profile extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    int count = 0;
     private ArrayList<Post> Posts = new ArrayList<>();
 
 
@@ -171,7 +175,22 @@ public class Profile extends Fragment {
             }
         };
 
+        db.collection("Users").document(auth.getUid()).collection("Following")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
 
+                            for (DocumentSnapshot document : task.getResult()) {
+                                count++;
+                            }
+                            following.setText(String.valueOf(count));
+                        } else {
+                            Log.d("DROP CHAT", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
         userinfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -180,7 +199,7 @@ public class Profile extends Fragment {
                 bio.setText(user.getBio());
                 email.setText(user.getEmailAdress());
                 followers.setText(String.valueOf(user.getFollower()));
-                following.setText(String.valueOf(user.getFollowing()));
+
                 if (getActivity() != null) {
 
                     if (user.getPostnum() < 100) {

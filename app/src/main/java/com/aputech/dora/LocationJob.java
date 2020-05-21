@@ -257,7 +257,6 @@ public class LocationJob extends JobService {
         if (closekm(postlocation, mLastKnownLocation)) {
             int x = 0;
             while (x < posts.size()) {
-
                 Post pst = posts.get(x);
                 if (!pst.getUserid().equals(auth.getUid())){
                     if (pst.getLocation() != null) {

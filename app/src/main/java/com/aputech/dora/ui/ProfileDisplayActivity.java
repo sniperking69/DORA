@@ -199,18 +199,13 @@ public class ProfileDisplayActivity extends AppCompatActivity {
             settings.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    db.collection("Users").document(auth.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            final User me = documentSnapshot.toObject(User.class);
                             db.collection("Users").document(user.getUserid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     User you = documentSnapshot.toObject(User.class);
                                     if (Following) {
                                         db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid()).delete();
-                                        db.collection("Users").document(auth.getUid()).update("Following", me.getFollowing() - 1);
-                                        db.collection("Users").document(user.getUserid()).update("Follower", you.getFollower() - 1);
+                                        db.collection("Users").document(user.getUserid()).update("follower", you.getFollower() - 1);
                                         followers.setText(String.valueOf(you.getFollower() - 1));
                                         settings.setText("FOLLOW");
                                         Following = false;
@@ -219,15 +214,13 @@ public class ProfileDisplayActivity extends AppCompatActivity {
                                         Fol fol = new Fol();
                                         fol.setExists("");
                                         db.collection("Users").document(auth.getUid()).collection("Following").document(user.getUserid()).set(fol);
-                                        db.collection("Users").document(auth.getUid()).update("Following", me.getFollowing() + 1);
-                                        db.collection("Users").document(user.getUserid()).update("Follower", you.getFollower() + 1);
+                                        db.collection("Users").document(user.getUserid()).update("follower", you.getFollower() + 1);
                                         followers.setText(String.valueOf(you.getFollower() + 1));
                                         settings.setText("UNFOLLOW");
                                         Following = true;
                                     }
 
-                                }
-                            });
+
 
                         }
                     });
