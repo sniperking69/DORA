@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -43,6 +44,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -76,6 +78,7 @@ public class ProfileDisplayActivity extends AppCompatActivity {
     private ImageView level;
     private Uri filePath;
     private RecyclerView.AdapterDataObserver observer;
+    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,9 +111,23 @@ public class ProfileDisplayActivity extends AppCompatActivity {
         bio.setText(user.getBio());
         email.setText(user.getEmailAdress());
         followers.setText(String.valueOf(user.getFollower()));
-        following.setText(String.valueOf(user.getFollowing()));
         name.setText(user.getUserName());
+        db.collection("Users").document(user.getUserid()).collection("Following")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
 
+                            for (DocumentSnapshot document : task.getResult()) {
+                                count++;
+                            }
+                            following.setText(String.valueOf(count));
+                        } else {
+                            Log.d("DROP CHAT", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
         if (user.getPostnum() < 100) {
             Glide
                     .with(ProfileDisplayActivity.this)
