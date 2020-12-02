@@ -74,7 +74,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void locationCheck() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(Arrays.asList(
                         Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_BACKGROUND_LOCATION,

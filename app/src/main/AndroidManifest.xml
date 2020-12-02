@@ -32,7 +32,7 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.NearByPrivatePosts"></activity>
+        <activity android:name=".ui.NearByPrivatePosts" />
         <activity android:name=".ui.NearByPosts" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
